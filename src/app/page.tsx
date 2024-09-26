@@ -8,7 +8,7 @@ export default function Home() {
     <>
       <Navbar />
       <Hero />
-      <main className="container mx-auto">
+      <main className="container mx-auto ">
         <BentoGrid />
       </main>
     </>
