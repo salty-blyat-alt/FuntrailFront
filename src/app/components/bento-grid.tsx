@@ -16,7 +16,7 @@ interface BentoItemProps {
     imageSrc: string;
 }
 
-export function BentoGrid() {
+export function BentoGrid({ className }){
     const items: BentoItemProps[] = [
         {
             title: "Angkor Wat",
@@ -46,8 +46,11 @@ export function BentoGrid() {
     ];
 
     return (
-        <section>
-            <h2 className="text-2xl font-bold mb-4">Featured Items</h2>
+        <section className={className}>
+            <div className='mb-4'>
+                <h2 className="text-2xl font-bold leading-none tracking">Trending Destination</h2>
+                <p className='text-muted-foreground'>Angkor Wat, a magnificent temple complex in Cambodia, is renowned for its intricate architecture and historical significance. Stunning and iconic.</p>
+            </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                 {items.map((item, index) => (
                     <Card key={index} className={index === 0 ? 'md:col-span-2' : ''}>

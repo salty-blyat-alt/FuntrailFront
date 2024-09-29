@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import hero from "public/images/hero.png";
+import { Button } from "./ui/button";
 
 export function Hero() {
   return (
@@ -29,26 +30,11 @@ export function Hero() {
                 Its intricate designs and massive structures continue to awe
                 visitors from around the world.
               </p>
-              <Link
-                href="/explore"
-                className="inline-flex items-center rounded-md bg-white px-5 py-2.5 text-base font-semibold text-gray-900 transition-colors hover:bg-gray-100"
-              >
-                Explore
-                <svg
-                  className="ml-2 h-5 w-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M9 5l7 7-7 7"
-                  />
-                </svg>
-              </Link>
+              <Button size="lg">
+                <Link href='/'>
+                  Explore
+                </Link>
+              </Button>
             </div>
           </div>
         </div>
