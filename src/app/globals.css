@@ -89,6 +89,12 @@
   * {
     @apply border-border;
   }
+  h2 {
+    @apply text-2xl font-semibold tracking-tight;
+  }
+  .subtitle1{
+    @apply text-sm text-muted-foreground;
+  }
   body {
     @apply bg-background text-foreground;
   }
