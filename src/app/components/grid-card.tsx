@@ -1,5 +1,4 @@
 import Image from "next/image";
-import { Card, CardContent } from "./ui/card";
 import hero from "@public/images/hero.png";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tab";
 // Correct import for Next.js Link
@@ -24,36 +23,36 @@ const GridCard = () => {
         </TabsList>
 
         <TabsContent
-          className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4"
+          className="grid gap-4 grid-cols-3 md:grid-cols-4 lg:grid-cols-6"
           value="hotel"
         >
-         {items.map((item, index) => (
-            <div key={index} className="w-full h-auto rounded-md overflow-hidden">
-              <Link href="/"   passHref>
+          {items.map((item, index) => (
+            <div key={index} className="rounded-md overflow-hidden">
+              <Link href="/" passHref>
                 <Image
-                  src={hero} // Use item.image if available, otherwise default to hero
-                  width={1000}
-                  height={1000}
-                  className="object-cover object-center hover:scale-110 duration-200 transition-all ease-in w-full h-auto" // Ensure the image covers the div while maintaining aspect ratio
+                  src="https://via.placeholder.com/300" // Use item.image if available, otherwise default to hero
+                  width={300}
+                  height={300}
+                  className="object-cover hover:scale-110 duration-200 transition-all ease-in " // Ensure the image covers the div while maintaining aspect ratio
                   alt={item.alt || "placeholder"} // Meaningful alt text fallback
                 />
               </Link>
             </div>
           ))}
         </TabsContent>
-        
+
         <TabsContent
-          className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4"
+          className="grid gap-4 grid-cols-3 md:grid-cols-4 lg:grid-cols-6"
           value="restaurant"
         >
           {items.map((item, index) => (
-            <div key={index} className="w-full h-auto rounded-md overflow-hidden">
-              <Link href="/"   passHref>
+            <div key={index} className="rounded-md overflow-hidden">
+              <Link href="/" passHref>
                 <Image
-                  src={hero} // Use item.image if available, otherwise default to hero
-                  width={1000}
-                  height={1000}
-                  className="object-cover object-center rounded-md hover:scale-110 duration-200 transition-all ease-in w-full h-auto" // Ensure the image covers the div while maintaining aspect ratio
+                  src="https://via.placeholder.com/300" // Use item.image if available, otherwise default to hero
+                  width={300}
+                  height={300}
+                  className="object-cover hover:scale-110 duration-200 transition-all ease-in " // Ensure the image covers the div while maintaining aspect ratio
                   alt={item.alt || "placeholder"} // Meaningful alt text fallback
                 />
               </Link>

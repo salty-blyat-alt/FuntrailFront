@@ -1,26 +1,27 @@
-'use client'
+"use client";
 
-import Link from "next/link"
-import logo from '@public/logo/logo.svg' 
-import Image from "next/image"
-import { Button } from "./ui/button"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu"
-import { Menu, User } from "lucide-react"
-import { ModeToggle } from "@/theme/toggle-theme"
+import Link from "next/link";
+import logo from "@public/logo/logo.svg";
+import Image from "next/image";
+import { Button } from "./ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "./ui/dropdown-menu";
+import { Menu, User } from "lucide-react";
+import { ModeToggle } from "@/theme/toggle-theme";
 
 export function Navbar() {
   return (
-    <nav className="fixed top-0 left-0 right-0 z-[60] py-4 bg-background">
+    <nav className="fixed top-0 left-0 right-0 z-30 py-4 px-4 bg-background">
       <div className="container mx-auto flex items-center justify-between">
         {/* Logo Section */}
         <div className="flex items-center">
           <Link href="/">
             <div className="flex items-center space-x-2">
-              <Image
-                src={logo}
-                alt="Logo"
-                className="size-9"
-              />
+              <Image src={logo} alt="Logo" className="size-9" />
               <span className="text-xl font-bold">Funtrail</span>
             </div>
           </Link>
@@ -37,15 +38,17 @@ export function Navbar() {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem>
-                <Link href="/login" className="w-full">Login</Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Link href="/register" className="w-full">Register</Link>
-              </DropdownMenuItem>
+              <Link href="/auth/login" passHref>
+                <DropdownMenuItem>Login</DropdownMenuItem>
+              </Link>
+              <Link href="/auth/register" passHref>
+                <DropdownMenuItem>
+                  Register
+                </DropdownMenuItem>
+              </Link>
             </DropdownMenuContent>
           </DropdownMenu>
-          <ModeToggle /> 
+          <ModeToggle />
         </div>
 
         {/* Mobile Menu */}
@@ -63,18 +66,24 @@ export function Navbar() {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuItem>
-                <Link href="/join-us" className="w-full">Join Us</Link>
+                <Link href="/join-us" className="w-full">
+                  Join Us
+                </Link>
               </DropdownMenuItem>
               <DropdownMenuItem>
-                <Link href="/login" className="w-full">Login</Link>
+                <Link href="/login" className="w-full">
+                  Login
+                </Link>
               </DropdownMenuItem>
               <DropdownMenuItem>
-                <Link href="/register" className="w-full">Register</Link>
+                <Link href="/register" className="w-full">
+                  Register
+                </Link>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
       </div>
     </nav>
-  )
+  );
 }
