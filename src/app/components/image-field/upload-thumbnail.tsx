@@ -1,11 +1,11 @@
+import { toast } from "@/app/hooks/use-toast";
 import { X } from "lucide-react";
 import Image from "next/image";
 import React, { useCallback, useRef, useState } from "react";
+import RedStar from "../redstar/redstar";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
-import RedStar from "../redstar/redstar";
-import { toast } from "@/app/hooks/use-toast";
 
 interface UploadThumbnailProps {
   title: string;
@@ -78,7 +78,7 @@ const UploadThumbnail: React.FC<UploadThumbnailProps> = ({
 
   return (
     <div>
-      <Label htmlFor="thumbnail">
+      <Label  htmlFor="thumbnail">
         {title} {isRequired && <RedStar />}
       </Label>
       {!thumbnail ? (
@@ -86,7 +86,7 @@ const UploadThumbnail: React.FC<UploadThumbnailProps> = ({
           className={`flex items-center h-40 justify-center border-2 rounded-md p-4 cursor-pointer transition-all duration-200 ${
             isDragOver
               ? "border-blue-500 bg-blue-100"
-              : "border-dashed border-gray-300 bg-white"
+              : "border-dashed border-gray-300 backdrop-brightness-100"
           }`}
           onDrop={handleDrop}
           onDragOver={handleDragOver}

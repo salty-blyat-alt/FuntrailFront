@@ -1,21 +1,21 @@
-"use client";
-
 import { ModeToggle } from "@/theme/toggle-theme";
 import logo from "@public/logo/logo.svg";
-import { Menu, User } from "lucide-react";
+import { User } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "../ui/button";
 import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 
 export function Navbar() {
   return (
-    <nav className="fixed top-0 left-0 right-0 z-30 py-4 px-4 shadow bg-background">
+    <nav className="fixed top-0 left-0 right-0 z-[60] py-4 px-4 shadow bg-background">
       <div className="container mx-auto flex items-center justify-between">
         {/* Logo Section */}
         <div className="flex items-center">
@@ -28,7 +28,7 @@ export function Navbar() {
         </div>
 
         {/* Desktop Links */}
-        <div className="hidden md:flex items-center space-x-4">
+        <div className="flex items-center space-x-2">
           {/* Dropdown for "Join Us" */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -47,60 +47,36 @@ export function Navbar() {
           {/* Account Dropdown */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost">
-                <User className="mr-2 h-4 w-4" />
-                Account
+              <Button variant="outline" size="icon" className="overflow-hidden">
+                <User className="size-4" />
+                {/* prod */}
+                {/* <Image
+                  src="/placeholder-user.jpg"
+                  width={36}
+                  height={36}
+                  alt="Avatar"
+                  className="overflow-hidden rounded-full"
+                /> */}
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <Link href="/auth/login" passHref>
+              <DropdownMenuLabel>My Account</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <Link href={"/auth/login"}>
                 <DropdownMenuItem>Login</DropdownMenuItem>
               </Link>
-              <Link href="/auth/register" passHref>
+              <Link href={"/auth/register"}>
                 <DropdownMenuItem>Register</DropdownMenuItem>
               </Link>
+
+              <DropdownMenuSeparator />
+              <DropdownMenuItem>Settings</DropdownMenuItem>
+              <DropdownMenuItem>Support</DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem>Logout</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
           <ModeToggle />
-        </div>
-
-        {/* Mobile Menu */}
-        <div className="md:hidden flex items-center space-x-2">
-          {/* Mode Toggle Button */}
-          <ModeToggle />
-
-          {/* Burger Menu */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="icon">
-                <Menu className="h-5 w-5" />
-                <span className="sr-only">Toggle menu</span>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              {/* Join Us dropdown for mobile */}
-              <DropdownMenuItem>
-                <Link href="/register-hotel" className="w-full">
-                  Register Hotel
-                </Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Link href="/register-restaurant" className="w-full">
-                  Register Restaurant
-                </Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Link href="/login" className="w-full">
-                  Login
-                </Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Link href="/register" className="w-full">
-                  Register
-                </Link>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
         </div>
       </div>
     </nav>

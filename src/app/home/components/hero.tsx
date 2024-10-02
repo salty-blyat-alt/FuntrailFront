@@ -30,11 +30,9 @@ export function Hero() {
                 Its intricate designs and massive structures continue to awe
                 visitors from around the world.
               </p>
-              <Button size="lg">
-                <Link href='/'>
-                  Explore
-                </Link>
-              </Button>
+              <Link  href="/search/34yukj">
+                <Button size="lg">Explore</Button>
+              </Link>
             </div>
           </div>
         </div>

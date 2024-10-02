@@ -13,7 +13,7 @@ const Register = () => {
           alt="Image"
           width="1920"
           height="1080"
-          className="  object-cover dark:brightness-[0.2] dark:grayscale"
+          className=" object-cover dark:brightness-[0.2] dark:grayscale"
         />
       </div>
       <div className="pt-[40%]">

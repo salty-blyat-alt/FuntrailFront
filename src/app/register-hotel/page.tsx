@@ -13,12 +13,12 @@ import { Input } from "@components/ui/input";
 import { Label } from "@components/ui/label";
 import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import UploadThumbnail from "../components/image-field/upload-thumbnail";
-import UploadImages from "../components/image-field/upload-images";
 import ImageListPreview from "../components/image-field/image-list-preview";
+import UploadImages from "../components/image-field/upload-images";
+import UploadThumbnail from "../components/image-field/upload-thumbnail";
 import RedStar from "../components/redstar/redstar";
-import { Textarea } from "../components/ui/textarea";
 import { ComboBox, ItemProps } from "../components/ui/combo-box";
+import { Textarea } from "../components/ui/textarea";
 
 export interface HotelProps {
   name: string;
@@ -103,7 +103,7 @@ const RegisterHotel = () => {
       close_at: "",
     });
   };
-  
+
   const handleThumbnailChange = (file: File | null) => {
     setHotel((prev) => ({ ...prev, thumbnail: file }));
     setValue("thumbnail", file);
@@ -310,7 +310,12 @@ const RegisterHotel = () => {
             <Button variant="outline" type="button" onClick={() => reset()}>
               Cancel
             </Button>
-            <Button type="submit">Register Hotel</Button>
+            <div className="space-x-4">
+              <Button variant="secondary" type="button" onClick={() => reset()}>
+                Preview
+              </Button>
+              <Button type="submit">Register Hotel</Button>
+            </div>
           </CardFooter>
         </Card>
       </form>

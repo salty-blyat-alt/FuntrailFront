@@ -8,10 +8,12 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/app/components/ui/breadcrumb";
+import { CalendarDateRangePicker } from "@/app/components/ui/date-range-picker";
 import SearchGroup from "@/app/home/components/search-group";
 import { Filter, FilterContent } from "@/app/search/components/filter";
 import List from "@/app/search/components/list";
 import { Button } from "@components/ui/button";
+import Link from "next/link";
 import React from "react";
 
 export default function SearchPage({ params }: { params: { slug: string } }) {
@@ -111,11 +113,11 @@ export default function SearchPage({ params }: { params: { slug: string } }) {
 
   return (
     <div className="min-h-screen">
-      <div className="bg-secondary py-20 relative text-primary-foreground">
+      <div className="bg-secondary py-20 relative   text-primary-foreground">
         <SearchGroup className="absolute px-6 container -translate-x-1/2 -bottom-5 left-1/2 right-1/2" />
       </div>
 
-      <div className="container mx-auto px-4 lg:px-12 py-8">
+      <div className="container   mx-auto px-4 lg:px-12 py-8">
         {/* Breadcrumb */}
         <Breadcrumb className="mb-4">
           <BreadcrumbList>
@@ -153,9 +155,6 @@ export default function SearchPage({ params }: { params: { slug: string } }) {
             <div className="md:hidden mb-4">
               <Filter />
             </div>
-           
-           
-
             {/* Filters for Large Screens */}
             <div className="hidden md:block md:w-1/4 sticky top-20">
               <FilterContent />
@@ -171,11 +170,16 @@ export default function SearchPage({ params }: { params: { slug: string } }) {
               </Button>
             </div>
 
-            <div className="grid grid-cols-2 md:block space-y-4">
+            <div className="grid grid-cols-2 gap-4">
               {mockData.map((item, index) => (
-                <List key={index} item={item} />
+                <div className="col-span-2 sm:col-span-1 md:col-span-2">
+                  <Link href="/hotel-detail/id">
+                    <List key={index} item={item} />
+                  </Link>
+                </div>
               ))}
             </div>
+
           </div>
         </div>
       </div>

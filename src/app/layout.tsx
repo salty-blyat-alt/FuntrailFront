@@ -5,6 +5,7 @@ import "../app/globals.css";
 import { Navbar } from "./components/navbar/navbar";
 import { Toaster } from "@components/ui/toaster";
 import Head from "next/head";
+import { TooltipProvider } from "./components/ui/tooltip";
 
 const geistSans = localFont({
   src: "../../public/fonts/GeistVF.woff",
@@ -43,8 +44,10 @@ export default function RootLayout({
           themes={["light", "dark", "purple"]}
         >
           <Navbar />
+          <TooltipProvider>
           <main className="mt-16">{children}</main>
           <Toaster />
+          </TooltipProvider>
         </ThemeProvider>
       </body>
     </html>

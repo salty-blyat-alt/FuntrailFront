@@ -1,9 +1,9 @@
-import { useRef, useCallback, useState, SetStateAction, Dispatch } from "react";
-import { Label } from "../ui/label";
-import { Input } from "../ui/input";
 import { toast } from "@/app/hooks/use-toast"; // Ensure this is the correct path
 import { HotelProps } from "@/app/register-hotel/page";
+import { Dispatch, SetStateAction, useCallback, useRef, useState } from "react";
 import { UseFormSetValue } from "react-hook-form";
+import { Input } from "../ui/input";
+import { Label } from "../ui/label";
 
 interface UploadImagesProps {
   hotel: { images: File[] };
@@ -82,7 +82,7 @@ const UploadImages: React.FC<UploadImagesProps> = ({
         className={`flex items-center justify-center h-40 border-2 rounded-md p-4 cursor-pointer transition-all duration-200 ${
           isDragOver
             ? "border-blue-500 bg-blue-100"
-            : "border-dashed border-gray-300 bg-white"
+            : "border-dashed border-gray-300 backdrop-brightness-100"
         }`}
         onDrop={handleDrop}
         onDragOver={handleDragOver}
@@ -90,9 +90,9 @@ const UploadImages: React.FC<UploadImagesProps> = ({
         onClick={() => imagesInputRef.current?.click()}
       >
         {hotel.images.length === 0 ? (
-          <span>Drag & drop images here or click to choose</span>
+            <span className={isDragOver?"text-blue-500": ''}>Drag & drop images here or click to choose</span>  
         ) : (
-          <span>{hotel.images.length} file(s) chosen</span>
+          <span className={isDragOver?"text-blue-500": ''}>{hotel.images.length} file(s) chosen</span>
         )}
       </div>
       <Input

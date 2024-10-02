@@ -2,7 +2,7 @@
 
 import { Button } from "@components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@components/ui/tab";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/app/components/ui/tabs";
 import { HeartIcon, MapPinIcon, ShareIcon } from "lucide-react";
 import { useParams } from "next/navigation";
 import HotelBreadcrumb from "../components/hotel-breadcrumb";

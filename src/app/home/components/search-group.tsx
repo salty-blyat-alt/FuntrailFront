@@ -1,6 +1,7 @@
 import { CalendarIcon, SearchIcon } from "lucide-react";
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
+import { CalendarDateRangePicker } from "@/app/components/ui/date-range-picker";
 
 const SearchGroup = ({ className }: { className: string }) => {
   return (
@@ -9,14 +10,8 @@ const SearchGroup = ({ className }: { className: string }) => {
         placeholder="Eilat"
         className="flex-grow bg-background text-foreground"
       />
-      <Button
-        variant="outline"
-        className="flex-grow sm:flex-grow-0 bg-background text-foreground"
-      >
-        <CalendarIcon className="mr-2 h-4 w-4" /> Check-in — Check-out
-      </Button> 
+      <CalendarDateRangePicker className="flex-grow  sm:flex-grow-0 bg-background text-foreground" />
 
-      
       <Button className="w-full sm:w-auto  ">
         <SearchIcon className="mr-2 h-4 w-4" /> Search
       </Button>
