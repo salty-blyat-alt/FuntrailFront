@@ -1,9 +1,5 @@
 "use client";
 
-import { Button } from "@components/ui/button";
-import SearchGroup from "@/app/components/search-group";
-import { Filter, FilterContent } from "@/app/components/filter";
-import List from "@/app/components/list";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -12,6 +8,10 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/app/components/ui/breadcrumb";
+import SearchGroup from "@/app/home/components/search-group";
+import { Filter, FilterContent } from "@/app/search/components/filter";
+import List from "@/app/search/components/list";
+import { Button } from "@components/ui/button";
 import React from "react";
 
 export default function SearchPage({ params }: { params: { slug: string } }) {

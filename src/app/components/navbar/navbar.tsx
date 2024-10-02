@@ -1,17 +1,17 @@
 "use client";
 
-import Link from "next/link";
-import logo from "@public/logo/logo.svg";
-import Image from "next/image";
-import { Button } from "./ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "./ui/dropdown-menu";
-import { Menu, User } from "lucide-react";
 import { ModeToggle } from "@/theme/toggle-theme";
+import logo from "@public/logo/logo.svg";
+import { Menu, User } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import { Button } from "../ui/button";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from "../ui/dropdown-menu";
 
 export function Navbar() {
   return (
@@ -29,7 +29,22 @@ export function Navbar() {
 
         {/* Desktop Links */}
         <div className="hidden md:flex items-center space-x-4">
-          <Button variant="default">Join Us</Button>
+          {/* Dropdown for "Join Us" */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="default">Join Us</Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <Link href="/register-hotel" passHref>
+                <DropdownMenuItem>Register Hotel</DropdownMenuItem>
+              </Link>
+              <Link href="/register-restaurant" passHref>
+                <DropdownMenuItem>Register Restaurant</DropdownMenuItem>
+              </Link>
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          {/* Account Dropdown */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost">
@@ -42,9 +57,7 @@ export function Navbar() {
                 <DropdownMenuItem>Login</DropdownMenuItem>
               </Link>
               <Link href="/auth/register" passHref>
-                <DropdownMenuItem>
-                  Register
-                </DropdownMenuItem>
+                <DropdownMenuItem>Register</DropdownMenuItem>
               </Link>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -65,9 +78,15 @@ export function Navbar() {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
+              {/* Join Us dropdown for mobile */}
               <DropdownMenuItem>
-                <Link href="/join-us" className="w-full">
-                  Join Us
+                <Link href="/register-hotel" className="w-full">
+                  Register Hotel
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <Link href="/register-restaurant" className="w-full">
+                  Register Restaurant
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuItem>

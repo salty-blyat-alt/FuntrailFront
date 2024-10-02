@@ -1,6 +1,5 @@
 import Image from "next/image";
-import hero from "@public/images/hero.png";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tab";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../components/ui/tab";
 // Correct import for Next.js Link
 import Link from "next/link";
 

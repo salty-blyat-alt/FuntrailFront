@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import hero from "public/images/hero.png";
-import { Button } from "./ui/button";
+import { Button } from "../../components/ui/button";
 
 export function Hero() {
   return (

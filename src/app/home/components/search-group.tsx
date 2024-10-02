@@ -1,6 +1,6 @@
-import { Input } from "./ui/input";
-import { Button } from "./ui/button";
 import { CalendarIcon, SearchIcon } from "lucide-react";
+import { Button } from "../../components/ui/button";
+import { Input } from "../../components/ui/input";
 
 const SearchGroup = ({ className }: { className: string }) => {
   return (

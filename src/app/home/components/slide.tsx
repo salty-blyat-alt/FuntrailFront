@@ -1,13 +1,12 @@
+import Image from "next/image";
+import Link from "next/link";
 import {
   Carousel,
   CarouselContent,
   CarouselItem,
   CarouselNext,
   CarouselPrevious,
-} from "./ui/carousel";
-import Image from "next/image";
-import logo from "@public/images/hero.png";
-import Link from "next/link";
+} from "../../components/ui/carousel";
 
 const Slide = ({ title, subtitle }: { title: string; subtitle: string }) => {
   return (

@@ -1,8 +1,10 @@
-import { BentoGrid } from "./components/bento-grid";
-import GridCard from "./components/grid-card";
-import { Hero } from "./components/hero";
-import Slide from "./components/slide";
 import { ComboBox } from "./components/ui/combo-box";
+import { BentoGrid } from "./home/components/bento-grid";
+import GridCard from "./home/components/grid-card";
+import { Hero } from "./home/components/hero";
+import Slide from "./home/components/slide";
+
+ 
 
 export default function Home() {
   return (

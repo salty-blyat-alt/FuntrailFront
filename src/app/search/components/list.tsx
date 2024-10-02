@@ -1,8 +1,8 @@
-import Image from "next/image";
-import { Card, CardContent } from "./ui/card";
 import { MapPinIcon } from "lucide-react";
-import { Button } from "./ui/button";
+import Image from "next/image";
 import Link from "next/link";
+import { Button } from "../../components/ui/button";
+import { Card, CardContent } from "../../components/ui/card";
 
 interface ListProps {
   item: {

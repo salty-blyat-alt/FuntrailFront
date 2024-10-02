@@ -1,15 +1,15 @@
 "use client";
-import { useState } from "react";
 import { FilterIcon } from "lucide-react";
-import { Button } from "./ui/button";
+import { useState } from "react";
+import { Button } from "../../components/ui/button";
+import { Checkbox } from "../../components/ui/checkbox";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "./ui/dialog";
-import { Checkbox } from "./ui/checkbox";
+} from "../../components/ui/dialog";
 
 const Filter = () => {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
