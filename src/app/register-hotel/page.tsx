@@ -18,24 +18,17 @@ import UploadImages from "../components/image-field/upload-images";
 import ImageListPreview from "../components/image-field/image-list-preview";
 import RedStar from "../components/redstar/redstar";
 import { Textarea } from "../components/ui/textarea";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../components/ui/select";
+import { ComboBox, ItemProps } from "../components/ui/combo-box";
 
 export interface HotelProps {
   name: string;
   address?: string;
-  province_id: string; // Change to required
+  province_id: string;
   description?: string;
   thumbnail: File | null;
   images: File[];
-  open_at: string; // Renamed
-  close_at: string; // Renamed
+  open_at: string;
+  close_at: string;
 }
 
 const RegisterHotel = () => {
@@ -43,7 +36,6 @@ const RegisterHotel = () => {
     register,
     handleSubmit,
     setValue,
-    setError,
     formState: { errors },
     reset,
   } = useForm<HotelProps>();
@@ -51,18 +43,13 @@ const RegisterHotel = () => {
   const [hotel, setHotel] = useState<HotelProps>({
     name: "",
     address: "",
-    province_id: "", // Change to required
+    province_id: "",
     description: "",
     thumbnail: null,
     images: [],
-    open_at: "", // Renamed
-    close_at: "", // Renamed
+    open_at: "",
+    close_at: "",
   });
-
-  const handleSelectChange = (value: string) => {
-    setHotel((prev) => ({ ...prev, province_id: value }));
-    setValue("province_id", value);
-  };
 
   const onSubmit: SubmitHandler<HotelProps> = async (data) => {
     // Trim whitespace from string fields
@@ -76,31 +63,6 @@ const RegisterHotel = () => {
       close_at: data.close_at.trim(),
     };
 
-    // Validate required fields
-    if (!trimmedData.thumbnail) {
-      toast({
-        title: "Error",
-        description: "Thumbnail is required.",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    // Check for whitespace in required fields
-    if (!trimmedData.name) {
-      setError("name", { type: "manual", message: "Hotel name is required." });
-      return;
-    }
-    if (!trimmedData.province_id) {
-      setError("province_id", {
-        type: "manual",
-        message: "Province is required.",
-      });
-      return;
-    }
-    // Add similar checks for other required fields if necessary
-
-    console.log(trimmedData);
     const formData = new FormData();
     formData.append("name", trimmedData.name);
     formData.append("address", trimmedData.address || "");
@@ -129,16 +91,7 @@ const RegisterHotel = () => {
     });
 
     // Reset the form values
-    reset({
-      name: "",
-      address: "",
-      province_id: "", // Resetting province_id
-      description: "",
-      thumbnail: null,
-      images: [],
-      open_at: "", // Renamed
-      close_at: "", // Renamed
-    });
+    reset();
     setHotel({
       name: "",
       address: "",
@@ -150,6 +103,7 @@ const RegisterHotel = () => {
       close_at: "",
     });
   };
+  
   const handleThumbnailChange = (file: File | null) => {
     setHotel((prev) => ({ ...prev, thumbnail: file }));
     setValue("thumbnail", file);
@@ -165,6 +119,25 @@ const RegisterHotel = () => {
       hotel.images.filter((_, i) => i !== index)
     );
   };
+
+  const items: ItemProps[] = [
+    {
+      label: "Phnom Penh",
+      value: "1",
+    },
+    {
+      label: "Kandal",
+      value: "2",
+    },
+    {
+      label: "Siem Reap",
+      value: "3",
+    },
+    {
+      label: "Battambang",
+      value: "4",
+    },
+  ];
 
   return (
     <div className="container mx-auto p-4">
@@ -217,25 +190,20 @@ const RegisterHotel = () => {
                 <Label htmlFor="province_id">
                   Province <RedStar />
                 </Label>
-                <Select
-                  className="w-full"
-                  onValueChange={handleSelectChange}
+
+                <ComboBox
+                  items={items}
+                  title="Please select a province"
                   value={hotel.province_id}
+                  setValue={(value: string) => {
+                    setHotel((prev) => ({ ...prev, province_id: value }));
+                    setValue("province_id", value, { shouldValidate: true });
+                  }}
                   {...register("province_id", {
                     required: "Province is required",
-                  })} // Registering the select
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Please select a province" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectGroup>
-                      <SelectItem value="province_1">Province 1</SelectItem>
-                      <SelectItem value="province_2">Province 2</SelectItem>
-                      <SelectItem value="province_3">Province 3</SelectItem>
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
+                  })}
+                />
+
                 {errors.province_id && (
                   <span className="text-red-500 pt-0 text-sm">
                     {errors.province_id.message || "Province is required"}
@@ -258,7 +226,6 @@ const RegisterHotel = () => {
                   </span>
                 )}
               </div>
-
               {/* Thumbnail Upload */}
               <div className="flex flex-col space-y-1.5">
                 <UploadThumbnail
@@ -266,6 +233,9 @@ const RegisterHotel = () => {
                   title="Please upload hotel profile"
                   thumbnail={hotel.thumbnail}
                   setThumbnail={handleThumbnailChange}
+                  {...register("thumbnail", {
+                    required: "Hotel profile is required",
+                  })}
                 />
                 {errors.thumbnail && (
                   <span className="text-red-500 pt-0 text-sm">

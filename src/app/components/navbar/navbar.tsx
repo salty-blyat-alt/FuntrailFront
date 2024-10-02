@@ -15,7 +15,7 @@ import {
 
 export function Navbar() {
   return (
-    <nav className="fixed top-0 left-0 right-0 z-30 py-4 px-4 bg-background">
+    <nav className="fixed top-0 left-0 right-0 z-30 py-4 px-4 shadow bg-background">
       <div className="container mx-auto flex items-center justify-between">
         {/* Logo Section */}
         <div className="flex items-center">
