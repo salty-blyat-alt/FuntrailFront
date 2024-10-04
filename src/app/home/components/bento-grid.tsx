@@ -42,7 +42,7 @@ export function BentoGrid({ className }) {
   return (
     <section className={className}>
       <div className="mb-4">
-        <h2>
+      <h2 className="text-2xl font-bold leading-none tracking"> 
           Trending Destination
         </h2>
         <p className="muted">

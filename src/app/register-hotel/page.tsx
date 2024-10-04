@@ -19,8 +19,11 @@ import UploadThumbnail from "../components/image-field/upload-thumbnail";
 import RedStar from "../components/redstar/redstar";
 import { ComboBox, ItemProps } from "../components/ui/combo-box";
 import { Textarea } from "../components/ui/textarea";
+import { Checkbox } from "../components/ui/checkbox";
+import { facilities, policies, provinces } from "../constant/constant";
 
 export interface HotelProps {
+  id?: number; // prod
   name: string;
   address?: string;
   province_id: string;
@@ -29,6 +32,8 @@ export interface HotelProps {
   images: File[];
   open_at: string;
   close_at: string;
+  facilities: string[];
+  policies: string[];
 }
 
 const RegisterHotel = () => {
@@ -49,6 +54,8 @@ const RegisterHotel = () => {
     images: [],
     open_at: "",
     close_at: "",
+    facilities: [],
+    policies: [],
   });
 
   const onSubmit: SubmitHandler<HotelProps> = async (data) => {
@@ -77,10 +84,20 @@ const RegisterHotel = () => {
     }
 
     // Append additional images if they exist
-    if (trimmedData.images) {
-      trimmedData.images.forEach((image, index) => {
-        formData.append(`images[${index}]`, image);
+    if (trimmedData.images.length > 0) {
+      trimmedData.images.forEach((image) => {
+        formData.append("images[]", image); // Use "images[]" to send as an array
       });
+    }
+    console.log(trimmedData.facilities);
+    // Append facilities as a JSON string
+    if (trimmedData.facilities) {
+      formData.append("facilities", JSON.stringify(trimmedData.facilities));
+    }
+
+    // Append policies as a JSON string
+    if (trimmedData.policies) {
+      formData.append("policies", JSON.stringify(trimmedData.policies));
     }
 
     console.log("Submitting the form with the following data:", formData);
@@ -101,6 +118,8 @@ const RegisterHotel = () => {
       images: [],
       open_at: "",
       close_at: "",
+      facilities: [],
+      policies: [],
     });
   };
 
@@ -119,25 +138,6 @@ const RegisterHotel = () => {
       hotel.images.filter((_, i) => i !== index)
     );
   };
-
-  const items: ItemProps[] = [
-    {
-      label: "Phnom Penh",
-      value: "1",
-    },
-    {
-      label: "Kandal",
-      value: "2",
-    },
-    {
-      label: "Siem Reap",
-      value: "3",
-    },
-    {
-      label: "Battambang",
-      value: "4",
-    },
-  ];
 
   return (
     <div className="container mx-auto p-4">
@@ -172,7 +172,7 @@ const RegisterHotel = () => {
               {/* Address */}
               <div>
                 <Label htmlFor="address">Address</Label>
-                <Input
+                <Textarea
                   className="w-full"
                   id="address"
                   placeholder="Please enter address"
@@ -192,7 +192,7 @@ const RegisterHotel = () => {
                 </Label>
 
                 <ComboBox
-                  items={items}
+                  items={provinces}
                   title="Please select a province"
                   value={hotel.province_id}
                   setValue={(value: string) => {
@@ -209,6 +209,87 @@ const RegisterHotel = () => {
                     {errors.province_id.message || "Province is required"}
                   </span>
                 )}
+              </div>
+
+              {/* facilities */}
+              <div>
+                <Label htmlFor="facilities">Facilities</Label>
+                <div className="grid grid-cols-2 gap-2">
+                  {facilities.map((facility, index) => (
+                    <div key={index} className="flex items-center">
+                      <Checkbox
+                        id={`facility-${index}`}
+                        value={facility}
+                        onCheckedChange={(checked) => {
+                          setHotel((prev) => ({
+                            ...prev,
+                            facilities: checked
+                              ? [...prev.facilities, facility]
+                              : prev.facilities?.filter((f) => f !== facility),
+                          }));
+                          setValue(
+                            "facilities",
+                            checked
+                              ? [...hotel.facilities, facility]
+                              : hotel.facilities?.filter((f) => f !== facility)
+                          );
+                        }}
+                        className="mr-2"
+                      />
+                      <Label
+                        className="hover:cursor-pointer"
+                        htmlFor={`facility-${index}`}
+                      >
+                        {facility}
+                      </Label>
+                    </div>
+                  ))}
+                  {errors.facilities && (
+                    <span className="text-red-500 pt-0 text-sm">
+                      {errors.facilities.message}
+                    </span>
+                  )}
+                </div>
+              </div>
+              {/* policies */}
+              <div>
+                <Label htmlFor="policies">Policies</Label>
+                <div className="grid grid-cols-2 gap-2">
+                  {policies.map((policy, index) => (
+                    <div key={index} className="flex items-center">
+                      <Checkbox
+                        id={`policies-${index}`}
+                        value={policy}
+                        onCheckedChange={(checked) => {
+                          setHotel((prev) => ({
+                            ...prev,
+                            policies: checked
+                              ? [...prev.policies, policy]
+                              : prev.policies?.filter((p) => p !== policy),
+                          }));
+                          setValue(
+                            "policies",
+                            checked
+                              ? [...hotel.policies, policy]
+                              : hotel.policies?.filter((p) => p !== policy)
+                          );
+                        }}
+                        className="mr-2"
+                      />
+                      <Label
+                        className="hover:cursor-pointer"
+                        htmlFor={`policies-${index}`}
+                      >
+                        {policy}
+                      </Label>
+                    </div>
+                  ))}
+                  {errors.policies && (
+                    <span className="text-red-500 pt-0 text-sm">
+                      {errors.policies.message}
+                    </span>
+                  )}
+                </div>
               </div>
 
               {/* Description */}

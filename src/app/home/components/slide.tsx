@@ -12,7 +12,9 @@ const Slide = ({ title, subtitle }: { title: string; subtitle: string }) => {
   return (
     <section>
       <div className="mb-4">
-        <h2>{title || "Explore Cambodia"}</h2>
+        <h2 className=" text-2xl font-bold leading-none tracking">
+          {title || "Explore Cambodia"}
+        </h2>
         <p className="muted">
           {subtitle ||
             "Angkor Wat, a magnificent temple complex in Cambodia, is renowned for its intricate architecture and historical significance. Stunning and iconic."}

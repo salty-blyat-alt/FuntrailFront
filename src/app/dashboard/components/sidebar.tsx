@@ -6,27 +6,12 @@ import { ChevronLeft, LayoutDashboard, User, UserIcon } from "lucide-react";
 import Link from "next/link";
 import { DashboardNav, NavItem } from "./dashboard-nav";
 
-type SidebarProps = {
+interface SidebarProps extends NavItem  {
   className?: string;
+  navItems: NavItem[];
 };
 
-const navItems: NavItem[] = [
-  {
-    title: "Dashboard",
-    href: "/dashboard/hotel/sdaf",
-    icon: <LayoutDashboard className='ml-3 size-5 flex-none' />, // Store the icon component directly
-    label: "LayoutDashboard",
-  },
-  {
-    title: "User",
-    href: "/dashboard/hotel/sdaf",
-    icon: <UserIcon className='ml-3 size-5 flex-none' />, // Store the icon component directly
-    label: "User",
-  }, 
-];
-
-
-export default function Sidebar({ className }: SidebarProps) {
+export default function Sidebar({ className,navItems }: SidebarProps) {
   const { isMinimized, toggle } = useSidebar();
 
   const handleToggle = () => {

@@ -1,5 +1,6 @@
 "use client";
 
+import CustomBreadcrumb from "@/app/components/custom-breadcrumb/custom-breadcrumb";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -14,6 +15,7 @@ import { Filter, FilterContent } from "@/app/search/components/filter";
 import List from "@/app/search/components/list";
 import { Button } from "@components/ui/button";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import React from "react";
 
 export default function SearchPage({ params }: { params: { slug: string } }) {
@@ -111,43 +113,18 @@ export default function SearchPage({ params }: { params: { slug: string } }) {
     },
   ];
 
+  const pathname = usePathname();
   return (
     <div className="min-h-screen">
       <div className="bg-secondary py-20 relative   text-primary-foreground">
         <SearchGroup className="absolute px-6 container -translate-x-1/2 -bottom-5 left-1/2 right-1/2" />
       </div>
 
-      <div className="container   mx-auto px-4 lg:px-12 py-8">
+      <div className="container mx-auto px-4 lg:px-12 py-8">
         {/* Breadcrumb */}
-        <Breadcrumb className="mb-4">
-          <BreadcrumbList>
-            {/* Home Link */}
-            <BreadcrumbItem>
-              <BreadcrumbLink href="/">Home</BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator />
-
-            {/* Search Link */}
-            <BreadcrumbItem>
-              <BreadcrumbPage>Search</BreadcrumbPage>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator />
-
-            {/* Map through the slug array to dynamically generate the breadcrumb links */}
-            {slugArray.map((segment, index) => (
-              <React.Fragment key={index}>
-                <BreadcrumbItem>
-                  <BreadcrumbLink
-                    href={`/search/${slugArray.slice(0, index + 1).join("/")}`}
-                  >
-                    {segment.charAt(0).toUpperCase() + segment.slice(1)}
-                  </BreadcrumbLink>
-                </BreadcrumbItem>
-                {index < slugArray.length - 1 && <BreadcrumbSeparator />}
-              </React.Fragment>
-            ))}
-          </BreadcrumbList>
-        </Breadcrumb>
+        <div className="mb-4">
+          <CustomBreadcrumb pathname={pathname} />
+        </div>
 
         <div className="flex flex-col md:flex-row gap-4  ">
           <div>
@@ -179,7 +156,6 @@ export default function SearchPage({ params }: { params: { slug: string } }) {
                 </div>
               ))}
             </div>
-
           </div>
         </div>
       </div>

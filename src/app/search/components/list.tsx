@@ -1,7 +1,5 @@
 import { MapPinIcon } from "lucide-react";
 import Image from "next/image";
-import Link from "next/link";
-import { Button } from "../../components/ui/button";
 import { Card, CardContent } from "../../components/ui/card";
 
 interface ListProps {
@@ -50,8 +48,7 @@ const List: React.FC<ListProps> = ({ item }) => {
               </span>
             </div>
           </div>
-          <p className="mt-2 text-sm md:text-base">{description}</p>
-          <Button className="mt-4">Show prices</Button>
+          <p className="mt-2 text-sm md:text-base">{description}</p> 
         </div>
       </CardContent>
     </Card>

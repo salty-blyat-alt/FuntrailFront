@@ -1,14 +1,8 @@
 import React, { useState } from "react";
 import Image from "next/image"; // Assuming you're using Next.js for images
 
-interface ImageData {
-  id: number;
-  src: string;
-  alt: string;
-}
-
 interface ImageSelectProps {
-  images: ImageData[];
+  images: string[]; // Updated to accept an array of strings (image URLs)
 }
 
 const ImageSelect: React.FC<ImageSelectProps> = ({ images }) => {
@@ -24,8 +18,8 @@ const ImageSelect: React.FC<ImageSelectProps> = ({ images }) => {
       <div className="relative aspect-video mb-4">
         <Image
           fill
-          src={images[thumbnailIndex].src}
-          alt={images[thumbnailIndex].alt}
+          src={images[thumbnailIndex]}
+          alt={`Image ${thumbnailIndex}`}
           className="rounded-lg object-cover"
         />
       </div>
@@ -34,7 +28,7 @@ const ImageSelect: React.FC<ImageSelectProps> = ({ images }) => {
       <div className="grid grid-cols-5 gap-2">
         {images.map((image, index) => (
           <div
-            key={image.id}
+            key={index}
             className={`relative aspect-video cursor-pointer ${
               index === thumbnailIndex ? "ring-2 ring-primary" : ""
             }`}
@@ -42,8 +36,8 @@ const ImageSelect: React.FC<ImageSelectProps> = ({ images }) => {
           >
             <Image
               fill
-              src={image.src}
-              alt={image.alt}
+              src={image}
+              alt={`Thumbnail ${index}`}
               className="rounded-lg object-cover"
             />
           </div>
