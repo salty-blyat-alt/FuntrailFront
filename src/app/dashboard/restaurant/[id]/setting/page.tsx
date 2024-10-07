@@ -1,106 +1,74 @@
-"use client";
+'use client'
 
-import { useParams, usePathname } from "next/navigation";
-import CustomBreadcrumb from "@/app/components/custom-breadcrumb/custom-breadcrumb";
-import Image from "next/image";
-import { Button } from "@/app/components/ui/button";
-import ImageSelect from "@/app/hotel-detail/components/image-select";
-import HotelComment from "@/app/hotel-detail/components/hotel-comment";
-import { HeartIcon, Share1Icon } from "@radix-ui/react-icons";
-import { MapPinIcon, ShoppingCart, Plus, Minus } from "lucide-react";
+import DashboardLayout from "@/app/dashboard/dashboard-layout";
 import { useState } from "react";
-import { ScrollArea } from "@/app/components/ui/scroll-area";
-import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from "@/app/components/ui/card";
+import { restaurantNavItem } from "../page";
+import PageContainer from "@/app/dashboard/components/page-container";
+import { Button } from "@/app/components/ui/button";
+import { HeartIcon, MapPinIcon, ShareIcon, Minus, Plus, ShoppingCart } from "lucide-react";
+import ImageSelect from "@/app/hotel-detail/components/image-select";
+import { ScrollArea } from "@/app/components/ui/scroll-area"; // Import ScrollArea component
+import Image from "next/image"; // Import next/image for thumbnails
+import { Card, CardHeader, CardTitle, CardDescription, CardFooter } from "@/app/components/ui/card"; // Import Card components
+import { Share1Icon } from "@radix-ui/react-icons";
 
-// Sample restaurant data
-const restaurant = {
-  id: 2,
-  name: "Rose Hotel",
-  address:
-    "Street Preah Somramrth (River Road), Psar Veng village, Sangkat Kratie, Kratie Town, Kratie Province, Kratie, Cambodia",
-  phone_number: "012345343",
-  open_at: "07:00",
-  close_at: "22:00",
-};
+const RestaurantSetting = ( ) => {
+  // Sample restaurant data 
+  // Dynamically set restaurant data from props, with fallback values
+  const [restaurant, setrestaurant] = useState({
+    id: 2,
+    name: "Rose Hotel",
+    address:
+      "Street Preah Somramrth (River Road), Psar Veng village, Sangkat Kratie, Kratie Town, Kratie Province, Kratie, Cambodia",
+    phone_number: "012345343",
+    open_at: "07:00", 
+    close_at: "22:00",
+    images: [
+      "https://via.placeholder.com/400",
+      "https://via.placeholder.com/500",
+      "https://via.placeholder.com/600",
+      "https://via.placeholder.com/700",
+      "https://via.placeholder.com/900",
+    ]
+  });
 
-const image = [
-  "https://via.placeholder.com/400",
-  "https://via.placeholder.com/500",
-  "https://via.placeholder.com/600",
-  "https://via.placeholder.com/700",
-  "https://via.placeholder.com/900",
-];
-
-// Unified food menu with thumbnails
-const foodMenu = [
-  {
-    name: "Spring Rolls",
-    price: "$5.00",
-    thumbnail: "https://via.placeholder.com/50",
-  },
-  {
-    name: "Chicken Satay",
-    price: "$6.00",
-    thumbnail: "https://via.placeholder.com/50",
-  },
-  {
-    name: "Garlic Bread",
-    price: "$3.50",
-    thumbnail: "https://via.placeholder.com/50",
-  },
-  {
-    name: "Bruschetta",
-    price: "$4.50",
-    thumbnail: "https://via.placeholder.com/50",
-  },
-  {
-    name: "Chocolate Cake",
-    price: "$6.00",
-    thumbnail: "https://via.placeholder.com/50",
-  },
-  {
-    name: "Ice Cream",
-    price: "$4.00",
-    thumbnail: "https://via.placeholder.com/50",
-  },
-];
-
-export default function RestaurantDetail() {
-  const { id } = useParams();
-  const pathname = usePathname();
-
-  // State to track quantity for each item (default is 1 for each)
-  const [quantities, setQuantities] = useState(
-    foodMenu.map(() => 1) // Set initial quantity for each item
-  );
-
-  // Function to handle quantity increment
-  const handleIncrement = (index) => {
-    setQuantities((prevQuantities) =>
-      prevQuantities.map((quantity, i) =>
-        i === index ? quantity + 1 : quantity
-      )
-    );
-  };
-
-  // Function to handle quantity decrement
-  const handleDecrement = (index) => {
-    setQuantities((prevQuantities) =>
-      prevQuantities.map((quantity, i) =>
-        i === index && quantity > 1 ? quantity - 1 : quantity
-      )
-    );
-  };
-
-  const handleCheckout = () => {
-    alert("Proceeding to Checkout");
-  };
+  // Food menu and quantities (example data)
+  const [foodMenu, setFoodMenu] = useState([
+    {
+      name: "Spring Rolls",
+      price: "$5.00",
+      thumbnail: "https://via.placeholder.com/50",
+    },
+    {
+      name: "Chicken Satay",
+      price: "$6.00",
+      thumbnail: "https://via.placeholder.com/50",
+    },
+    {
+      name: "Garlic Bread",
+      price: "$3.50",
+      thumbnail: "https://via.placeholder.com/50",
+    },
+    {
+      name: "Bruschetta",
+      price: "$4.50",
+      thumbnail: "https://via.placeholder.com/50",
+    },
+    {
+      name: "Chocolate Cake",
+      price: "$6.00",
+      thumbnail: "https://via.placeholder.com/50",
+    },
+    {
+      name: "Ice Cream",
+      price: "$4.00",
+      thumbnail: "https://via.placeholder.com/50",
+    },
+  ]);
 
   return (
-    <div className="container mx-auto p-4">
-      <div className="mb-4 text-sm breadcrumbs">
-        <CustomBreadcrumb pathname={pathname} />
-
+    <DashboardLayout navItems={restaurantNavItem}>
+      <PageContainer scrollable={true}>
         <div className="flex justify-between items-start sm:items-center mb-4 gap-4">
           <h1 className="text-2xl font-bold">{restaurant.name}</h1>
           <div className="flex gap-2">
@@ -121,7 +89,7 @@ export default function RestaurantDetail() {
 
         {/* Image Carousel */}
         <div className="mb-8">
-          <ImageSelect images={image} />
+          <ImageSelect images={restaurant.images} />
         </div>
 
         {/* Food Menu Section and Cards Side by Side */}
@@ -150,15 +118,15 @@ export default function RestaurantDetail() {
                         <Button
                           variant="outline"
                           size="icon"
-                          onClick={() => handleDecrement(index)}
+                        // onClick={() => handleDecrement(index)}
                         >
                           <Minus className="h-3 w-3" />
                         </Button>
-                        <span className="text-sm">{quantities[index]}</span>
+                        <span className="text-sm">1</span>
                         <Button
                           variant="outline"
                           size="icon"
-                          onClick={() => handleIncrement(index)}
+
                         >
                           <Plus className="h-3 w-3" />
                         </Button>
@@ -170,7 +138,7 @@ export default function RestaurantDetail() {
               </ScrollArea>
             </div>
 
-            <Button className="" onClick={handleCheckout}>
+            <Button className=""  >
               <ShoppingCart className="mr-2" /> Checkout
             </Button>
           </div>
@@ -214,8 +182,9 @@ export default function RestaurantDetail() {
           </div>
         </div>
 
-        <HotelComment />
-      </div>
-    </div>
-  )
+      </PageContainer>
+    </DashboardLayout>
+  );
 };
+
+export default RestaurantSetting;
