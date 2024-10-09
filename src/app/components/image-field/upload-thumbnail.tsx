@@ -1,7 +1,7 @@
 import { toast } from "@/app/hooks/use-toast";
 import { X } from "lucide-react";
 import Image from "next/image";
-import React, { useCallback, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import RedStar from "../redstar/redstar";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
@@ -11,14 +11,14 @@ interface UploadThumbnailProps {
   title: string;
   thumbnail: File | null;
   isRequired?: boolean | null;
-  setThumbnail: (thumbnail: File | null) => void; 
+  setThumbnail: (thumbnail: File | null) => void;
 }
 
 const UploadThumbnail: React.FC<UploadThumbnailProps> = ({
   title,
   thumbnail,
   setThumbnail,
-  isRequired = false 
+  isRequired = false,
 }) => {
   const [isDragOver, setIsDragOver] = useState(false);
   const thumbnailInputRef = useRef<HTMLInputElement>(null);
@@ -52,7 +52,7 @@ const UploadThumbnail: React.FC<UploadThumbnailProps> = ({
     }
   };
 
-  const handleDrop = useCallback((e: React.DragEvent<HTMLDivElement>) => {
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     e.stopPropagation();
     setIsDragOver(false);
@@ -60,7 +60,7 @@ const UploadThumbnail: React.FC<UploadThumbnailProps> = ({
       const file = e.dataTransfer.files[0];
       handleThumbnailChange(file);
     }
-  }, []);
+  };
 
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
@@ -78,7 +78,7 @@ const UploadThumbnail: React.FC<UploadThumbnailProps> = ({
 
   return (
     <div>
-      <Label  htmlFor="thumbnail">
+      <Label htmlFor="thumbnail">
         {title} {isRequired && <RedStar />}
       </Label>
       {!thumbnail ? (
@@ -130,9 +130,9 @@ const UploadThumbnail: React.FC<UploadThumbnailProps> = ({
         id="thumbnail"
         ref={thumbnailInputRef}
         className="hidden"
-        accept="image/jpeg, image/png" 
+        accept="image/jpeg, image/png"
         onChange={handleFileSelect}
-      /> 
+      />
     </div>
   );
 };

@@ -10,7 +10,7 @@ interface BentoItemProps {
   imageSrc: string;
 }
 
-export function BentoGrid({ className }) {
+export function BentoGrid({ className = "" }) {
   const items: BentoItemProps[] = [
     {
       title: "Angkor Wat",
@@ -42,7 +42,7 @@ export function BentoGrid({ className }) {
   return (
     <section className={className}>
       <div className="mb-4">
-      <h2 className="text-2xl font-bold leading-none tracking"> 
+        <h2 className="text-2xl font-bold leading-none tracking">
           Trending Destination
         </h2>
         <p className="muted">
@@ -52,16 +52,16 @@ export function BentoGrid({ className }) {
         </p>
       </div>
       <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-4">
-        {items.map((item, index) => (
+        {items.map((item) => (
           <Link
+            key={item.title} // Use item title as a unique key
             className={`overflow-hidden h-52 rounded-md ${
-              index === 0 ? "col-span-2" : ""
-            } `}
+              item.title === "Angkor Wat" ? "col-span-2" : ""
+            }`}
             href="/"
           >
             <Image
-              key={index}
-              src='https://via.placeholder.com/300'
+              src={item.imageSrc} // Use the imageSrc from the item
               alt={item.title}
               width={500}
               height={300}

@@ -4,10 +4,10 @@ import { Button } from "@/app/components/ui/button";
 import PageContainer from "@/app/dashboard/components/page-container";
 import DashboardLayout from "@/app/dashboard/dashboard-layout";
 import { PlusIcon } from "lucide-react";
-import { useState } from "react";
-import { hotelNavItem } from "../page";
+import { useState } from "react"; 
 import AddRoomDialog from "./components/add-room-dialog";
 import CustomTable, { HeaderProps } from "@/app/components/custom-table/custom-table";
+import { hotelNavItem } from "@/app/dashboard/routes/routes";
 export default function Manage() {
   const [openDialog, setOpenDialog] = useState<boolean>(false);
 

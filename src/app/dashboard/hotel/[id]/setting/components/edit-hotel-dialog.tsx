@@ -1,5 +1,12 @@
 "use client"; // Add if using Next.js
 
+import { Input } from "@/app/components/ui/input";
+import { Label } from "@/app/components/ui/label";
+import { ScrollArea } from "@/app/components/ui/scroll-area";
+import { Textarea } from "@/app/components/ui/textarea";
+import { facilities, policies } from "@/app/constant/constant";
+import { HotelProps } from "@/app/data/mockupData";
+import { Button } from "@components/ui/button";
 import {
   Dialog,
   DialogClose,
@@ -10,22 +17,19 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@components/ui/dialog";
-import { Button } from "@components/ui/button";
-import { Input } from "@components/ui/input";
-import { Label } from "@/app/components/ui/label";
 import { PenIcon } from "lucide-react";
-import { Checkbox } from "@/app/components/ui/checkbox";
-import { facilities, policies } from "@/app/constant/constant";
-import { Textarea } from "@/app/components/ui/textarea";
-import { ScrollArea } from "@/app/components/ui/scroll-area";
-import { setTimeout } from "timers";
-import { FormEvent } from "react";
+import React, { Dispatch, SetStateAction } from "react";
 
-const EditHotelDialog = ({ item, setHotel }) => {
-  const handleChange = (e: FormEvent<HTMLButtonElement>) => {
-    const { name, value } = e.target;
-    setHotel((prev: any) => ({ ...prev, [name]: value }));
-  };
+interface EditHotelDialog {
+  item: HotelProps;
+  setHotel: Dispatch<SetStateAction<HotelProps>>;
+}
+
+const EditHotelDialog: React.FC<EditHotelDialog> = ({ item, setHotel }) => {
+  // const handleChange = (e: FormEvent<HTMLButtonElement>) => {
+  //   const { name, value } = e.target;
+  //   setHotel((prev: any) => ({ ...prev, [name]: value }));
+  // };
 
   return (
     <Dialog>
@@ -39,7 +43,7 @@ const EditHotelDialog = ({ item, setHotel }) => {
         <DialogHeader>
           <DialogTitle>Edit Hotel</DialogTitle>
           <DialogDescription>
-            Make changes to your hotel here. Click preview when you're done.
+            Make changes to your hotel here. Click preview when you are done.
           </DialogDescription>
         </DialogHeader>
 
@@ -55,7 +59,7 @@ const EditHotelDialog = ({ item, setHotel }) => {
                 name="name"
                 value={item.name}
                 onChange={(e) =>
-                  setHotel((prev: any) => ({ ...prev, name: e.target.value }))
+                  setHotel((prev) => ({ ...prev, name: e.target.value }))
                 }
                 className="col-span-3"
               />
@@ -70,7 +74,7 @@ const EditHotelDialog = ({ item, setHotel }) => {
                 name="address"
                 value={item.address}
                 onChange={(e) =>
-                  setHotel((prev: any) => ({
+                  setHotel((prev) => ({
                     ...prev,
                     address: e.target.value,
                   }))
@@ -88,7 +92,7 @@ const EditHotelDialog = ({ item, setHotel }) => {
                 name="description"
                 value={item.description}
                 onChange={(e) =>
-                  setHotel((prev: any) => ({
+                  setHotel((prev) => ({
                     ...prev,
                     description: e.target.value,
                   }))
@@ -108,7 +112,7 @@ const EditHotelDialog = ({ item, setHotel }) => {
                 type="time"
                 value={item.open_at}
                 onChange={(e) =>
-                  setHotel((prev: any) => ({
+                  setHotel((prev) => ({
                     ...prev,
                     open_at: e.target.value,
                   }))
@@ -127,7 +131,7 @@ const EditHotelDialog = ({ item, setHotel }) => {
                 type="time"
                 value={item.close_at}
                 onChange={(e) =>
-                  setHotel((prev: any) => ({
+                  setHotel((prev) => ({
                     ...prev,
                     close_at: e.target.value,
                   }))

@@ -1,7 +1,4 @@
 "use client";
-import { LayoutDashboard, ListOrdered, Settings, Wrench } from "lucide-react";
-import { useParams } from "next/navigation";
-import { NavItem } from "../../components/dashboard-nav";
 import PageContainer from "../../components/page-container";
 import DashboardLayout from "../../dashboard-layout";
 
@@ -10,44 +7,44 @@ import CustomTable, {
   HeaderProps,
 } from "@/app/components/custom-table/custom-table";
 import Transactions from "../../components/transaction";
+import { hotelNavItem } from "../../routes/routes";
 
-const data = [
-  {
-    customer: "Liam Johnson",
-    email: "liam@example.com",
-    type: "Sale",
-    status: "Fulfilled",
-    date: "2023-06-23",
-    amount: "250.00",
-  },
-  {
-    customer: "Olivia Smith",
-    email: "olivia@example.com",
-    type: "Refund",
-    status: "Declined",
-    date: "2023-06-24",
-    amount: "150.00",
-  },
-  {
-    customer: "Noah Williams",
-    email: "noah@example.com",
-    type: "Subscription",
-    status: "Fulfilled",
-    date: "2023-06-25",
-    amount: "350.00",
-  },
-  {
-    customer: "Emma Brown",
-    email: "emma@example.com",
-    type: "Sale",
-    status: "Fulfilled",
-    date: "2023-06-26",
-    amount: "450.00",
-  },
-];
+// const data = [
+//   {
+//     customer: "Liam Johnson",
+//     email: "liam@example.com",
+//     type: "Sale",
+//     status: "Fulfilled",
+//     date: "2023-06-23",
+//     amount: "250.00",
+//   },
+//   {
+//     customer: "Olivia Smith",
+//     email: "olivia@example.com",
+//     type: "Refund",
+//     status: "Declined",
+//     date: "2023-06-24",
+//     amount: "150.00",
+//   },
+//   {
+//     customer: "Noah Williams",
+//     email: "noah@example.com",
+//     type: "Subscription",
+//     status: "Fulfilled",
+//     date: "2023-06-25",
+//     amount: "350.00",
+//   },
+//   {
+//     customer: "Emma Brown",
+//     email: "emma@example.com",
+//     type: "Sale",
+//     status: "Fulfilled",
+//     date: "2023-06-26",
+//     amount: "450.00",
+//   },
+// ];
 
-export default function HotelDashboard() {
-  const { id } = useParams();
+export default function HotelDashboard() { 
 
   const data = [
     {
@@ -116,30 +113,3 @@ export default function HotelDashboard() {
   );
 }
 
-export const hotelNavItem: NavItem[] = [
-  // replace all the /id/ with :id
-  {
-    title: "Dashboard",
-    href: "/dashboard/hotel/id",
-    icon: <LayoutDashboard className="ml-3 size-5 flex-none" />, // Store the icon component directly
-    label: "LayoutDashboard",
-  },
-  {
-    title: "Manage",
-    href: "/dashboard/hotel/id/manage",
-    icon: <Wrench className="ml-3 size-5 flex-none" />, // Store the icon component directly
-    label: "User",
-  },
-  {
-    title: "Orders",
-    href: "/dashboard/hotel/id/orders",
-    icon: <ListOrdered className="ml-3 size-5 flex-none" />, // Store the icon component directly
-    label: "User",
-  },
-  {
-    title: "Setting",
-    href: "/dashboard/hotel/id/setting",
-    icon: <Settings className="ml-3 size-5 flex-none" />, // Store the icon component directly
-    label: "Setting",
-  },
-];

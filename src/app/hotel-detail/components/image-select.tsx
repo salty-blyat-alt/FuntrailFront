@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Image from "next/image"; // Assuming you're using Next.js for images
 
 interface ImageSelectProps {
-  images: string[]; // Updated to accept an array of strings (image URLs)
+  images: string[];
 }
 
 const ImageSelect: React.FC<ImageSelectProps> = ({ images }) => {

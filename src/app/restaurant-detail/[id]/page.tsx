@@ -1,6 +1,6 @@
 "use client";
 
-import { useParams, usePathname } from "next/navigation";
+import { usePathname } from "next/navigation";
 import CustomBreadcrumb from "@/app/components/custom-breadcrumb/custom-breadcrumb";
 import Image from "next/image";
 import { Button } from "@/app/components/ui/button";
@@ -10,7 +10,13 @@ import { HeartIcon, Share1Icon } from "@radix-ui/react-icons";
 import { MapPinIcon, ShoppingCart, Plus, Minus } from "lucide-react";
 import { useState } from "react";
 import { ScrollArea } from "@/app/components/ui/scroll-area";
-import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from "@/app/components/ui/card";
+import {
+  Card,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/app/components/ui/card";
 
 // Sample restaurant data
 const restaurant = {
@@ -66,7 +72,6 @@ const foodMenu = [
 ];
 
 export default function RestaurantDetail() {
-  const { id } = useParams();
   const pathname = usePathname();
 
   // State to track quantity for each item (default is 1 for each)
@@ -127,15 +132,19 @@ export default function RestaurantDetail() {
         {/* Food Menu Section and Cards Side by Side */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {/* Food Menu */}
-          <div className="md:col-span-1 lg:col-span-1"> {/* Keep it responsive */}
+          <div className="md:col-span-1 lg:col-span-1">
+            {" "}
+            {/* Keep it responsive */}
             <h2 className="text-lg font-bold mb-4">Food Menu</h2>
-
             {/* Unified Food Menu */}
             <div className="mb-6">
               <ScrollArea className="h-72 w-full">
                 <ul className="space-y-4">
                   {foodMenu.map((item, index) => (
-                    <li key={index} className="flex justify-between items-center">
+                    <li
+                      key={index}
+                      className="flex justify-between items-center"
+                    >
                       <div className="flex items-center">
                         <Image
                           src={item.thumbnail}
@@ -169,14 +178,15 @@ export default function RestaurantDetail() {
                 </ul>
               </ScrollArea>
             </div>
-
             <Button className="" onClick={handleCheckout}>
               <ShoppingCart className="mr-2" /> Checkout
             </Button>
           </div>
 
           {/* Flex Container for Cards */}
-          <div className="flex flex-col gap-3 md:col-span-1 lg:col-span-2"> {/* Adjusted for responsiveness */}
+          <div className="flex flex-col gap-3 md:col-span-1 lg:col-span-2">
+            {" "}
+            {/* Adjusted for responsiveness */}
             {/* Overview Card */}
             <Card>
               <CardHeader className="pb-3">
@@ -184,30 +194,47 @@ export default function RestaurantDetail() {
               </CardHeader>
               <ScrollArea className="h-48">
                 <CardDescription className="w-full text-balance leading-relaxed p-4">
-                  Introducing Our Dynamic Orders Dashboard for Seamless Management and Insightful Analysis.Introducing Our Dynamic Orders Dashboard for Seamless Management and Insightful Analysis.Introducing Our Dynamic Orders Dashboard for Seamless Management and Insightful Analysis.Introducing Our Dynamic Orders Dashboard for Seamless Management and Insightful Analysis.Introducing Our Dynamic Orders Dashboard for Seamless Management and Insightful Analysis.Introducing Our Dynamic Orders Dashboard for Seamless Management and Insightful Analysis.Introducing Our Dynamic Orders Dashboard for Seamless Management and Insightful Analysis.Introducing Our Dynamic Orders Dashboard for Seamless Management and Insightful Analysis.Introducing Our Dynamic Orders Dashboard for Seamless Management and Insightful Analysis.Introducing Our Dynamic Orders Dashboard for Seamless Management and Insightful Analysis.Introducing Our Dynamic Orders Dashboard for Seamless Management and Insightful Analysis.
+                  Introducing Our Dynamic Orders Dashboard for Seamless
+                  Management and Insightful Analysis.Introducing Our Dynamic
+                  Orders Dashboard for Seamless Management and Insightful
+                  Analysis.Introducing Our Dynamic Orders Dashboard for Seamless
+                  Management and Insightful Analysis.Introducing Our Dynamic
+                  Orders Dashboard for Seamless Management and Insightful
+                  Analysis.Introducing Our Dynamic Orders Dashboard for Seamless
+                  Management and Insightful Analysis.Introducing Our Dynamic
+                  Orders Dashboard for Seamless Management and Insightful
+                  Analysis.Introducing Our Dynamic Orders Dashboard for Seamless
+                  Management and Insightful Analysis.Introducing Our Dynamic
+                  Orders Dashboard for Seamless Management and Insightful
+                  Analysis.Introducing Our Dynamic Orders Dashboard for Seamless
+                  Management and Insightful Analysis.Introducing Our Dynamic
+                  Orders Dashboard for Seamless Management and Insightful
+                  Analysis.Introducing Our Dynamic Orders Dashboard for Seamless
+                  Management and Insightful Analysis.
                 </CardDescription>
               </ScrollArea>
               <CardFooter></CardFooter>
             </Card>
-
             {/* Phone Number Card */}
             <Card>
               <CardHeader className="pb-3">
                 <CardTitle>Phone Number</CardTitle>
               </CardHeader>
               <CardDescription className="leading-relaxed p-4">
-                Contact us at: <span className="font-bold">{restaurant.phone_number}</span>
+                Contact us at:{" "}
+                <span className="font-bold">{restaurant.phone_number}</span>
               </CardDescription>
               <CardFooter></CardFooter>
             </Card>
-
             {/* Operating Hours Card */}
             <Card>
               <CardHeader className="pb-3">
                 <CardTitle>Operating Hours</CardTitle>
               </CardHeader>
               <CardDescription className="leading-relaxed p-4">
-                Open from <span className="font-bold">{restaurant.open_at}</span> to <span className="font-bold">{restaurant.close_at}</span>
+                Open from{" "}
+                <span className="font-bold">{restaurant.open_at}</span> to{" "}
+                <span className="font-bold">{restaurant.close_at}</span>
               </CardDescription>
               <CardFooter></CardFooter>
             </Card>
@@ -217,5 +244,5 @@ export default function RestaurantDetail() {
         <HotelComment />
       </div>
     </div>
-  )
-};
+  );
+}

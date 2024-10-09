@@ -1,5 +1,4 @@
-import { ItemProps } from "../components/ui/combo-box";
-
+ 
 export const facilities = [
   "Free Wi-Fi",
   "Swimming Pool",

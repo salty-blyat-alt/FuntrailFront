@@ -1,16 +1,80 @@
+"use client";
 import Image from "next/image";
 import Link from "next/link";
-
-import { Input } from "@/app/components/ui/input";
 import { Button } from "@components/ui/button";
 import { Label } from "@components/ui/label";
-
-export const description =
-  "A login page with two columns. The first column has the login form with email and password. There's a Forgot your passwork link and a link to sign up if you do not have an account. The second column has a cover image.";
+import { Input } from "@components/ui/input";
+import { SubmitHandler, useForm } from "react-hook-form";
+import useAxios from "@/app/hooks/use-axios";
+import { useEffect } from "react";
+import Cookies from "js-cookie"; 
+import { useRouter } from "next/navigation";
 
 function Login() {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<{ email: string; password: string }>();
+
+  const {
+    triggerFetch: triggerLogin,
+    responseData: response, 
+  } = useAxios<
+    {
+      result_message: string;
+      result_code: number;
+      body: any;
+      email: string;
+      password: string;
+    },
+    any
+  >({
+    baseUrl: "http://localhost:8000",
+    endpoint: "/api/auth/login",
+    method: "POST",
+    config: {
+      headers: {
+        Accept: "application/json",
+      },
+    },
+  });
+
+  const router = useRouter();
+
+  useEffect(() => {
+    // Check if the response is successful and contains the access token
+    if (
+      response &&
+      response.result_code === 200 &&
+      response.result_message === "Success" &&
+      response.body.access_token
+    ) {
+      console.log(response);
+      Cookies.set("access_token", response.body.access_token, { expires: 7 }); // Token expires in 7 days
+
+      // Redirect to the home page
+      router.push("/");
+    }
+
+    // If an access token already exists in the cookies, redirect as well
+    const storedToken = Cookies.get("access_token");
+    if (storedToken) {
+      router.push("/");
+    }
+  }, [response, router]);
+
+  const onSubmit: SubmitHandler<{ email: string; password: string }> = (
+    data
+  ) => {
+    const formData = new FormData();
+    formData.append("email", data.email);
+    formData.append("password", data.password);
+    triggerLogin?.(formData);
+  };
+
   return (
-    <div className="w-full min-h-dvh my-auto lg:grid  lg:grid-cols-2 overflow-hidden "> 
+    <div className="w-full min-h-dvh my-auto lg:grid  lg:grid-cols-2 overflow-hidden ">
       <div className="pt-[40%]">
         <div className="mx-auto grid w-[350px] gap-6">
           <div className="grid gap-2 text-center">
@@ -20,33 +84,50 @@ function Login() {
             </p>
           </div>
           <div className="grid gap-4">
-            <div className="grid gap-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="m@example.com"
-                required
-              />
-            </div>
-            <div className="grid gap-2">
-              <div className="flex items-center">
-                <Label htmlFor="password">Password</Label>
-                <Link
-                  href="/forgot-password"
-                  className="ml-auto inline-block text-sm underline"
-                >
-                  Forgot your password?
-                </Link>
+            <form onSubmit={handleSubmit(onSubmit)}>
+              <div className="grid gap-2">
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="your_email@example.com"
+                  {...register("email", { required: "Email is required" })}
+                  required
+                />
+                {/* Show email validation error */}
+                {errors.email && (
+                  <span className="text-red-500">{errors.email.message}</span>
+                )}
               </div>
-              <Input id="password" type="password" required />
-            </div>
-            <Button type="submit" className="w-full">
-              Login
-            </Button>
-            <Button variant="outline" className="w-full">
-              Login with Google
-            </Button>
+              <div className="grid gap-2">
+                <div className="flex items-center">
+                  <Label htmlFor="password">Password</Label>
+                  <Link
+                    href="/forgot-password"
+                    className="ml-auto inline-block text-sm underline"
+                  >
+                    Forgot your password?
+                  </Link>
+                </div>
+                <Input
+                  id="password"
+                  type="password"
+                  {...register("password", {
+                    required: "Password is required",
+                  })}
+                  required
+                />
+                {/* Show password validation error */}
+                {errors.password && (
+                  <span className="text-red-500">
+                    {errors.password.message}
+                  </span>
+                )}
+              </div>
+              <Button type="submit" className="w-full">
+                Login
+              </Button>
+            </form>
           </div>
           <div className="mt-4 text-center text-sm">
             Don&apos;t have an account?{" "}

@@ -1,16 +1,14 @@
 "use client";
-import { Button } from "@components/ui/button";
-import { Input } from "@components/ui/input";
-import { Label } from "@components/ui/label";
+import { Input } from "@/app/components/ui/input";
 import {
   AlertDialog,
-  AlertDialogTrigger,
   AlertDialogContent,
-  AlertDialogHeader,
   AlertDialogFooter,
+  AlertDialogHeader
 } from "@components/ui/alert-dialog"; // Importing AlertDialog components
+import { Button } from "@components/ui/button";
+import { Label } from "@components/ui/label";
 import { useForm } from "react-hook-form";
-import { error } from "console";
 
 export interface AddRoomDialogProps {
   isOpen: boolean;

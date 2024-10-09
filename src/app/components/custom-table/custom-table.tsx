@@ -30,7 +30,9 @@ import {
 import { Badge } from "../ui/badge";
 
 export interface DataProps {
-  [key: string]: any;
+  id: string | number;
+  // eslint-disable-next-line
+  [key: string]: any;  
 }
 
 export interface HeaderProps {
@@ -43,11 +45,10 @@ export interface CustomTableProps {
   data: DataProps[];
   title: string;
   subtitle?: string;
-  onEdit?: (id: any) => void | undefined;
-  onDelete?: (id: any) => void | undefined;
+  onEdit?: (item: DataProps) => void;
+  onDelete?: (item: DataProps) => void;
   headers: HeaderProps[];
-}
-
+} 
 export default function CustomTable({
   data,
   subtitle,

@@ -12,10 +12,10 @@ import { useParams, usePathname } from "next/navigation";
 import HotelComment from "../components/hotel-comment";
 import ImageSelect from "../components/image-select";
 import CustomBreadcrumb from "@/app/components/custom-breadcrumb/custom-breadcrumb";
-import { useState } from "react"; 
+import RoomList from "../components/room-list";
 
 export default function HotelDetail() {
-  const [hotel, setHotel] = useState({
+  const hotel = {
     id: 2,
     name: "Le Tonle",
     address:
@@ -45,7 +45,7 @@ export default function HotelDetail() {
       "https://via.placeholder.com/700",
       "https://via.placeholder.com/900",
     ],
-  });
+  };
   const { id } = useParams();
   console.log("id", id);
 
@@ -66,7 +66,6 @@ export default function HotelDetail() {
           <Button variant="outline" size="icon">
             <ShareIcon className="h-4 w-4" />
           </Button>
-          <Button>Reserve</Button>
         </div>
       </div>
 
@@ -79,7 +78,7 @@ export default function HotelDetail() {
       </div>
 
       <Tabs defaultValue="overview" className="mb-4">
-        <TabsList className="flex flex-wrap">   
+        <TabsList className="flex flex-wrap">
           <TabsTrigger value="overview" className="mb-2 mr-2">
             Overview
           </TabsTrigger>
@@ -112,6 +111,11 @@ export default function HotelDetail() {
             <strong>Check-out Time:</strong> {hotel.close_at}
           </p>
         </TabsContent>
+        {/* render rooms */}
+        {/* <Room> 
+        </Room> */}
+
+        <RoomList />
 
         {/* Facilities Tab */}
         <TabsContent value="facilities">

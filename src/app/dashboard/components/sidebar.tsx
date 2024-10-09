@@ -2,8 +2,7 @@
 import { useSidebar } from "@/app/hooks/use-sidebar";
 import { cn } from "@/lib/utils";
 
-import { ChevronLeft, LayoutDashboard, User, UserIcon } from "lucide-react";
-import Link from "next/link";
+import { ChevronLeft } from "lucide-react";
 import { DashboardNav, NavItem } from "./dashboard-nav";
 
 interface SidebarProps extends NavItem  {

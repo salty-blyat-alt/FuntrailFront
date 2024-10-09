@@ -1,9 +1,39 @@
+"use client";
 import Image from "next/image";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../components/ui/tabs";
-// Correct import for Next.js Link
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "../../components/ui/tabs"; 
 import Link from "next/link";
+import useAxios from "@/app/hooks/use-axios";
+import { useEffect } from "react";
 
 const GridCard = () => {
+  const { triggerFetch: fetchPopular, responseData: response } = useAxios<
+    {
+      result_message: string;
+      result_code: number;
+      body: any;
+      email: string;
+      password: string;
+    },
+    any
+  >({
+    endpoint: "/api/popular/hotels",
+    method: "GET",
+    config: {
+      headers: {
+        Accept: "application/json",
+      },
+    },
+  });
+
+  useEffect(() => {
+    fetchPopular?.();
+  }, []);
+  console.log(response);
   const items = [
     { image: "/path/to/image1.jpg", alt: "Image 1" },
     { image: "/path/to/image2.jpg", alt: "Image 2" },

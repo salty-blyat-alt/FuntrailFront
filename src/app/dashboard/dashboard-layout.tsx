@@ -1,13 +1,4 @@
 "use client";
-import Link from "next/link";
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "../components/ui/breadcrumb";
 import { SidebarProvider } from "../hooks/use-sidebar";
 import { NavItem } from "./components/dashboard-nav";
 import Sidebar from "./components/sidebar";

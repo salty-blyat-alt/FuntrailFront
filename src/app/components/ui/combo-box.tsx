@@ -1,6 +1,5 @@
 "use client";
 
-import * as React from "react";
 import { CaretSortIcon, CheckIcon } from "@radix-ui/react-icons";
 
 import { cn } from "@/lib/utils";
@@ -18,9 +17,24 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@components/ui/popover";
+import React, { useState } from "react";
 
-export function ComboBox({ title, className = "", items, value, setValue }) {
-  const [open, setOpen] = React.useState(false);
+interface ComboBoxProps {
+  title: string;
+  className?: string;
+  items?: any[];
+  value?: string;
+  setValue?: (value: string) => void;
+}
+
+export const ComboBox: React.FC<ComboBoxProps> = ({
+  title,
+  className = "",
+  items,
+  value,
+  setValue,
+}) => {
+  const [open, setOpen] = useState<boolean>(false);
 
   return (
     <div className={className}>
@@ -32,9 +46,7 @@ export function ComboBox({ title, className = "", items, value, setValue }) {
             aria-expanded={open}
             className="w-full justify-between"
           >
-            {value
-              ? items.find((item) => item.value === value)?.label
-              : title}
+            {value ? items?.find((item) => item.value === value)?.label : title}
             <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
           </Button>
         </PopoverTrigger>
@@ -44,12 +56,12 @@ export function ComboBox({ title, className = "", items, value, setValue }) {
             <CommandList>
               <CommandEmpty>No item found.</CommandEmpty>
               <CommandGroup>
-                {items.map((item) => (
+                {items?.map((item) => (
                   <CommandItem
                     key={item.value}
                     value={item.value}
                     onSelect={(currentValue) => {
-                      setValue(currentValue === value ? "" : currentValue); // Update value using the external setValue
+                      setValue?.(currentValue === value ? "" : currentValue); // Update value using the external setValue
                       setOpen(false);
                     }}
                   >
@@ -69,4 +81,4 @@ export function ComboBox({ title, className = "", items, value, setValue }) {
       </Popover>
     </div>
   );
-}
+};

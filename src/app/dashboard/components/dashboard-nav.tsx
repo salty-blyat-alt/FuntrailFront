@@ -2,13 +2,6 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import {
-  HomeIcon,
-  UserIcon,
-  SettingsIcon,
-  ArrowRightIcon,
-  LayoutDashboard,
-} from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Dispatch, SetStateAction } from "react";
 import { useSidebar } from "@hooks/use-sidebar";

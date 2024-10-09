@@ -1,11 +1,11 @@
 "use client";
 import DashboardLayout from "@/app/dashboard/dashboard-layout";
-import React from "react";
-import { hotelNavItem } from "../page";
+import React from "react"; 
 import PageContainer from "@/app/dashboard/components/page-container";
 import CustomTable, {
   HeaderProps,
 } from "@/app/components/custom-table/custom-table";
+import { hotelNavItem } from "@/app/dashboard/routes/routes";
 
 const Orders = () => {
   
@@ -51,11 +51,11 @@ const Orders = () => {
     { key: "status", label: "Status", hidden: false },
     { key: "actions", label: "Actions", hidden: false },
   ];
-  const handleEdit = (row: any) => {
+  const handleEdit = (row: string) => {
     console.log("selected", row);
   };
 
-  const handleDelete = (row: any) => {
+  const handleDelete = (row: string) => {
     console.log("delete", row);
   };
 

@@ -1,26 +1,19 @@
 "use client";
 
 import CustomBreadcrumb from "@/app/components/custom-breadcrumb/custom-breadcrumb";
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/app/components/ui/breadcrumb";
-import { CalendarDateRangePicker } from "@/app/components/ui/date-range-picker";
 import SearchGroup from "@/app/home/components/search-group";
 import { Filter, FilterContent } from "@/app/search/components/filter";
 import List from "@/app/search/components/list";
 import { Button } from "@components/ui/button";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import React from "react";
+import { usePathname, useSearchParams } from "next/navigation";
 
-export default function SearchPage({ params }: { params: { slug: string } }) {
-  const { slug } = params;
-  const slugArray = Array.isArray(slug) ? slug : [slug];
+export default function SearchPage() {
+  const searchParams = useSearchParams();
+
+  const search = searchParams.get("search");
+  console.log(search);
+
   const mockData = [
     {
       imageSrc: "https://via.placeholder.com/300",
@@ -117,7 +110,7 @@ export default function SearchPage({ params }: { params: { slug: string } }) {
   return (
     <div className="min-h-screen">
       <div className="bg-secondary py-20 relative   text-primary-foreground">
-        <SearchGroup className="absolute px-6 container -translate-x-1/2 -bottom-5 left-1/2 right-1/2" />
+        <SearchGroup />
       </div>
 
       <div className="container mx-auto px-4 lg:px-12 py-8">
@@ -149,9 +142,9 @@ export default function SearchPage({ params }: { params: { slug: string } }) {
 
             <div className="grid grid-cols-2 gap-4">
               {mockData.map((item, index) => (
-                <div className="col-span-2 sm:col-span-1 md:col-span-2">
+                <div  key={index} className="col-span-2 sm:col-span-1 md:col-span-2">
                   <Link href="/hotel-detail/id">
-                    <List key={index} item={item} />
+                    <List item={item} />
                   </Link>
                 </div>
               ))}

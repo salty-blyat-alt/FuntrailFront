@@ -1,4 +1,5 @@
 "use client";
+import { Input } from "@/app/components/ui/input";
 import { toast } from "@/app/hooks/use-toast";
 import { Button } from "@components/ui/button";
 import {
@@ -9,7 +10,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@components/ui/card";
-import { Input } from "@components/ui/input";
 import { Label } from "@components/ui/label";
 import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
@@ -17,24 +17,11 @@ import ImageListPreview from "../components/image-field/image-list-preview";
 import UploadImages from "../components/image-field/upload-images";
 import UploadThumbnail from "../components/image-field/upload-thumbnail";
 import RedStar from "../components/redstar/redstar";
-import { ComboBox, ItemProps } from "../components/ui/combo-box";
-import { Textarea } from "../components/ui/textarea";
 import { Checkbox } from "../components/ui/checkbox";
+import { ComboBox } from "../components/ui/combo-box";
+import { Textarea } from "../components/ui/textarea";
 import { facilities, policies, provinces } from "../constant/constant";
-
-export interface HotelProps {
-  id?: number; // prod
-  name: string;
-  address?: string;
-  province_id: string;
-  description?: string;
-  thumbnail: File | null;
-  images: File[];
-  open_at: string;
-  close_at: string;
-  facilities: string[];
-  policies: string[];
-}
+import { HotelProps } from "../data/mockupData";
 
 const RegisterHotel = () => {
   const {

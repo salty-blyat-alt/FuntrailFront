@@ -16,7 +16,7 @@ const ImageListPreview: React.FC<ImageListPreviewProps> = ({
 }) => {
   return (
     <div className="mt-2 flex flex-col space-y-2">
-      {images.map((image, index) => {
+      {images?.map((image, index) => {
         const fileName = image.name;
         const fileSize = (image.size / 1024).toFixed(2) + " KB";
 

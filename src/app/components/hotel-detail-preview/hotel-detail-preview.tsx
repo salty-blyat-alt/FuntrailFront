@@ -3,10 +3,10 @@ import { Button } from "../ui/button";
 import { HeartIcon, MapPinIcon, ShareIcon } from "lucide-react";
 import ImageSelect from "@/app/hotel-detail/components/image-select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
+import { HotelProps } from "@/app/data/mockupData";
 
-const HotelDetailPreview = ({ hotel }) => {
+const HotelDetailPreview = ({ hotel }: { hotel: HotelProps }) => {
   const { images } = hotel;
-  console.log(hotel);
   return (
     <>
       <div className="flex justify-between items-start sm:items-center mb-4 gap-4">
@@ -27,6 +27,7 @@ const HotelDetailPreview = ({ hotel }) => {
       </p>
 
       <div className="mb-4">
+        {/*    @ts-expect-error  images might be null i guess. check hotel detail preview for the   */}
         <ImageSelect images={images} />
       </div>
 

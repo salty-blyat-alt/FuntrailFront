@@ -1,13 +1,21 @@
+"use client";
 import { toast } from "@/app/hooks/use-toast"; // Ensure this is the correct path
-import { HotelProps } from "@/app/register-hotel/page";
-import { Dispatch, SetStateAction, useCallback, useRef, useState } from "react";
+import { HotelProps } from "@/app/data/mockupData";
+import {
+  Dispatch,
+  SetStateAction,
+  useCallback,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { UseFormSetValue } from "react-hook-form";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 
 interface UploadImagesProps {
-  hotel: { images: File[] };
-  setHotel:  Dispatch<SetStateAction<HotelProps>>;
+  hotel: HotelProps;
+  setHotel: Dispatch<SetStateAction<HotelProps>>;
   setValue: UseFormSetValue<HotelProps>;
 }
 
@@ -19,31 +27,40 @@ const UploadImages: React.FC<UploadImagesProps> = ({
   const imagesInputRef = useRef<HTMLInputElement>(null);
   const [isDragOver, setIsDragOver] = useState(false);
 
-  const allowedTypes = ["image/jpeg", "image/png", "image/gif"]; // Specify allowed image types
+  // Use useMemo for allowed types to prevent unnecessary re-renders
+  const allowedTypes = useMemo(
+    () => ["image/jpeg", "image/png", "image/gif"],
+    []
+  );
 
-  const handleImagesChange = (files: File[]) => {
-    const validFiles = files.filter((file) => allowedTypes.includes(file.type));
-    const invalidFiles = files.filter(
-      (file) => !allowedTypes.includes(file.type)
-    );
+  const handleImagesChange = useCallback(
+    (files: File[]) => {
+      const validFiles = files.filter((file) =>
+        allowedTypes.includes(file.type)
+      );
+      const invalidFiles = files.filter(
+        (file) => !allowedTypes.includes(file.type)
+      );
 
-    if (validFiles.length > 0) {
-      setHotel((prev) => ({
-        ...prev,
-        images: [...prev.images, ...validFiles],
-      }));
-      setValue("images", [...hotel.images, ...validFiles]);
-    }
+      if (validFiles.length > 0) {
+        setHotel((prev) => {
+          const updatedImages = [...(prev.images || []), ...validFiles];
+          setValue("images", updatedImages); // Use the new images array
+          return { ...prev, images: updatedImages }; // Return updated state
+        });
+      }
 
-    // Notify user of invalid files
-    if (invalidFiles.length > 0) {
-      toast({
-        title: "Invalid file type",
-        description: "Only JPEG, PNG, and GIF files are allowed.",
-        variant: "destructive",
-      });
-    }
-  };
+      // Notify user of invalid files
+      if (invalidFiles.length > 0) {
+        toast({
+          title: "Invalid file type",
+          description: "Only JPEG, PNG, and GIF files are allowed.",
+          variant: "destructive",
+        });
+      }
+    },
+    [allowedTypes, setHotel, setValue] // No need for hotel.images here
+  );
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
@@ -89,10 +106,14 @@ const UploadImages: React.FC<UploadImagesProps> = ({
         onDragLeave={handleDragLeave}
         onClick={() => imagesInputRef.current?.click()}
       >
-        {hotel.images.length === 0 ? (
-            <span className={isDragOver?"text-blue-500": ''}>Drag & drop images here or click to choose</span>  
+        {hotel.images?.length === 0 ? (
+          <span className={isDragOver ? "text-blue-500" : ""}>
+            Drag & drop images here or click to choose
+          </span>
         ) : (
-          <span className={isDragOver?"text-blue-500": ''}>{hotel.images.length} file(s) chosen</span>
+          <span className={isDragOver ? "text-blue-500" : ""}>
+            {hotel.images?.length} file(s) chosen
+          </span>
         )}
       </div>
       <Input

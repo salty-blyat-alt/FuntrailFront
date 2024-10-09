@@ -1,21 +1,19 @@
 'use client'
 
 import DashboardLayout from "@/app/dashboard/dashboard-layout";
-import { useState } from "react";
-import { restaurantNavItem } from "../page";
 import PageContainer from "@/app/dashboard/components/page-container";
 import { Button } from "@/app/components/ui/button";
-import { HeartIcon, MapPinIcon, ShareIcon, Minus, Plus, ShoppingCart } from "lucide-react";
+import { HeartIcon, MapPinIcon, Minus, Plus, ShoppingCart } from "lucide-react";
 import ImageSelect from "@/app/hotel-detail/components/image-select";
 import { ScrollArea } from "@/app/components/ui/scroll-area"; // Import ScrollArea component
 import Image from "next/image"; // Import next/image for thumbnails
 import { Card, CardHeader, CardTitle, CardDescription, CardFooter } from "@/app/components/ui/card"; // Import Card components
 import { Share1Icon } from "@radix-ui/react-icons";
+import { restaurantNavItem } from "@/app/dashboard/routes/routes";
 
-const RestaurantSetting = ( ) => {
-  // Sample restaurant data 
-  // Dynamically set restaurant data from props, with fallback values
-  const [restaurant, setrestaurant] = useState({
+const RestaurantSetting = ( ) => { 
+ 
+  const  restaurant=  {
     id: 2,
     name: "Rose Hotel",
     address:
@@ -30,10 +28,10 @@ const RestaurantSetting = ( ) => {
       "https://via.placeholder.com/700",
       "https://via.placeholder.com/900",
     ]
-  });
+  };
 
   // Food menu and quantities (example data)
-  const [foodMenu, setFoodMenu] = useState([
+  const foodMenu = [
     {
       name: "Spring Rolls",
       price: "$5.00",
@@ -64,7 +62,7 @@ const RestaurantSetting = ( ) => {
       price: "$4.00",
       thumbnail: "https://via.placeholder.com/50",
     },
-  ]);
+  ];
 
   return (
     <DashboardLayout navItems={restaurantNavItem}>
