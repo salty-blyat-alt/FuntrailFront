@@ -7,48 +7,43 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/app/components/ui/tabs";
-import { HeartIcon, MapPinIcon, ShareIcon } from "lucide-react";
-import { useParams, usePathname } from "next/navigation";
+import { ArrowBigLeft, HeartIcon, MapPinIcon, ShareIcon } from "lucide-react";
+import { useParams, usePathname, useRouter } from "next/navigation";
 import HotelComment from "../components/hotel-comment";
 import ImageSelect from "../components/image-select";
 import CustomBreadcrumb from "@/app/components/custom-breadcrumb/custom-breadcrumb";
 import RoomList from "../components/room-list";
+import useAxios from "@/app/hooks/use-axios";
+import {
+  AwaitedReactNode,
+  JSXElementConstructor,
+  Key,
+  ReactElement,
+  ReactNode,
+  ReactPortal,
+  useEffect,
+} from "react";
 
 export default function HotelDetail() {
-  const hotel = {
-    id: 2,
-    name: "Le Tonle",
-    address:
-      "Street Preah Somramrth (River Road), Psar Veng village, Sangkat Kratie, Kratie Town, Kratie Province, Kratie, Cambodia",
-    description: `Le Tonle is a recently renovated guest house in Kratie where guests can make the most of its terrace and shared lounge.`,
-    open_at: "07:00",
-    close_at: "12:00",
-    facilities: [
-      "Free Wi-Fi",
-      "Swimming Pool",
-      "Spa and Wellness Center",
-      "24-hour Front Desk",
-      "Restaurant & Bar",
-      "Gym",
-      "Room Service",
-      "Parking",
-    ],
-    policies: [
-      "Free cancellation within 48 hours of booking.",
-      "Children of all ages are welcome.",
-      "Pets are allowed on request.",
-    ],
-    images: [
-      "https://via.placeholder.com/400",
-      "https://via.placeholder.com/500",
-      "https://via.placeholder.com/600",
-      "https://via.placeholder.com/700",
-      "https://via.placeholder.com/900",
-    ],
-  };
   const { id } = useParams();
-  console.log("id", id);
+  const { triggerFetch: fetchHotel, responseData: hotel } = useAxios<
+    any,
+    undefined
+  >({
+    endpoint: `/api/hotel/show/${id}`,
+    method: "GET",
+    config: {
+      headers: {
+        Accept: "application/json",
+      },
+    },
+  });
+  useEffect(() => {
+    fetchHotel?.();
+  }, []);
 
+  console.log(hotel);
+  const router = useRouter();
   const pathname = usePathname();
 
   return (
@@ -57,6 +52,9 @@ export default function HotelDetail() {
         <CustomBreadcrumb pathname={pathname} />
       </div>
 
+      <Button className="mb-4" variant="outline" size="sm" onClick={() => router.back()}>
+        <ArrowBigLeft />
+      </Button>
       <div className="flex justify-between items-start sm:items-center mb-4 gap-4">
         <h1 className="text-2xl font-bold">{hotel?.name}</h1>
         <div className="flex gap-2">
@@ -74,7 +72,7 @@ export default function HotelDetail() {
       </p>
 
       <div className="mb-4">
-        <ImageSelect images={hotel.images} />
+        <ImageSelect images={hotel?.images} />
       </div>
 
       <Tabs defaultValue="overview" className="mb-4">
@@ -92,47 +90,98 @@ export default function HotelDetail() {
             Policies
           </TabsTrigger>
         </TabsList>
+
+        {/* Overview Tab */}
         <TabsContent value="overview">
-          <p>{hotel.description}</p>
+          {hotel?.description ? (
+            <p>{hotel.description}</p>
+          ) : (
+            <p>No overview available.</p>
+          )}
         </TabsContent>
 
         {/* Info & Prices Tab */}
         <TabsContent value="info">
-          <p>
-            <strong>Hotel Name:</strong> {hotel.name}
-          </p>
-          <p>
-            <strong>Address:</strong> {hotel.address}
-          </p>
-          <p>
-            <strong>Check-in Time:</strong> {hotel.open_at}
-          </p>
-          <p>
-            <strong>Check-out Time:</strong> {hotel.close_at}
-          </p>
+          {hotel ? (
+            <>
+              <p>
+                <strong>Hotel Name:</strong> {hotel.name || "N/A"}
+              </p>
+              <p>
+                <strong>Address:</strong> {hotel.address || "N/A"}
+              </p>
+              <p>
+                <strong>Check-in Time:</strong> {hotel.open_at || "N/A"}
+              </p>
+              <p>
+                <strong>Check-out Time:</strong> {hotel.close_at || "N/A"}
+              </p>
+            </>
+          ) : (
+            <p>No information available.</p>
+          )}
         </TabsContent>
-        {/* render rooms */}
-        {/* <Room> 
-        </Room> */}
 
-        <RoomList />
+        {/* Rooms List */}
+        <TabsContent value="rooms">
+          {/* Render rooms if available */}
+          <RoomList />
+        </TabsContent>
 
         {/* Facilities Tab */}
         <TabsContent value="facilities">
-          <ul>
-            {hotel.facilities.map((facility, index) => (
-              <li key={index}>{facility}</li>
-            ))}
-          </ul>
+          {Array.isArray(hotel?.facilities) && hotel.facilities.length > 0 ? (
+            <ul>
+              {hotel.facilities.map(
+                (
+                  facility:
+                    | string
+                    | number
+                    | bigint
+                    | boolean
+                    | ReactElement<any, string | JSXElementConstructor<any>>
+                    | Iterable<ReactNode>
+                    | ReactPortal
+                    | Promise<AwaitedReactNode>
+                    | null
+                    | undefined,
+                  index: Key | null | undefined
+                ) => (
+                  <li key={index}>{facility}</li>
+                )
+              )}
+            </ul>
+          ) : (
+            <p>No facilities available.</p>
+          )}
         </TabsContent>
 
         {/* Policies Tab */}
         <TabsContent value="policies">
-          <ul>
-            {hotel.policies.map((policy, index) => (
-              <li key={index}>{policy}</li>
-            ))}
-          </ul>
+          {Array.isArray(hotel?.facilities) && hotel.facilities.length > 0 ? (
+            <ul>
+              {hotel.facilities.map(
+                (
+                  facility:
+                    | string
+                    | number
+                    | bigint
+                    | boolean
+                    | ReactElement<any, string | JSXElementConstructor<any>>
+                    | Iterable<ReactNode>
+                    | ReactPortal
+                    | Promise<AwaitedReactNode>
+                    | null
+                    | undefined,
+                  index: Key | null | undefined
+                ) => (
+                  <li key={index}>{facility}</li>
+                )
+              )}
+            </ul>
+          ) : (
+            <p>No facilities available.</p>
+          )}
         </TabsContent>
       </Tabs>
 

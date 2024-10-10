@@ -33,7 +33,7 @@ const GridCard = () => {
   useEffect(() => {
     fetchPopular?.();
   }, []);
-  console.log(response);
+  
   const items = [
     { image: "/path/to/image1.jpg", alt: "Image 1" },
     { image: "/path/to/image2.jpg", alt: "Image 2" },

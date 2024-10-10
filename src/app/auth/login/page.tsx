@@ -29,8 +29,7 @@ function Login() {
       password: string;
     },
     any
-  >({
-    baseUrl: "http://localhost:8000",
+  >({ 
     endpoint: "/api/auth/login",
     method: "POST",
     config: {
@@ -43,8 +42,7 @@ function Login() {
   const router = useRouter();
 
   useEffect(() => {
-    // Check if the response is successful and contains the access token
-    if (
+     if (
       response &&
       response.result_code === 200 &&
       response.result_message === "Success" &&

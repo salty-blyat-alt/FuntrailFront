@@ -43,22 +43,4 @@ export const policies = [
   "Luggage Storage Available",
   "Daily Housekeeping",
 ];
-
-export const provinces: ItemProps[] = [
-  {
-    label: "Phnom Penh",
-    value: "1",
-  },
-  {
-    label: "Kandal",
-    value: "2",
-  },
-  {
-    label: "Siem Reap",
-    value: "3",
-  },
-  {
-    label: "Battambang",
-    value: "4",
-  },
-];
+ 

@@ -64,7 +64,7 @@ const Orders = () => {
     { key: "id", label: "ID", hidden: true },
     { key: "customer", label: "Resturant ID", hidden: true },
     { key: "type", label: "Food", hidden: false },
-    { key: "amount", label: "Price", hidden: false }, // Fixed key to match the price data
+    { key: "amount", label: "Price", hidden: false },
     { key: "status", label: "Status", hidden: false },
     { key: "actions", label: "Actions", hidden: false },
   ];
