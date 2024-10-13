@@ -1,17 +1,32 @@
 "use client";
+
 import { FilterIcon } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "../../components/ui/button";
-import { Checkbox } from "../../components/ui/checkbox";
 import {
   Dialog,
+  DialogClose,
   DialogContent,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "../../components/ui/dialog";
+import { Label } from "@/app/components/ui/label";
+import { Province } from "@/app/home/components/search-group";
+import { ScrollArea } from "@/app/components/ui/scroll-area";
+import { RadioGroup, RadioGroupItem } from "@/app/components/ui/radio-group";
+import { useSearchParams } from "next/navigation";
 
-const Filter = () => {
+const Filter = ({
+  selectedProvince,
+  provinces,
+  onProvinceChange,
+}: {
+  selectedProvince: string | null;
+  provinces: Province[] | null;
+  onProvinceChange: (provinceId: string) => void;
+}) => {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
 
   return (
@@ -25,38 +40,52 @@ const Filter = () => {
         <DialogHeader>
           <DialogTitle>Filter by</DialogTitle>
         </DialogHeader>
-        {/* content */}
-        <FilterContent />
+        {/* Filter content in dialog for small screens */}
+        <FilterContent
+          selectedProvince={selectedProvince}
+          provinces={provinces}
+          onProvinceChange={onProvinceChange}
+        />
+          <DialogFooter className="sm:justify-start">
+          <DialogClose asChild>
+            <Button type="button" variant="secondary">
+              Close
+            </Button>
+          </DialogClose>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );
 };
 
-const FilterContent = () => {
-  const filters = [
-    "Restaurant",
-    "Guesthouses",
-    "Hostels",
-    "Hotels",
-    "Apartments",
-    "Motels",
-    "Swimming pool",
-    "Bed and Breakfasts",
-  ];
-
+const FilterContent = ({
+  provinces,
+  onProvinceChange,
+  selectedProvince,
+}: {
+  selectedProvince: string | null;
+  provinces: Province[] | null;
+  onProvinceChange: (provinceId: string) => void;
+}) => {
   return (
     <div className="space-y-2">
-            <h2 className="text-nowrap">Filter by:</h2> 
-
-      <p className="muted text-nowrap" >Filters others picked</p>
-      {filters.map((filter) => (
-        <div key={filter} className="flex items-center">
-          <Checkbox id={filter} />
-          <label htmlFor={filter} className="ml-2 text-sm">
-            {filter}
-          </label>
-        </div>
-      ))}
+      <h2 className="text-nowrap">Filter by:</h2>
+      <p className="muted text-nowrap">Filters others picked</p>
+      <ScrollArea className="h-80">
+        <RadioGroup
+          value={selectedProvince ? selectedProvince.toString() : ""}  // Controlled value instead of defaultValue
+          onValueChange={onProvinceChange} // Handle province change
+        >
+          {provinces?.map((province) => (
+            <div key={province.id} className="flex items-center">
+              <RadioGroupItem value={province.id.toString()} id={province.id.toString()} />
+              <Label htmlFor={province.id.toString()} className="ml-2 text-sm">
+                {province.name}
+              </Label>
+            </div>
+          ))}
+        </RadioGroup>
+      </ScrollArea>
     </div>
   );
 };

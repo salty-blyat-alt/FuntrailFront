@@ -5,62 +5,103 @@ import {
   DialogContent,
   DialogFooter,
 } from "@/app/components/ui/dialog";
-import { Input } from "@/app/components/ui/input";
 import { toast } from "@/app/hooks/use-toast";
 import { DialogTitle } from "@radix-ui/react-dialog";
-import { Label } from "@radix-ui/react-label";
-import React from "react";
+import React, { Dispatch, SetStateAction, useEffect } from "react";
 import { RoomProps } from "./room-list";
-
+import { SubmitHandler, useForm } from "react-hook-form";
+import useAxios from "@/app/hooks/use-axios";
+import dayjs from "dayjs";
+import { useRouter } from "next/navigation";
+import { DateRange } from "react-day-picker";
+import { format } from "date-fns";
 export interface BookingModalProps {
-  bookingCart: RoomProps[];
-  isBookingModalOpen: boolean;
-  setBookingCart: React.Dispatch<React.SetStateAction<RoomProps[]>>;
-  setRooms: React.Dispatch<React.SetStateAction<RoomProps[]>>;
-  setIsBookingModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  // eslint-disable-next-line
-  setBookingDetails: React.Dispatch<React.SetStateAction<any>>;
-  // eslint-disable-next-line
-  bookingDetails: any;
-  rooms: RoomProps[];
+  bookingCart?: RoomProps[];
+  isBookingModalOpen?: boolean;
+  setBookingCart?: Dispatch<SetStateAction<boolean>>;
+  setIsBookingModalOpen?: Dispatch<SetStateAction<boolean>>;
+  handleCloseModal?: () => void;
+  dateRange: DateRange | undefined;
+}
+export interface BookingDetailProps {
+  room_ids: number[];
+  hotel_id: string;
+  date_start: string;
+  date_end: string;
 }
 
 const BookingModal: React.FC<BookingModalProps> = ({
   bookingCart,
   isBookingModalOpen,
-  setBookingCart,
-  setRooms,
   setIsBookingModalOpen,
-  setBookingDetails,
-  bookingDetails,
-  rooms,
+  handleCloseModal,
+  dateRange,
 }) => {
-  const handleBookingSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log("Booking submitted:", {
-      rooms: bookingCart,
-      ...bookingDetails,
+  const { handleSubmit } = useForm<BookingDetailProps>({
+    defaultValues: {
+      date_start: dateRange?.from
+        ? dayjs(dateRange.from).format("DD/MM/YYYY")
+        : "",
+      date_end: dateRange?.to ? dayjs(dateRange.to).format("DD/MM/YYYY") : "",
+      hotel_id: bookingCart?.[0]?.hotel_id?.toString() || "",
+      room_ids: [],
+    },
+  });
+  console.log(bookingCart?.[0]?.hotel_id);
+  const {
+    triggerFetch: triggerBook,
+    error,
+    responseDataWithStat: response,
+  } = useAxios<any, any>({
+    endpoint: "/api/hotel/book",
+    method: "POST",
+    config: {},
+  });
+  const router = useRouter();
+
+  useEffect(() => {
+    if (response?.result === true) {
+      toast({
+        title: "Booking Successful",
+        description: `You have successfully booked ${bookingCart?.length} room(s).`,
+        variant: "success",
+      });
+
+      const paymentUrl = response.body?.session?.payment_url;
+      if (paymentUrl) {
+        router.push(paymentUrl);
+      }
+    } else if (error) {
+      toast({
+        title: "Booking Failed",
+        description: "An unknown error occurred.",
+        variant: "destructive",
+      });
+    }
+    handleCloseModal?.();
+  }, [response, error]);
+
+  const formattedFrom = dateRange?.from
+    ? format(dateRange.from, "dd/MM/yyyy")
+    : "";
+
+  const formattedTo = dateRange?.to ? format(dateRange.to, "dd/MM/yyyy") : "";
+
+  const onSubmit: SubmitHandler<BookingDetailProps> = async () => {
+    const formData = new FormData();
+    bookingCart?.forEach((item) => {
+      if (item?.id) {
+        formData.append("room_ids[]", item.id.toString());
+      }
     });
 
-    // Update room availability
-    setRooms(
-      rooms.map((room) =>
-        bookingCart.some((bookedRoom) => bookedRoom.id === room.id)
-          ? { ...room, isAvailable: false }
-          : room
-      )
-    );
+    const hotelId = bookingCart?.[0]?.hotel_id?.toString() || "";
+    formData.append("hotel_id", hotelId);
 
-    // Close modal and reset form
-    setIsBookingModalOpen(false);
-    setBookingCart([]);
-    setBookingDetails({ name: "", email: "", checkIn: "", checkOut: "" });
-    console.log("bookingcart", bookingCart);
-    // Show success message
-    toast({
-      title: "Booking Successful",
-      description: `You have successfully booked ${bookingCart.length} room(s).`,
-    });
+    formData.append("date_start", formattedFrom || "");
+    formData.append("date_end", formattedTo || "");
+
+    triggerBook?.(formData);
   };
 
   return (
@@ -69,84 +110,11 @@ const BookingModal: React.FC<BookingModalProps> = ({
         <AlertDialogHeader>
           <DialogTitle>Complete Your Booking</DialogTitle>
         </AlertDialogHeader>
-        <form onSubmit={handleBookingSubmit}>
-          <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="name" className="text-right">
-                Name
-              </Label>
-              <Input
-                id="name"
-                value={bookingDetails.name}
-                onChange={(e) =>
-                  setBookingDetails({
-                    ...bookingDetails,
-                    name: e.target.value,
-                  })
-                }
-                className="col-span-3"
-                required
-              />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="email" className="text-right">
-                Email
-              </Label>
-              <Input
-                id="email"
-                type="email"
-                value={bookingDetails.email}
-                onChange={(e) =>
-                  setBookingDetails({
-                    ...bookingDetails,
-                    email: e.target.value,
-                  })
-                }
-                className="col-span-3"
-                required
-              />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="checkIn" className="text-right">
-                Check-in
-              </Label>
-              <Input
-                id="checkIn"
-                type="date"
-                value={bookingDetails.checkIn}
-                onChange={(e) =>
-                  setBookingDetails({
-                    ...bookingDetails,
-                    checkIn: e.target.value,
-                  })
-                }
-                className="col-span-3"
-                required
-              />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="checkOut" className="text-right">
-                Check-out
-              </Label>
-              <Input
-                id="checkOut"
-                type="date"
-                value={bookingDetails.checkOut}
-                onChange={(e) =>
-                  setBookingDetails({
-                    ...bookingDetails,
-                    checkOut: e.target.value,
-                  })
-                }
-                className="col-span-3"
-                required
-              />
-            </div>
-          </div>
-          <DialogFooter>
-            <Button type="submit">Confirm Booking</Button>
-          </DialogFooter>
-        </form>
+        <DialogFooter className="flex gap-x-4">
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <Button type="submit">Pay via Stripe</Button>
+          </form>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );

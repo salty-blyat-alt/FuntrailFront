@@ -76,7 +76,7 @@ const RegisterHotel = () => {
         formData.append("images[]", image); // Use "images[]" to send as an array
       });
     }
-    console.log(trimmedData.facilities);
+    
     // Append facilities as a JSON string
     if (trimmedData.facilities) {
       formData.append("facilities", JSON.stringify(trimmedData.facilities));

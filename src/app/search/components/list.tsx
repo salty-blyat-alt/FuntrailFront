@@ -16,6 +16,10 @@ interface ListProps {
 const List: React.FC<ListProps> = ({ item }) => {
   const { thumbnail, name, distance, rating, reviewCount, description } = item;
 
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL + thumbnail;
+
+  const completeImageUrls = thumbnail.startsWith("https://via.placeholder.com") ? thumbnail : `${baseUrl}${thumbnail}`;
+
   return (
     <Card>
       <CardContent className="p-4 flex flex-row sm:flex-col md:flex-row gap-4">
@@ -23,7 +27,7 @@ const List: React.FC<ListProps> = ({ item }) => {
           <Image
             width={300}
             height={300}
-            src={thumbnail}
+            src={completeImageUrls}
             alt={name}
             className="size-64 aspect-square object-cover rounded"
           />
@@ -38,13 +42,13 @@ const List: React.FC<ListProps> = ({ item }) => {
             </div>
             <div className="text-right">
               <span className="bg-blue-600 text-white px-2 py-1 rounded">
-                {rating}
+                {rating || 'rating placeholder'}
               </span>{" "}
               <br />
               <span className="text-xs md:text-sm text-nowrap">Very Good</span>
               <br />
               <span className="text-xs md:text-sm text-muted-foreground">
-                {reviewCount} reviews
+                {reviewCount  || "reviewCount"} reviews
               </span>
             </div>
           </div>

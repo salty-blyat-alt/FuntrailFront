@@ -1,26 +1,29 @@
 "use client";
-import { Input } from "@/app/components/ui/input";
 import {
-  AlertDialog,
-  AlertDialogContent,
-  AlertDialogFooter,
-  AlertDialogHeader
-} from "@components/ui/alert-dialog"; // Importing AlertDialog components
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/app/components/ui/dialog";
+import { Input } from "@/app/components/ui/input";
+import useAxios from "@/app/hooks/use-axios";
 import { Button } from "@components/ui/button";
 import { Label } from "@components/ui/label";
-import { useForm } from "react-hook-form";
+import { SubmitHandler, useForm } from "react-hook-form";
 
 export interface AddRoomDialogProps {
-  isOpen: boolean;
+  open: boolean;
   onClose: () => void;
 }
 
 interface FormData {
   roomType: string;
-  price: number;
+  price_per_night: number;
 }
 
-const AddRoomDialog: React.FC<AddRoomDialogProps> = ({ isOpen, onClose }) => {
+const AddRoomDialog: React.FC<AddRoomDialogProps> = ({ open, onClose }) => {
   const {
     register,
     handleSubmit,
@@ -28,21 +31,42 @@ const AddRoomDialog: React.FC<AddRoomDialogProps> = ({ isOpen, onClose }) => {
     formState: { errors },
   } = useForm<FormData>();
 
-  const onSubmit = (data: FormData) => {
-    console.log("Room added:", data);
-    // Add logic to handle form submission, e.g., API call to add a room
-    reset(); // Reset the form fields
-    onClose(); // Close the dialog after submission
+  const { triggerFetch: addRoom, responseData: success } = useAxios<
+    any,
+    FormData
+  >({
+    endpoint: "/api/hotel/add-room",
+    config: {},
+    method: "POST",
+  });
+
+  const onSubmit: SubmitHandler<FormData> = (data) => {
+    const formData = new FormData();
+    formData.append("room_type", data.roomType);
+    formData.append("price_per_night", data.price_per_night.toString());
+    addRoom?.(formData);
+    reset();
+    onClose();
   };
 
   return (
-    <AlertDialog open={isOpen} onOpenChange={onClose}> 
-      {/* Use AlertDialog for the room adding confirmation */}
-      <AlertDialogContent>
-        <AlertDialogHeader>
-          <h3 className="font-semibold text-lg">Add Room</h3>
-        </AlertDialogHeader>
+    <Dialog
+      open={open}
+      onOpenChange={onClose}
+      aria-describedby="dialog-description"
+    >
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Add Room</DialogTitle>
+          <DialogDescription>
+            <p id="dialog-description" className="text-muted-foreground">
+              Please enter the room details below:
+            </p>
+          </DialogDescription>
+        </DialogHeader>
+
         <form className="grid gap-y-2" onSubmit={handleSubmit(onSubmit)}>
+          {/* Room Type */}
           <div>
             <Label htmlFor="roomType">Room Type</Label>
             <Input
@@ -58,24 +82,27 @@ const AddRoomDialog: React.FC<AddRoomDialogProps> = ({ isOpen, onClose }) => {
             )}
           </div>
 
+          {/* Price */}
           <div>
-            <Label htmlFor="price">Price per Night</Label>
+            <Label htmlFor="price_per_night">Price per Night</Label>
             <Input
-              id="price"
+              id="price_per_night"
               type="number"
-              {...register("price", {required: "Price is required." ,
-                setValueAs: v => parseInt(v),
+              {...register("price_per_night", {
+                required: "Price is required.",
+                valueAsNumber: true, // Automatically convert to number
               })}
               className="border border-gray-300 rounded p-2 w-full"
             />
-            {errors.price && (
+            {errors.price_per_night && (
               <span className="text-red-500 pt-0 text-sm">
-                {errors.price.message}
+                {errors.price_per_night.message}
               </span>
             )}
           </div>
-          {/* Add more fields as needed */}
-          <AlertDialogFooter>
+
+          {/* Footer */}
+          <DialogFooter>
             <div className="mt-4 flex justify-end">
               <Button
                 type="button"
@@ -89,10 +116,10 @@ const AddRoomDialog: React.FC<AddRoomDialogProps> = ({ isOpen, onClose }) => {
                 Add Room
               </Button>
             </div>
-          </AlertDialogFooter>
+          </DialogFooter>
         </form>
-      </AlertDialogContent>
-    </AlertDialog>
+      </DialogContent>
+    </Dialog>
   );
 };
 

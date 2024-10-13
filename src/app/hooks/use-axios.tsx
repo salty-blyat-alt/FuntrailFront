@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
+import { useEffect, useState } from "react";
 
 export type AxiosMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
 
@@ -24,6 +24,18 @@ interface UseAxiosReturn<T, U> {
   error: string | null;
   responseData: T | null;
   setResponseData: (data: T) => void;
+  setResponseDataWithStat: (data: {
+    result: boolean;
+    result_code: number;
+    result_message: string;
+    body: T;
+  }) => void; // Adjusted type
+  responseDataWithStat: {
+    result: boolean;
+    result_code: number;
+    result_message: string;
+    body: T;
+  } | null; // Adjusted type
   triggerFetch?: (data?: U) => void;
   finished: boolean;
 }
@@ -34,7 +46,6 @@ const fetchCsrfToken = async () => {
     await axios.get("http://localhost:8000/sanctum/csrf-cookie", {
       withCredentials: true, // Ensure cookies are sent with the request
     });
-    console.log("CSRF token fetched successfully");
   } catch (error) {
     console.error("Error fetching CSRF token:", error);
   }
@@ -49,8 +60,14 @@ const useAxios = <T, U>({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [responseData, setResponseData] = useState<T | null>(null);
+  const [responseDataWithStat, setResponseDataWithStat] = useState<{
+    result: boolean;
+    result_code: number;
+    result_message: string;
+    body: T;
+  } | null>(null);
   const [finished, setFinished] = useState(false);
-  // Fetch CSRF token on hook initialization
+
   useEffect(() => {
     fetchCsrfToken();
   }, []);
@@ -59,12 +76,11 @@ const useAxios = <T, U>({
     setLoading(true);
     setError(null);
     try {
-      // Retrieve the CSRF token from cookies
       const csrfToken = getCsrfTokenFromCookies();
       const access_token = getAccessToken();
 
       let requestOption = {
-        url: `http://${baseUrl ?? process.env.PUBLIC_BASE_URL}${endpoint}`,
+        url: `http://${baseUrl ?? process.env.NEXT_PUBLIC_BASE_URL}${endpoint}`,
         method,
         ...config,
         headers: {
@@ -82,9 +98,13 @@ const useAxios = <T, U>({
         };
       }
 
-      const response: CustomAxiosResponse<T> = await axios({ ...requestOption });
-      const { body } = response.data;       
+      const response: CustomAxiosResponse<T> = await axios({
+        ...requestOption,
+      });
+      const { body, result, result_code, result_message } = response.data;
       setResponseData(body);
+      // Set only the relevant data in responseDataWithStat
+      setResponseDataWithStat({ result, result_code, result_message, body });
     } catch (err: any) {
       setError(err.message || "Something went wrong!");
     } finally {
@@ -105,6 +125,8 @@ const useAxios = <T, U>({
     loading,
     error,
     setResponseData,
+    responseDataWithStat,
+    setResponseDataWithStat,
     responseData,
     triggerFetch,
     finished,

@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
   Pagination,
   PaginationContent,
@@ -7,9 +7,17 @@ import {
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
-} from "@components/ui/pagination"
+} from "@components/ui/pagination";
 
-const CustomPagination = ({ currentPage, totalPages, onPageChange }:{ currentPage:number, totalPages:number, onPageChange:(newPage: number) => void  }) => {
+const CustomPagination = ({
+  currentPage,
+  totalPages,
+  onPageChange,
+}: {
+  currentPage: number;
+  totalPages: number;
+  onPageChange: (newPage: number) => void;
+}) => {
   const paginate = (current: number, max: number) => {
     if (!current || !max) return null;
 
@@ -18,7 +26,7 @@ const CustomPagination = ({ currentPage, totalPages, onPageChange }:{ currentPag
     let items = [1];
 
     if (current === 1 && max === 1) return { current, prev, next, items };
-    if (current > 4) items.push('…');
+    if (current > 4) items.push("…");
 
     let r = 2;
     let r1 = current - r;
@@ -28,63 +36,68 @@ const CustomPagination = ({ currentPage, totalPages, onPageChange }:{ currentPag
       items.push(i);
     }
 
-    if (r2 + 1 < max) items.push('…');
+    if (r2 + 1 < max) items.push("…");
     if (r2 < max) items.push(max);
 
     return { current, prev, next, items };
   };
 
   const paginationData = paginate(currentPage, totalPages);
+  
 
   if (!paginationData) return null;
 
   return (
-    <Pagination>
-      <PaginationContent>
-        {paginationData.prev !== null && (
-          <PaginationItem>
-            <PaginationPrevious 
-              href="#" 
-              onClick={(e) => {
-                e.preventDefault();
-                onPageChange(paginationData.prev);
-              }} 
-            />
-          </PaginationItem>
-        )}
-
-        {paginationData.items.map((item, index) => (
-          <PaginationItem key={index}>
-            {item === '…' ? (
-              <PaginationEllipsis />
-            ) : (
-              <PaginationLink 
-                href="#" 
-                onClick={(e) => {
-                  e.preventDefault();
-                  onPageChange(item);
-                }}
-                isActive={currentPage === item}
-              >
-                {item}
-              </PaginationLink>
+    <>
+      {totalPages > 1 && (
+        <Pagination>
+          <PaginationContent>
+            {paginationData.prev !== null && (
+              <PaginationItem>
+                <PaginationPrevious
+                  href="#"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    onPageChange(paginationData.prev);
+                  }}
+                />
+              </PaginationItem>
             )}
-          </PaginationItem>
-        ))}
 
-        {paginationData.next !== null && (
-          <PaginationItem>
-            <PaginationNext 
-              href="#" 
-              onClick={(e) => {
-                e.preventDefault();
-                onPageChange(paginationData.next);
-              }} 
-            />
-          </PaginationItem>
-        )}
-      </PaginationContent>
-    </Pagination>
+            {paginationData.items.map((item, index) => (
+              <PaginationItem key={index}>
+                {item === "…" ? (
+                  <PaginationEllipsis />
+                ) : (
+                  <PaginationLink
+                    href="#"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      onPageChange(item);
+                    }}
+                    isActive={currentPage === item}
+                  >
+                    {item}
+                  </PaginationLink>
+                )}
+              </PaginationItem>
+            ))}
+
+            {paginationData.next !== null && (
+              <PaginationItem>
+                <PaginationNext
+                  href="#"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    onPageChange(paginationData.next);
+                  }}
+                />
+              </PaginationItem>
+            )}
+          </PaginationContent>
+        </Pagination>
+      )}
+    </>
   );
 };
 

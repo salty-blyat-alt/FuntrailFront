@@ -26,6 +26,8 @@ import {
 
 export default function HotelDetail() {
   const { id } = useParams();
+  
+
   const { triggerFetch: fetchHotel, responseData: hotel } = useAxios<
     any,
     undefined
@@ -41,8 +43,7 @@ export default function HotelDetail() {
   useEffect(() => {
     fetchHotel?.();
   }, []);
-
-  console.log(hotel);
+ 
   const router = useRouter();
   const pathname = usePathname();
 
@@ -52,7 +53,12 @@ export default function HotelDetail() {
         <CustomBreadcrumb pathname={pathname} />
       </div>
 
-      <Button className="mb-4" variant="outline" size="sm" onClick={() => router.back()}>
+      <Button
+        className="mb-4"
+        variant="outline"
+        size="sm"
+        onClick={() => router.back()}
+      >
         <ArrowBigLeft />
       </Button>
       <div className="flex justify-between items-start sm:items-center mb-4 gap-4">
@@ -122,12 +128,6 @@ export default function HotelDetail() {
           )}
         </TabsContent>
 
-        {/* Rooms List */}
-        <TabsContent value="rooms">
-          {/* Render rooms if available */}
-          <RoomList />
-        </TabsContent>
-
         {/* Facilities Tab */}
         <TabsContent value="facilities">
           {Array.isArray(hotel?.facilities) && hotel.facilities.length > 0 ? (
@@ -183,7 +183,9 @@ export default function HotelDetail() {
             <p>No facilities available.</p>
           )}
         </TabsContent>
-      </Tabs>
+      </Tabs> 
+      {/* Render rooms if available */}
+      <RoomList hotelId={id.toString()}/>
 
       <HotelComment />
     </div>

@@ -1,55 +1,56 @@
 "use client";
-import React, { useState } from "react";
 import Image from "next/image";
+import React, { useState } from "react";
 
 interface ImageSelectProps {
-  images?: string[];
+  images?: string; // Expecting images as a JSON string
 }
 
 const ImageSelect: React.FC<ImageSelectProps> = ({ images }) => {
-  const [thumbnailIndex, setThumbnailIndex] = useState<number>(0);
+  const [thumbnailIndex, setThumbnailIndex] = useState<number>(0); // Default to 0
+
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || ""; // Fallback to empty string
+
+  // Safely parse images
+  let parsedImages: string[] = [];
+  if (images) {
+    try {
+      parsedImages = JSON.parse(images); 
+    } catch (error) {
+      console.error("Failed to parse images:", error);
+    }
+  }
+
+  // Prepend base URL to each image path
+  const completeImageUrls = parsedImages.map(image => 
+    image.startsWith("https://via.placeholder.com") ? image : `${baseUrl}${image}`
+  );
+ 
 
   const handleImageClick = (index: number) => {
-    setThumbnailIndex(index);
+    setThumbnailIndex(index); // Update the thumbnail index
   };
-
-  // Function to get the image source with base URL
-  const getImageSrc = (src: string) => {
-    const baseUrl = process.env.PUBLIC_BASE_URL || "http://localhost:8000";
-    if (src && src.startsWith("/storage/")) {
-      // For local development
-      if (baseUrl.includes("localhost")) {
-        return `${baseUrl}${src}`;
-      }
-      // For production
-      return `${baseUrl}/storage${src}`;
-    }
-    return src;
-  };
-
-  // Fallback for the main image if images array is empty or undefined
-  const imageSrc =
-    Array.isArray(images) && images.length > 0
-      ? getImageSrc(images[thumbnailIndex])
-      : getImageSrc(
-          "/storage/hotels/thumbnails/fig_removebg_preview_66f5988242de6.png"
-        );
 
   return (
     <>
       {/* Display the main image */}
-      <div className="relative aspect-video mb-4">
-        <Image
-          fill
-          src={imageSrc}
-          alt={`Image ${thumbnailIndex}`}
-          className="rounded-lg object-cover"
-        />
+      <div className="mx-auto relative aspect-video mb-4 max-w-lg border-4">
+        {completeImageUrls.length > 0 ? (
+          <Image
+            fill
+            src={completeImageUrls[thumbnailIndex]} // Use the selected image as thumbnail
+            alt={`Image ${thumbnailIndex}`}
+            onLoadingComplete={() => console.log("Image loaded")}
+            onError={() => console.log("Image failed to load")}
+          />
+        ) : (
+          <div>No image available</div> // Fallback if no images are available
+        )}
       </div>
       {/* Display the thumbnails */}
       <div className="grid grid-cols-5 gap-2">
-        {Array.isArray(images) && images.length > 0 ? (
-          images.map((image, index) => (
+        {completeImageUrls.length > 0 ? (
+          completeImageUrls.map((image, index) => (
             <div
               key={index}
               className={`relative aspect-video cursor-pointer ${
@@ -59,7 +60,7 @@ const ImageSelect: React.FC<ImageSelectProps> = ({ images }) => {
             >
               <Image
                 fill
-                src={getImageSrc(image)}
+                src={image} // Use each image as thumbnail
                 alt={`Thumbnail ${index}`}
                 className="rounded-lg object-cover"
               />

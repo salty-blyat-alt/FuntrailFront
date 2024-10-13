@@ -140,6 +140,12 @@ input[type="number"] {
   }
 }
 
+.success {
+  border: 1px solid #38a169; /* Tailwind green-500 */
+  background-color: #f0fff4; /* Tailwind green-100 */
+  color: #2f855a; /* Tailwind green-700 */
+}
+
 ul {
   list-style-type: none;
 } 

@@ -5,24 +5,31 @@ import {
   CardHeader,
   CardTitle,
 } from "@/app/components/ui/card";
-import { ScrollArea } from "@/app/components/ui/scroll-area";
+import { ScrollArea } from "@/app/components/ui/scroll-area";  
 import { RoomProps } from "./room-list";
-import React from "react";
+import { toast } from "@/app/hooks/use-toast";
 
-interface BookingCartProps {
+export interface BookingCartProps {
   bookingCart: RoomProps[];
-  handleBookNow: () => void;
+  handleOpenBookingModal: () => void;
   setBookingCart: React.Dispatch<React.SetStateAction<RoomProps[]>>;
 }
 
 const BookingCart: React.FC<BookingCartProps> = ({
   bookingCart,
-  handleBookNow,
+  handleOpenBookingModal,
   setBookingCart,
 }) => {
-  const removeFromBookingCart = (roomId: number) => {
+  const removeFromBookingCart = (roomId: number|undefined) => {
+    if(!roomId){
+      toast({
+        title: "Invalid room type",
+        description: "Please reselect the room.",
+        variant: "destructive",
+      });
+    }
     setBookingCart(bookingCart.filter((room) => room.id !== roomId));
-  };
+  }; 
   return (
     <Card>
       <CardHeader>
@@ -56,9 +63,9 @@ const BookingCart: React.FC<BookingCartProps> = ({
           <div className="mt-4">
             <div className="font-bold">
               Total: $
-              {bookingCart.reduce((sum, room) => sum + room.price_per_night, 0)}
+              {bookingCart.reduce((sum, room) => sum + (room?.price_per_night||0), 0)}
             </div>
-            <Button className="w-full mt-2" onClick={handleBookNow}>
+            <Button className="w-full mt-2" onClick={handleOpenBookingModal}>
               Proceed to Book
             </Button>
           </div>

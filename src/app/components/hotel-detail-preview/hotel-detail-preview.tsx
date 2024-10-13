@@ -27,8 +27,7 @@ const HotelDetailPreview = ({ hotel }: { hotel: HotelProps }) => {
       </p>
 
       <div className="mb-4">
-        {/*    @ts-expect-error  images might be null i guess. check hotel detail preview for the   */}
-        <ImageSelect images={images} />
+         <ImageSelect images={images} />
       </div>
 
       <Tabs defaultValue="overview" className="mb-4">

@@ -1,4 +1,5 @@
 "use client";
+
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@components/ui/button";
@@ -7,7 +8,6 @@ import { Input } from "@components/ui/input";
 import { SubmitHandler, useForm } from "react-hook-form";
 import useAxios from "@/app/hooks/use-axios";
 import { useEffect } from "react";
-import Cookies from "js-cookie"; 
 import { useRouter } from "next/navigation";
 
 function Login() {
@@ -17,19 +17,10 @@ function Login() {
     formState: { errors },
   } = useForm<{ email: string; password: string }>();
 
-  const {
-    triggerFetch: triggerLogin,
-    responseData: response, 
-  } = useAxios<
-    {
-      result_message: string;
-      result_code: number;
-      body: any;
-      email: string;
-      password: string;
-    },
+  const { triggerFetch: triggerLogin, responseData: response } = useAxios<
+    any,
     any
-  >({ 
+  >({
     endpoint: "/api/auth/login",
     method: "POST",
     config: {
@@ -42,22 +33,13 @@ function Login() {
   const router = useRouter();
 
   useEffect(() => {
-     if (
-      response &&
-      response.result_code === 200 &&
-      response.result_message === "Success" &&
-      response.body.access_token
-    ) {
-      console.log(response);
-      Cookies.set("access_token", response.body.access_token, { expires: 7 }); // Token expires in 7 days
-
-      // Redirect to the home page
+    if (response) {
+      // Set cookie to expire in 7 days
+      document.cookie = `access_token=${response.access_token}; max-age=${60 * 60 * 24 * 7}; path=/`;
       router.push("/");
-    }
-
+    } 
     // If an access token already exists in the cookies, redirect as well
-    const storedToken = Cookies.get("access_token");
-    if (storedToken) {
+    if (document.cookie.includes('access_token=')) {
       router.push("/");
     }
   }, [response, router]);
@@ -72,7 +54,7 @@ function Login() {
   };
 
   return (
-    <div className="w-full min-h-dvh my-auto lg:grid  lg:grid-cols-2 overflow-hidden ">
+    <div className="w-full min-h-dvh my-auto lg:grid lg:grid-cols-2 overflow-hidden">
       <div className="pt-[40%]">
         <div className="mx-auto grid w-[350px] gap-6">
           <div className="grid gap-2 text-center">
@@ -92,7 +74,6 @@ function Login() {
                   {...register("email", { required: "Email is required" })}
                   required
                 />
-                {/* Show email validation error */}
                 {errors.email && (
                   <span className="text-red-500">{errors.email.message}</span>
                 )}
@@ -115,21 +96,20 @@ function Login() {
                   })}
                   required
                 />
-                {/* Show password validation error */}
                 {errors.password && (
                   <span className="text-red-500">
                     {errors.password.message}
                   </span>
                 )}
               </div>
-              <Button type="submit" className="w-full">
+              <Button type="submit" className="w-full mt-4">
                 Login
               </Button>
             </form>
           </div>
           <div className="mt-4 text-center text-sm">
             Don&apos;t have an account?{" "}
-            <Link href="/auth/register" passHref className="underline">
+            <Link href="/auth/register" className="underline">
               Sign up
             </Link>
           </div>
@@ -139,12 +119,13 @@ function Login() {
         <Image
           src="/placeholder.svg"
           alt="Image"
-          width="1920"
-          height="1080"
+          width={1920}
+          height={1080}
           className="h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
         />
       </div>
     </div>
   );
 }
+
 export default Login;

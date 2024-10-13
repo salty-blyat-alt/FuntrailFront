@@ -13,6 +13,7 @@ interface StatsCardProps {
   title: string;
   percentage: number;
   progressValue: number;
+  duration?: string;
 }
 
 const StatsCard: React.FC<StatsCardProps> = ({
@@ -20,6 +21,7 @@ const StatsCard: React.FC<StatsCardProps> = ({
   title,
   percentage,
   progressValue,
+  duration = 'week'
 }) => {
   return (
     <Card>
@@ -29,7 +31,7 @@ const StatsCard: React.FC<StatsCardProps> = ({
       </CardHeader>
       <CardContent>
         <div className="text-xs text-muted-foreground">
-          {percentage > 0 ? `+${percentage}%` : `${percentage}%`} from last week
+          {percentage > 0 ? `+${percentage}%` : `${percentage}%`} from {duration}
         </div>
       </CardContent>
       <CardFooter>
