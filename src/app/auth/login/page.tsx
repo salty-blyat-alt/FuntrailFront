@@ -9,6 +9,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import useAxios from "@/app/hooks/use-axios";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { hasCookie, setCookie } from "cookies-next";
 
 function Login() {
   const {
@@ -19,7 +20,7 @@ function Login() {
 
   const { triggerFetch: triggerLogin, responseData: response } = useAxios<
     any,
-    any
+    FormData | { email: string; password: string }
   >({
     endpoint: "/api/auth/login",
     method: "POST",
@@ -35,11 +36,11 @@ function Login() {
   useEffect(() => {
     if (response) {
       // Set cookie to expire in 7 days
-      document.cookie = `access_token=${response.access_token}; max-age=${60 * 60 * 24 * 7}; path=/`;
+      setCookie("access_token", response.access_token);
       router.push("/");
-    } 
+    }
     // If an access token already exists in the cookies, redirect as well
-    if (document.cookie.includes('access_token=')) {
+    if (hasCookie("access_token")) {
       router.push("/");
     }
   }, [response, router]);

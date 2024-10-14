@@ -85,7 +85,7 @@ const useAxios = <T, U>({
         ...config,
         headers: {
           ...config.headers,
-          Authorization: `Bearer ${access_token}`, // Add Bearer token here
+          Authorization: `Bearer ${access_token}`,
           "X-XSRF-TOKEN": csrfToken,
         },
         withCredentials: true,
@@ -101,12 +101,21 @@ const useAxios = <T, U>({
       const response: CustomAxiosResponse<T> = await axios({
         ...requestOption,
       });
+
+      const statusCode = response.status;
+      console.log("statusCode", statusCode);
+
       const { body, result, result_code, result_message } = response.data;
       setResponseData(body);
       // Set only the relevant data in responseDataWithStat
       setResponseDataWithStat({ result, result_code, result_message, body });
     } catch (err: any) {
-      setError(err.message || "Something went wrong!");
+      if (err.response && err.response.status === 401) {
+        // Redirect to login page on 401 Unauthorized
+        window.location.href = "/auth/login";
+      } else {
+        setError(err.message || "Something went wrong!");
+      }
     } finally {
       setLoading(false);
     }

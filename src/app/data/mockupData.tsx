@@ -6,8 +6,8 @@ export interface HotelProps {
   address?: string;
   province_id: string;
   description?: string;
-  thumbnail?: File | string;
-  images?: File[] | undefined;
+  thumbnail?: string;
+  images?: string[] | string;
   open_at: string;
   close_at: string;
   facilities: string[];

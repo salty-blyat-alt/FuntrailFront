@@ -20,7 +20,7 @@ export default function Manage() {
   const [openDeleteDialog, setOpenDeleteDialog] = useState<boolean>(false); // Ensure this starts as false
 
   const headers: HeaderProps[] = [
-    { key: "id", label: "ID", hidden: false },
+    { key: "id", label: "ID", hidden: true },
     { key: "hotel_id", label: "Hotel ID", hidden: true },
     { key: "room_type", label: "Room Type", hidden: false },
     { key: "price_per_night", label: "Price", hidden: false },

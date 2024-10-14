@@ -11,6 +11,7 @@ import { ChangeEvent, useEffect, useState } from "react";
 import { Input } from "../components/ui/input";
 import { Province } from "../home/components/search-group";
 import CustomPagination from "../components/custom-pagination/custom-pagination";
+import { HotelProps } from "../data/mockupData";
 
 export default function SearchPage() {
   const [name, setName] = useState("");
@@ -137,14 +138,14 @@ export default function SearchPage() {
           {/* Search Results */}
           <div className="w-full md:w-3/4">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-2">
-              <h3>Results: {response?.paginate.total} properties found</h3>
+              <h3>Results: {response?.paginate.total || 0} properties found</h3>
               <Button variant="outline" className="w-full sm:w-auto">
                 Sort by: Top Picks for Solo Travelers
               </Button>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
-              {response?.items?.map((item, index) => (
+              {response?.items?.map((item:HotelProps, index) => (
                 <div
                   key={index}
                   className="col-span-2 sm:col-span-1 md:col-span-2"

@@ -1,6 +1,6 @@
 "use client";
 
-import { MoreHorizontal } from "lucide-react";
+import { ChevronLeft, ChevronRight, MoreHorizontal } from "lucide-react";
 import { Button } from "@components/ui/button";
 import {
   Card,
@@ -27,6 +27,14 @@ import {
   TableRow,
 } from "@components/ui/table";
 import { Badge } from "../ui/badge";
+import { AwaitedReactNode, Dispatch, JSXElementConstructor, Key, ReactElement, ReactNode, ReactPortal, SetStateAction } from "react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
 
 export type ANY = any;
 
@@ -48,7 +56,14 @@ export interface CustomTableProps {
   onEdit?: (item: ANY) => void;
   onDelete?: (item: ANY) => void;
   headers: HeaderProps[];
-  loading?: boolean; // New loading prop
+  loading?: boolean;
+  currentPage?: number;
+  totalPages?: number;
+  totalItems?: number;
+  perPage?: number;
+  havePagination?: boolean;
+  onPageChange: (page: number) => void;
+  onPerPageChange: (perPage: number) => void;
 }
 
 export default function CustomTable({
@@ -58,7 +73,14 @@ export default function CustomTable({
   onEdit,
   onDelete,
   headers,
-  loading = false, // Default to false
+  loading = false,
+  currentPage = 1,
+  totalPages = 1,
+  perPage = 10,
+  onPerPageChange,
+  onPageChange,
+  totalItems = 1,
+  havePagination,
 }: CustomTableProps) {
   return (
     <Card>
@@ -85,7 +107,7 @@ export default function CustomTable({
                 </TableCell>
               </TableRow>
             ) : data && data.length > 0 ? (
-              data.map((item) => (
+              data.map((item: { [x: string]: string | number | bigint | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Promise<AwaitedReactNode> | null | undefined; id: Key | null | undefined; }) => (
                 <TableRow key={item.id}>
                   {headers.map(({ key, hidden }) => (
                     <TableCell key={key} className={hidden ? "hidden" : ""}>
@@ -138,9 +160,54 @@ export default function CustomTable({
           </TableBody>
         </Table>
       </CardContent>
-      <CardFooter>
-        {/* Optionally add pagination or other footer content here */}
-      </CardFooter>
+      
+      {havePagination && (
+        <CardFooter className="flex justify-between items-center">
+          <div className="text-xs text-muted-foreground">
+            Showing{" "}
+            <strong>
+              {(currentPage - 1) * perPage + 1}-
+              {Math.min(currentPage * perPage, totalItems)}
+            </strong>{" "}
+            of <strong>{totalItems}</strong> items
+          </div>
+
+          <div className="flex items-center gap-x-2 text-xs text-muted-foreground">
+            <Button
+              variant={"ghost"}
+              size={"sm"}
+              onClick={() => onPageChange(currentPage - 1)}
+              disabled={currentPage === 1} // Disable if on the first page
+            >
+              <ChevronLeft />
+            </Button>
+
+            <Select
+              value={perPage.toString()}
+              onValueChange={(value) => onPerPageChange(Number(value))} // Handle per-page change
+            >
+              <SelectTrigger className="w-fit">
+                <SelectValue placeholder={perPage.toString()} />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="5">5</SelectItem>
+                <SelectItem value="10">10</SelectItem>
+                <SelectItem value="15">15</SelectItem>
+                <SelectItem value="25">25</SelectItem>
+              </SelectContent>
+            </Select>
+
+            <Button
+              variant={"ghost"}
+              size={"sm"}
+              onClick={() => onPageChange(currentPage + 1)}
+              disabled={currentPage >= totalPages} // Disable if on the last page
+            >
+              <ChevronRight />
+            </Button>
+          </div>
+        </CardFooter>
+      )}
     </Card>
   );
 }

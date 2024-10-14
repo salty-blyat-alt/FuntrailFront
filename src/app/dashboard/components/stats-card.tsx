@@ -19,10 +19,10 @@ interface StatsCardProps {
 const StatsCard: React.FC<StatsCardProps> = ({
   description,
   title,
-  percentage,
-  progressValue,
-  duration = 'week'
-}) => {
+  percentage = 0,
+  progressValue = 0,
+  duration = "week",
+}) => { 
   return (
     <Card>
       <CardHeader className="pb-2">
@@ -31,13 +31,19 @@ const StatsCard: React.FC<StatsCardProps> = ({
       </CardHeader>
       <CardContent>
         <div className="text-xs text-muted-foreground">
-          {percentage > 0 ? `+${percentage}%` : `${percentage}%`} from {duration}
+          {percentage > 0 ? `+${percentage}%` : `${percentage}%`} from{" "}
+          {duration}
         </div>
       </CardContent>
       <CardFooter>
         <Progress
           value={progressValue}
-          aria-label={`${progressValue}% increase`}
+          aria-label={`${progressValue}% ${
+            percentage > 0 ? "increase" : "decrease"
+          }`}
+          style={{
+            backgroundColor: percentage < 0 ? "red" : "green",
+          }}
         />
       </CardFooter>
     </Card>

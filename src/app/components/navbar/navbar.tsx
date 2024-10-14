@@ -18,6 +18,7 @@ import {
 import useAxios from "@/app/hooks/use-axios";
 import { useToast } from "@/app/hooks/use-toast";
 import { Dialog, DialogContent, DialogFooter, DialogTitle } from "../ui/dialog";
+import { deleteCookie } from "cookies-next";
 
 export function Navbar() {
   const [isLogoutDialogOpen, setIsLogoutDialogOpen] = useState(false);
@@ -42,14 +43,24 @@ export function Navbar() {
   };
 
   const confirmLogout = async () => {
-    await triggerLogout?.();
+    const formData = new FormData();
+    // You can add any data you want to send with the logout request if needed
+    // formData.append('key', 'value');
 
-    if (response) {
+    // Trigger the logout with FormData
+    await triggerLogout?.(formData);
+
+    // Delete the access_token cookie
+    deleteCookie('access_token', { path: '/', domain: process.env.NEXT_PUBLIC_DOMAIN }); 
+
+    // Check response status
+    if (response?.message) {
       toast({
         title: "Logged out successfully",
         variant: "success",
       });
-    } else if (error) {
+    }
+    if (error) { 
       toast({
         title: "Something went wrong during logout",
         variant: "destructive",
@@ -58,7 +69,8 @@ export function Navbar() {
 
     setIsLogoutDialogOpen(false);
   };
-
+console.log(error)
+console.log(response)
   return (
     <>
       <nav className="fixed top-0 left-0 right-0 z-[60] py-4 px-4 shadow bg-background">
@@ -99,14 +111,6 @@ export function Navbar() {
                   className="overflow-hidden"
                 >
                   <User className="h-4 w-4" />
-                  {/* Uncomment for production */}
-                  {/* <Image
-                    src="/placeholder-user.jpg"
-                    width={36}
-                    height={36}
-                    alt="Avatar"
-                    className="overflow-hidden rounded-full"
-                  /> */}
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">

@@ -1,74 +1,69 @@
 "use client";
 import DashboardLayout from "@/app/dashboard/dashboard-layout";
-import React from "react"; 
+import React, { useEffect, useState } from "react";
 import PageContainer from "@/app/dashboard/components/page-container";
 import CustomTable, {
   HeaderProps,
 } from "@/app/components/custom-table/custom-table";
 import { hotelNavItem } from "@/app/dashboard/routes/routes";
+import useAxios from "@/app/hooks/use-axios";
 
 const Orders = () => {
-  
-  const data = [
-    {
-      customer: "Liam Johnson",
-      email: "liam@example.com",
-      type: "Sale",
-      status: "Fulfilled",
-      date: "2023-06-23",
-      amount: "250.00",
-    },
-    {
-      customer: "Olivia Smith",
-      email: "olivia@example.com",
-      type: "Refund",
-      status: "Declined",
-      date: "2023-06-24",
-      amount: "150.00",
-    },
-    {
-      customer: "Noah Williams",
-      email: "noah@example.com",
-      type: "Subscription",
-      status: "Fulfilled",
-      date: "2023-06-25",
-      amount: "350.00",
-    },
-    {
-      customer: "Emma Brown",
-      email: "emma@example.com",
-      type: "Sale",
-      status: "Fulfilled",
-      date: "2023-06-26",
-      amount: "450.00",
-    },
-  ];
-  const headers: HeaderProps[] = [
-    { key: "id", label: "ID", hidden: true },
-    { key: "customer", label: "Hotel ID", hidden: true },
-    { key: "type", label: "Room Type", hidden: false },
-    { key: "total", label: "Price", hidden: false },
-    { key: "status", label: "Status", hidden: false },
-    { key: "actions", label: "Actions", hidden: false },
-  ];
-  const handleEdit = (row: string) => {
-    console.log("selected", row);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [perPage, setPerPage] = useState(10);
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page); 
   };
 
-  const handleDelete = (row: string) => {
-    console.log("delete", row);
+  const handlePerPageChange = (newPerPage: number) => {
+    setPerPage(newPerPage);  
+    setCurrentPage(1); 
   };
+
+  
+  const { triggerFetch: fetchOrderHistory, responseData: orderHistory } =
+  useAxios<any, undefined>({
+    endpoint: "/api/dashboard/history",
+    method: "GET",
+    config: {
+      params: {
+        perPage: perPage,
+        page: currentPage,
+      },
+    },
+  });
+   
+  const headers: HeaderProps[] = [
+    { key: "id", label: "ID", hidden: false },
+    { key: "username", label: "Customer", hidden: false },
+    { key: "room_type", label: "Room Type", hidden: false },
+    { key: "ordered_at", label: "Ordered At", hidden: false },
+    { key: "date_start", label: "Date From", hidden: false },
+    { key: "date_end", label: "Date To", hidden: false }, 
+    { key: "total", label: "Total", hidden: false },
+];
+console.log(orderHistory)
+
+  useEffect(() => {
+    fetchOrderHistory?.();
+  }, [perPage, currentPage]); // Fetch data when page or perPage changes
 
   return (
     <DashboardLayout navItems={hotelNavItem}>
       <PageContainer scrollable={true}>
         <CustomTable
-          title="Orders"
-          subtitle="order history"
-          data={data}
-          onEdit={handleEdit}
-          onDelete={handleDelete}
+          title="Pending Orders"
+          subtitle="Manage the pending orders"
+          data={orderHistory?.items} 
           headers={headers}
+          currentPage={orderHistory?.paginate.current_page}
+          totalPages={orderHistory?.paginate.last_page}
+          perPage={perPage}
+          totalItems={orderHistory?.paginate.total}
+          onPageChange={handlePageChange}  
+          onPerPageChange={handlePerPageChange} 
+          havePagination
         />
       </PageContainer>
     </DashboardLayout>

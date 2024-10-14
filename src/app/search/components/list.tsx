@@ -1,24 +1,17 @@
 import { MapPinIcon } from "lucide-react";
 import Image from "next/image";
 import { Card, CardContent } from "../../components/ui/card";
+import { HotelProps } from "@/app/data/mockupData";
+ 
 
-interface ListProps {
-  item: {
-    thumbnail: string; // URL of the image
-    name: string; // name of the item
-    distance: string; // Distance description
-    rating: number; // Rating value
-    reviewCount: number; // Number of reviews
-    description: string; // Description of the item
-  };
-}
+const List = ({ item }:{ item:HotelProps }) => {
+  console.log(item)
+  // const { thumbnail, name, distance, rating, reviewCount, description } = item;
+  const { thumbnail, name, description } = item;
 
-const List: React.FC<ListProps> = ({ item }) => {
-  const { thumbnail, name, distance, rating, reviewCount, description } = item;
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL! + thumbnail!;
 
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL + thumbnail;
-
-  const completeImageUrls = thumbnail.startsWith("https://via.placeholder.com") ? thumbnail : `${baseUrl}${thumbnail}`;
+  const completeImageUrls = thumbnail?.toString().startsWith("https://via.placeholder.com") ? thumbnail : `${baseUrl}${thumbnail}`;
 
   return (
     <Card>
@@ -37,18 +30,18 @@ const List: React.FC<ListProps> = ({ item }) => {
             <div>
               <h2 className="text-lg md:text-xl font-bold">{name}</h2>
               <div className="flex items-center text-xs md:text-sm text-muted-foreground">
-                <MapPinIcon className="mr-1 h-4 w-4" /> {distance} from downtown
+                <MapPinIcon className="mr-1 h-4 w-4" /> {"distance"} from downtown
               </div>
             </div>
             <div className="text-right">
               <span className="bg-blue-600 text-white px-2 py-1 rounded">
-                {rating || 'rating placeholder'}
+                { 'rating placeholder'}
               </span>{" "}
               <br />
               <span className="text-xs md:text-sm text-nowrap">Very Good</span>
               <br />
               <span className="text-xs md:text-sm text-muted-foreground">
-                {reviewCount  || "reviewCount"} reviews
+                { "reviewCount"} reviews
               </span>
             </div>
           </div>
