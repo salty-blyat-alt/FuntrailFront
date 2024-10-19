@@ -19,9 +19,11 @@ import useAxios from "@/app/hooks/use-axios";
 import { useToast } from "@/app/hooks/use-toast";
 import { Dialog, DialogContent, DialogFooter, DialogTitle } from "../ui/dialog";
 import { deleteCookie } from "cookies-next";
+import { useAuth } from "@/app/context/auth-context";
 
 export function Navbar() {
   const [isLogoutDialogOpen, setIsLogoutDialogOpen] = useState(false);
+  const { setUser, user } = useAuth();
   const { toast } = useToast();
 
   const {
@@ -51,16 +53,20 @@ export function Navbar() {
     await triggerLogout?.(formData);
 
     // Delete the access_token cookie
-    deleteCookie('access_token', { path: '/', domain: process.env.NEXT_PUBLIC_DOMAIN }); 
+    deleteCookie("access_token", {
+      path: "/",
+      domain: process.env.NEXT_PUBLIC_DOMAIN,
+    });
 
     // Check response status
     if (response?.message) {
+      setUser(null);
       toast({
         title: "Logged out successfully",
         variant: "success",
       });
     }
-    if (error) { 
+    if (error) {
       toast({
         title: "Something went wrong during logout",
         variant: "destructive",
@@ -69,8 +75,8 @@ export function Navbar() {
 
     setIsLogoutDialogOpen(false);
   };
-console.log(error)
-console.log(response)
+  console.log(user);
+
   return (
     <>
       <nav className="fixed top-0 left-0 right-0 z-[60] py-4 px-4 shadow bg-background">
@@ -87,52 +93,67 @@ console.log(response)
 
           {/* Desktop Links */}
           <div className="flex items-center space-x-2">
-            {/* Dropdown for "Join Us" */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="default">Join Us</Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem asChild>
-                  <Link href="/register-hotel">Register Hotel</Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link href="/register-restaurant">Register Restaurant</Link>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <Button>
+              <Link href="/register-hotel">Join Us</Link>
+            </Button>
 
             {/* Account Dropdown */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button
-                  variant="outline"
-                  size="icon"
-                  className="overflow-hidden"
-                >
-                  <User className="h-4 w-4" />
-                </Button>
+                {user?.profile_img ? (
+                  <Image
+                    width={300}
+                    height={300}
+                    src={process.env.NEXT_PUBLIC_BASE_URL + user.profile_img}
+                    alt="User profile"
+                    className="size-8 rounded-md hover:cursor-pointer"
+                  />
+                ) : (
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="overflow-hidden"
+                  >
+                    <User className="h-4 w-4" />
+                  </Button>
+                )}
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem asChild>
-                  <Link href="/auth/login">Login</Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link href="/auth/register">Register</Link>
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem>Settings</DropdownMenuItem>
-                <DropdownMenuItem>Support</DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem asChild>
-                  <Link href="/dashboard/hotel/id">Dashboard</Link>
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onSelect={handleLogout}>
-                  Logout
-                </DropdownMenuItem>
+                {user ? (
+                  <>
+                    <DropdownMenuLabel>Setting</DropdownMenuLabel>
+                    <DropdownMenuItem asChild>
+                      <Link href="/profile">Profile</Link>
+                    </DropdownMenuItem> 
+                  </>
+                ) : (
+                  <>
+                    {/* Login */}
+                    <DropdownMenuItem asChild>
+                      <Link href="/auth/login">Login</Link>
+                    </DropdownMenuItem>
+                    {/* Register */}
+                    <DropdownMenuItem asChild>
+                      <Link href="/auth/register">Register</Link>
+                    </DropdownMenuItem>
+                  </>
+                )}
+
+                {user?.user_type === "hotel" && (
+                  <>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem asChild>
+                      <Link href="/dashboard/hotel/id">Dashboard</Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                  </>
+                )}
+
+                {user && (
+                  <DropdownMenuItem onSelect={handleLogout}>
+                    Logout
+                  </DropdownMenuItem>
+                )}
               </DropdownMenuContent>
             </DropdownMenu>
             <ModeToggle />

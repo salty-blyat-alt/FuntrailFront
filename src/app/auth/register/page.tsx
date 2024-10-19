@@ -3,6 +3,7 @@
 import { Button } from "@/app/components/ui/button";
 import { Input } from "@/app/components/ui/input";
 import { Label } from "@/app/components/ui/label";
+import { useAuth } from "@/app/context/auth-context";
 import useAxios from "@/app/hooks/use-axios";
 import { hasCookie, setCookie } from "cookies-next";
 import Image from "next/image";
@@ -12,6 +13,8 @@ import { useEffect } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 
 const Register = () => {
+  const { fetchProfile } = useAuth();
+
   const {
     triggerFetch: registerUser,
     responseData: success,
@@ -62,6 +65,7 @@ const Register = () => {
     if (success) {
       // Set cookie to expire in 7 days
       setCookie("access_token", success.token);
+      fetchProfile?.();
       router.push("/");
     }
     // If an access token already exists in the cookies, redirect as well

@@ -49,7 +49,7 @@ export default function Manage() {
       responseUser?.establishment_id &&
       `/api/hotel/rooms/${responseUser.establishment_id}`,
   });
-  console.log(rooms);
+  // console.log(rooms);
 
   useEffect(() => {
     if (responseUser?.establishment_id) {

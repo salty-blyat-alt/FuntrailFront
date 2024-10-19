@@ -183,7 +183,7 @@ export default function HotelDetail() {
             <p>No facilities available.</p>
           )}
         </TabsContent>
-      </Tabs> 
+      </Tabs>
       {/* Render rooms if available */}
       <RoomList hotelId={id.toString()}/>
 

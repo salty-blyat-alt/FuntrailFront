@@ -15,10 +15,18 @@ import BookingModal from "./booking-modal";
 import { CalendarDateRangePicker } from "@components/ui/date-range-picker";
 import { format } from "date-fns";
 import { DateRange } from "react-day-picker"; // Make sure to import DateRange
+import Image from "next/image";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogTrigger,
+} from "@/app/components/ui/dialog";
 
 export interface RoomProps {
+  img?: string;
   hotel_id?: number;
-  id?: number ;
+  id?: number;
   price_per_night?: number;
   room_type?: string;
   status?: string;
@@ -109,7 +117,7 @@ export default function RoomList({ hotelId }: { hotelId: string }) {
         } gap-4`}
       >
         <div className="">
-          <div className="flex justify-between items-center mb-4">
+          <div className="flex flex-wrap gap-4 justify-between items-center mb-4">
             <h1 className="text-2xl font-bold">Available Rooms</h1>
             <div className="flex items-center gap-x-2">
               <CalendarDateRangePicker
@@ -126,7 +134,7 @@ export default function RoomList({ hotelId }: { hotelId: string }) {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>id</TableHead>
+                <TableHead></TableHead>
                 <TableHead>Type</TableHead>
                 <TableHead>Price</TableHead>
                 {/* <TableHead>Status</TableHead> */}
@@ -138,10 +146,39 @@ export default function RoomList({ hotelId }: { hotelId: string }) {
               {Array.isArray(rooms) && rooms?.length > 0 ? (
                 rooms.map((room) => (
                   <TableRow key={room.id}>
-                    <TableCell>{room.id}</TableCell>
+                    <TableCell>
+                      <Dialog>
+                        <DialogTrigger asChild>
+                          <Image
+                            alt={room.room_type || "room"}
+                            src={
+                              room.img
+                                ? `${process.env.NEXT_PUBLIC_BASE_URL}${room.img}`
+                                : ""
+                            }
+                            width={50}
+                            height={50}
+                            style={{ cursor: "pointer" }}
+                          />
+                        </DialogTrigger>
+                        <DialogContent className="p-4">
+                          <DialogClose className="absolute right-2 top-2" />
+                          <Image
+                            alt={room.room_type || "room"}
+                            src={
+                              room.img
+                                ? `${process.env.NEXT_PUBLIC_BASE_URL}${room.img}`
+                                : ""
+                            }
+                            width={500} // Larger image size for preview
+                            height={500}
+                            className="rounded-md"
+                          />
+                        </DialogContent>
+                      </Dialog>
+                    </TableCell>
                     <TableCell>{room.room_type}</TableCell>
                     <TableCell>${room.price_per_night}</TableCell>
-
                     <TableCell>
                       <Button
                         size="sm"
@@ -175,6 +212,7 @@ export default function RoomList({ hotelId }: { hotelId: string }) {
         )}
         <BookingModal
           bookingCart={bookingCart}
+          setBookingCart={setBookingCart}
           isBookingModalOpen={isBookingModalOpen}
           setIsBookingModalOpen={setIsBookingModalOpen}
           handleCloseModal={handleCloseModal}

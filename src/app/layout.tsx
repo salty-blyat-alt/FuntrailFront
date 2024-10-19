@@ -3,8 +3,10 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "../app/globals.css";
 import { Navbar } from "./components/navbar/navbar";
-import { Toaster } from "@components/ui/toaster"; 
+import { Toaster } from "@components/ui/toaster";
 import { TooltipProvider } from "./components/ui/tooltip";
+import { AuthProvider } from "./context/auth-context";
+import Footer from "./components/footer/footer";
 
 const geistSans = localFont({
   src: "../../public/fonts/GeistVF.woff",
@@ -31,23 +33,26 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning> 
+    <html lang="en" suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <ThemeProvider
-          enableSystem
-          attribute="class"
-          defaultTheme="system"
-          disableTransitionOnChange
-          themes={["light", "dark", "purple"]}
-        >
-          <Navbar />
-          <TooltipProvider>
-          <main className="mt-16">{children}</main>
-          <Toaster />
-          </TooltipProvider>
-        </ThemeProvider>
+        <AuthProvider>
+          <ThemeProvider
+            enableSystem
+            attribute="class"
+            defaultTheme="system"
+            disableTransitionOnChange
+            themes={["light", "dark", "purple"]}
+          >
+            <Navbar />
+            <TooltipProvider>
+              <main className="mt-16">{children}</main>
+              <Toaster />
+            </TooltipProvider>
+            <Footer className=" mt-32 " />
+          </ThemeProvider>
+        </AuthProvider>
       </body>
     </html>
   );

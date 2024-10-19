@@ -5,22 +5,18 @@ import {
   TabsContent,
   TabsList,
   TabsTrigger,
-} from "../../components/ui/tabs"; 
+} from "../../components/ui/tabs";
 import Link from "next/link";
 import useAxios from "@/app/hooks/use-axios";
 import { useEffect } from "react";
+import { Skeleton } from "@/app/components/ui/skeleton";
 
 const GridCard = () => {
-  const { triggerFetch: fetchPopular, responseData: response } = useAxios<
-    {
-      result_message: string;
-      result_code: number;
-      body: any;
-      email: string;
-      password: string;
-    },
-    any
-  >({
+  const {
+    triggerFetch: fetchPopularHotels,
+    loading,
+    responseData: popularHotels,
+  } = useAxios<any, undefined>({
     endpoint: "/api/popular/hotels",
     method: "GET",
     config: {
@@ -31,9 +27,9 @@ const GridCard = () => {
   });
 
   useEffect(() => {
-    fetchPopular?.();
+    fetchPopularHotels?.();
   }, []);
-  
+
   const items = [
     { image: "/path/to/image1.jpg", alt: "Image 1" },
     { image: "/path/to/image2.jpg", alt: "Image 2" },
@@ -41,54 +37,72 @@ const GridCard = () => {
   ];
 
   return (
-    <section>
-      <h2 className="mb-4 text-2xl font-bold leading-none tracking">
+    <section className="mt-20">
+      <h2 className="my-4 text-2xl font-bold leading-none tracking">
         Popular searches
       </h2>
-      <Tabs defaultValue="hotel">
+      {/* <Tabs defaultValue="hotel">
         <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="hotel">Hotel</TabsTrigger>
           <TabsTrigger value="restaurant">Restaurant</TabsTrigger>
-        </TabsList>
+        </TabsList> */}
 
-        <TabsContent
+      {/* <TabsContent
           className="grid gap-4 grid-cols-3 md:grid-cols-4 lg:grid-cols-6"
           value="hotel"
-        >
-          {items.map((item, index) => (
-            <div key={index} className="rounded-md overflow-hidden">
-              <Link href="/" passHref>
-                <Image
-                  src="https://via.placeholder.com/300" // Use item.image if available, otherwise default to hero
-                  width={300}
-                  height={300}
-                  className="object-cover hover:scale-110 duration-200 transition-all ease-in " // Ensure the image covers the div while maintaining aspect ratio
-                  alt={item.alt || "placeholder"} // Meaningful alt text fallback
-                />
-              </Link>
+        > */}
+      <div className="grid gap-4 grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
+        {popularHotels?.map((h, index) => (
+          <Link key={index} href={`/hotel-detail/${h.hotel_id}`} passHref>
+            <div className="rounded-md border h-32 overflow-hidden">
+              <Image
+                src={`${process.env.NEXT_PUBLIC_BASE_URL}${h.thumbnail}`}
+                width={500}
+                height={500}
+                className="object-cover size-full hover:scale-110 duration-200 transition-all ease-in"
+                alt={h.hotel_name}
+              />
+            </div>
+            {h.hotel_name}
+          </Link>
+        ))}
+
+        {/* not working */}
+        {loading &&
+          Array.from({ length: 5 }).map((_, index) => (
+            <div key={index} className="flex flex-col space-y-3">
+              <Skeleton className="h-[125px] rounded-xl" />
+              <div className="space-y-2">
+                <Skeleton className="h-4" />
+                <Skeleton className="h-4" />
+              </div>
             </div>
           ))}
-        </TabsContent>
+      </div>
+      {/* </TabsContent> */}
 
-        <TabsContent
+      {/* <TabsContent
           className="grid gap-4 grid-cols-3 md:grid-cols-4 lg:grid-cols-6"
           value="restaurant"
-        >
+          >
           {items.map((item, index) => (
-            <div key={index} className="rounded-md overflow-hidden">
-              <Link href="/" passHref>
-                <Image
-                  src="https://via.placeholder.com/300" // Use item.image if available, otherwise default to hero
-                  width={300}
-                  height={300}
-                  className="object-cover hover:scale-110 duration-200 transition-all ease-in " // Ensure the image covers the div while maintaining aspect ratio
-                  alt={item.alt || "placeholder"} // Meaningful alt text fallback
-                />
-              </Link>
-            </div>
+            <Link
+            className="rounded-md overflow-hidden"
+              href="/"
+              key={index}
+              passHref
+            >
+              <Image
+                src="https://via.placeholder.com/300"
+                width={300}
+                height={300}
+                className="object-cover hover:scale-110 duration-200 transition-all ease-in "
+                alt={item.alt || "placeholder"}
+              />
+            </Link>
           ))}
         </TabsContent>
-      </Tabs>
+      </Tabs> */}
     </section>
   );
 };

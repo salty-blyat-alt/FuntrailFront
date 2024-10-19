@@ -11,23 +11,29 @@ import {
   CardTitle,
 } from "@components/ui/card";
 import { Label } from "@components/ui/label";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import ImageListPreview from "../components/image-field/image-list-preview";
 import UploadImages from "../components/image-field/upload-images";
 import UploadThumbnail from "../components/image-field/upload-thumbnail";
 import RedStar from "../components/redstar/redstar";
 import { Checkbox } from "../components/ui/checkbox";
-import { ComboBox } from "../components/ui/combo-box";
 import { Textarea } from "../components/ui/textarea";
-import { facilities, policies, provinces } from "../constant/constant";
+import { facilities, policies } from "../constant/constant";
 import { HotelProps } from "../data/mockupData";
+import {
+  Select,
+  SelectContent, SelectItem, SelectTrigger,
+  SelectValue
+} from "../components/ui/select";
+import useAxios from "../hooks/use-axios";
+import { Province } from "../home/components/search-group";
 
 const RegisterHotel = () => {
   const {
     register,
     handleSubmit,
-    setValue,
+    setValue, 
     formState: { errors },
     reset,
   } = useForm<HotelProps>();
@@ -44,6 +50,8 @@ const RegisterHotel = () => {
     facilities: [],
     policies: [],
   });
+  
+  const [selectedProvince, setSelectedProvince] = useState<string>("");
 
   const onSubmit: SubmitHandler<HotelProps> = async (data) => {
     // Trim whitespace from string fields
@@ -76,7 +84,7 @@ const RegisterHotel = () => {
         formData.append("images[]", image); // Use "images[]" to send as an array
       });
     }
-    
+
     // Append facilities as a JSON string
     if (trimmedData.facilities) {
       formData.append("facilities", JSON.stringify(trimmedData.facilities));
@@ -125,6 +133,21 @@ const RegisterHotel = () => {
       hotel.images.filter((_, i) => i !== index)
     );
   };
+
+  const { triggerFetch: fetchProvinces, responseData: provinces } = useAxios<
+    Province[],
+    undefined
+  >({
+    endpoint: "/api/province/list",
+    method: "GET",
+    config: {},
+  });
+
+  useEffect(() => {
+    fetchProvinces?.();
+  }, []);
+
+  console.log(provinces);
 
   return (
     <div className="container mx-auto p-4">
@@ -178,18 +201,31 @@ const RegisterHotel = () => {
                   Province <RedStar />
                 </Label>
 
-                <ComboBox
-                  items={provinces}
-                  title="Please select a province"
-                  value={hotel.province_id}
-                  setValue={(value: string) => {
-                    setHotel((prev) => ({ ...prev, province_id: value }));
-                    setValue("province_id", value, { shouldValidate: true });
+                <Select
+                  value={selectedProvince}
+                  onValueChange={(value) => {
+                     setSelectedProvince(value);  
                   }}
-                  {...register("province_id", {
-                    required: "Province is required",
-                  })}
-                />
+                >
+                  <SelectTrigger className="">
+                    <SelectValue placeholder="Select a province" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {provinces?.map((p) => (
+                      <SelectItem
+                        key={p.id}
+                        value={p.name}
+                        onClick={() => {
+                          setValue("province_id", p.id); 
+                        }}
+                      >
+                        {p.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+
+                <input type="hidden" {...register('province_id', { required: "Province is required" })} />
 
                 {errors.province_id && (
                   <span className="text-red-500 pt-0 text-sm">

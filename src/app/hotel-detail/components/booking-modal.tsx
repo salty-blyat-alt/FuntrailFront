@@ -18,7 +18,7 @@ import { format } from "date-fns";
 export interface BookingModalProps {
   bookingCart?: RoomProps[];
   isBookingModalOpen?: boolean;
-  setBookingCart?: Dispatch<SetStateAction<boolean>>;
+  setBookingCart: Dispatch<SetStateAction<RoomProps[]>>;
   setIsBookingModalOpen?: Dispatch<SetStateAction<boolean>>;
   handleCloseModal?: () => void;
   dateRange: DateRange | undefined;
@@ -28,6 +28,7 @@ export interface BookingDetailProps {
   hotel_id: string;
   date_start: string;
   date_end: string;
+  setBookingCart: Dispatch<SetStateAction<RoomProps[]>>;
 }
 
 const BookingModal: React.FC<BookingModalProps> = ({
@@ -35,6 +36,7 @@ const BookingModal: React.FC<BookingModalProps> = ({
   isBookingModalOpen,
   setIsBookingModalOpen,
   handleCloseModal,
+  setBookingCart,
   dateRange,
 }) => {
   const { handleSubmit } = useForm<BookingDetailProps>({
@@ -47,7 +49,7 @@ const BookingModal: React.FC<BookingModalProps> = ({
       room_ids: [],
     },
   });
-  console.log(bookingCart?.[0]?.hotel_id);
+
   const {
     triggerFetch: triggerBook,
     error,
@@ -57,19 +59,20 @@ const BookingModal: React.FC<BookingModalProps> = ({
     method: "POST",
     config: {},
   });
+
   const router = useRouter();
 
   useEffect(() => {
     if (response?.result === true) {
-      toast({
-        title: "Booking Successful",
-        description: `You have successfully booked ${bookingCart?.length} room(s).`,
-        variant: "success",
-      });
-
       const paymentUrl = response.body?.session?.payment_url;
+      setBookingCart([]);
       if (paymentUrl) {
         router.push(paymentUrl);
+        toast({
+          title: "Booking Successful",
+          description: `You have successfully booked ${bookingCart?.length} room(s).`,
+          variant: "success",
+        });
       }
     } else if (error) {
       toast({
@@ -80,6 +83,8 @@ const BookingModal: React.FC<BookingModalProps> = ({
     }
     handleCloseModal?.();
   }, [response, error]);
+
+  console.log("response", response);
 
   const formattedFrom = dateRange?.from
     ? format(dateRange.from, "dd/MM/yyyy")
@@ -100,7 +105,6 @@ const BookingModal: React.FC<BookingModalProps> = ({
 
     formData.append("date_start", formattedFrom || "");
     formData.append("date_end", formattedTo || "");
-
     triggerBook?.(formData);
   };
 

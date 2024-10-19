@@ -43,7 +43,7 @@ const Orders = () => {
     { key: "date_end", label: "Date To", hidden: false }, 
     { key: "total", label: "Total", hidden: false },
 ];
-console.log(orderHistory)
+// console.log(orderHistory)
 
   useEffect(() => {
     fetchOrderHistory?.();

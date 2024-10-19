@@ -20,6 +20,8 @@ const BookingCart: React.FC<BookingCartProps> = ({
   handleOpenBookingModal,
   setBookingCart,
 }) => {
+
+
   const removeFromBookingCart = (roomId: number|undefined) => {
     if(!roomId){
       toast({
@@ -29,7 +31,8 @@ const BookingCart: React.FC<BookingCartProps> = ({
       });
     }
     setBookingCart(bookingCart.filter((room) => room.id !== roomId));
-  }; 
+  };
+
   return (
     <Card>
       <CardHeader>

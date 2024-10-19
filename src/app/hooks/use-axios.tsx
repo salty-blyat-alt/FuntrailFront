@@ -97,25 +97,37 @@ const useAxios = <T, U>({
           data: data,
         };
       }
-
+      
       const response: CustomAxiosResponse<T> = await axios({
         ...requestOption,
       });
 
-      const statusCode = response.status;
-      console.log("statusCode", statusCode);
+      // const statusCode = response.status; 
 
       const { body, result, result_code, result_message } = response.data;
+console.log(body)
       setResponseData(body);
       // Set only the relevant data in responseDataWithStat
       setResponseDataWithStat({ result, result_code, result_message, body });
     } catch (err: any) {
-      if (err.response && err.response.status === 401) {
-        // Redirect to login page on 401 Unauthorized
-        window.location.href = "/auth/login";
+      if (err.response) {
+        // The request was made and the server responded with a status code that falls out of the range of 2xx
+        console.error("Error response data:", err.response.data);
+        console.error("Error response status:", err.response.status);
+        console.error("Error response headers:", err.response.headers);
+        
+        if (err.response.status === 401) {
+          window.location.href = "/auth/login";
+        }
+      } else if (err.request) {
+        // The request was made but no response was received
+        console.error("No response received:", err.request);
       } else {
-        setError(err.message || "Something went wrong!");
+        // Something happened in setting up the request that triggered an Error
+        console.error("Error message:", err.message);
       }
+      
+      setError(err.message || "Something went wrong!");
     } finally {
       setLoading(false);
     }

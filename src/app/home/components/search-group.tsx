@@ -68,7 +68,7 @@ const SearchGroup = () => {
   }, []);
 
   return (
-    <div className="absolute container -translate-x-1/2 -bottom-5 left-1/2 right-1/2">
+    <div className="absolute container -translate-x-1/2 -bottom-5 left-1/2 right-1/2 px-10 sm:px-16">
       <div className="grid grid-cols-[1fr_2fr_1fr] gap-x-4 mx-auto">
         <Select value={selectedValue} onValueChange={setSelectedValue}>
           <SelectTrigger>

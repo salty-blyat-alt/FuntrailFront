@@ -12,18 +12,20 @@ import { Input } from "../components/ui/input";
 import { Province } from "../home/components/search-group";
 import CustomPagination from "../components/custom-pagination/custom-pagination";
 import { HotelProps } from "../data/mockupData";
+import Loading from "../components/loader/loading";
 
 export default function SearchPage() {
   const [name, setName] = useState("");
-  const [provinceId, setProvinceId] = useState<string|null>('');
+  const [provinceId, setProvinceId] = useState<string | null>("");
   const [page, setPage] = useState<number>();
 
-  const searchParams = useSearchParams(); 
+  const searchParams = useSearchParams();
   // fetch hotels
-  const { triggerFetch: fetchList, responseData: response } = useAxios<
-    any,
-    any
-  >({
+  const {
+    triggerFetch: fetchList,
+    loading,
+    responseData: response,
+  } = useAxios<any, any>({
     endpoint: "/api/hotel/list/",
     method: "GET",
     config: {
@@ -57,7 +59,7 @@ export default function SearchPage() {
 
   useEffect(() => {
     fetchList?.();
-    const provinceParam = searchParams.get("province")
+    const provinceParam = searchParams.get("province");
     setProvinceId(provinceParam);
     setPage(page);
   }, [name, provinceId, page]);
@@ -88,7 +90,7 @@ export default function SearchPage() {
       setProvinceId(provinceParam); // Sync province ID from URL
     }
   }, [searchParams]);
-  
+
   const pathname = usePathname();
 
   const handlePageChange = (newPage: number) => {
@@ -97,16 +99,26 @@ export default function SearchPage() {
 
   const handleProvinceChange = (provinceId: string) => {
     setProvinceId(provinceId);
-     const newSearchParams = new URLSearchParams(searchParams.toString());
+    const newSearchParams = new URLSearchParams(searchParams.toString());
     newSearchParams.set("province", provinceId);
     router.push(`?${newSearchParams.toString()}`);
-  }; 
+  };
+  
+  if (loading) {
+    // Show loading screen while content is loading
+    return <Loading />;
+  }
   return (
     <div className="min-h-screen">
       <div className="bg-secondary py-20 relative text-primary-foreground">
-      <div className="absolute -bottom-5 container -translate-x-1/2   left-1/2 right-1/2 "> 
-        <Input className="bg-input border border-black text-foreground" placeholder="Search" type="text" onChange={handleSearch} />
-      </div>
+        <div className="absolute -bottom-5 container -translate-x-1/2   left-1/2 right-1/2 ">
+          <Input
+            className="bg-input text-foreground"
+            placeholder="Search"
+            type="text"
+            onChange={handleSearch}
+          />
+        </div>
       </div>
 
       <div className="container mx-auto px-4 lg:px-12 py-8">
@@ -120,7 +132,7 @@ export default function SearchPage() {
             {/* Filter Button for Small Screens */}
             <div className="md:hidden mb-4">
               <Filter
-              selectedProvince={provinceId}
+                selectedProvince={provinceId}
                 provinces={provinces}
                 onProvinceChange={handleProvinceChange}
               />
@@ -128,7 +140,7 @@ export default function SearchPage() {
             {/* Filters for Large Screens */}
             <div className="hidden md:block sticky top-40">
               <FilterContent
-              selectedProvince={provinceId}
+                selectedProvince={provinceId}
                 provinces={provinces}
                 onProvinceChange={handleProvinceChange}
               />
@@ -145,7 +157,7 @@ export default function SearchPage() {
             </div>
 
             <div className="grid grid-cols-2 gap-4">
-              {response?.items?.map((item:HotelProps, index) => (
+              {response?.items?.map((item: HotelProps, index) => (
                 <div
                   key={index}
                   className="col-span-2 sm:col-span-1 md:col-span-2"
