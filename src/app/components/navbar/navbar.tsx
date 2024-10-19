@@ -93,9 +93,11 @@ export function Navbar() {
 
           {/* Desktop Links */}
           <div className="flex items-center space-x-2">
-            <Button>
-              <Link href="/register-hotel">Join Us</Link>
-            </Button>
+            {user?.user_type !== "hotel" && (
+              <Button>
+                <Link href="/register-hotel">Join Us</Link>
+              </Button>
+            )}
 
             {/* Account Dropdown */}
             <DropdownMenu>
@@ -124,7 +126,7 @@ export function Navbar() {
                     <DropdownMenuLabel>Setting</DropdownMenuLabel>
                     <DropdownMenuItem asChild>
                       <Link href="/profile">Profile</Link>
-                    </DropdownMenuItem> 
+                    </DropdownMenuItem>
                   </>
                 ) : (
                   <>

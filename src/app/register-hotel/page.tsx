@@ -23,102 +23,164 @@ import { facilities, policies } from "../constant/constant";
 import { HotelProps } from "../data/mockupData";
 import {
   Select,
-  SelectContent, SelectItem, SelectTrigger,
-  SelectValue
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "../components/ui/select";
 import useAxios from "../hooks/use-axios";
 import { Province } from "../home/components/search-group";
+import { useRouter } from "next/navigation";
 
 const RegisterHotel = () => {
   const {
     register,
     handleSubmit,
-    setValue, 
+    setValue,
     formState: { errors },
     reset,
   } = useForm<HotelProps>();
 
-  const [hotel, setHotel] = useState<HotelProps>({
+  const [selectedProvince, setSelectedProvince] = useState<string>("");
+  const [provinceId, setProvinceId] = useState<number | null>(null); // Use null for initial state
+
+  const { triggerFetch: fetchProvinces, responseData: provinces } = useAxios<
+    Province[],
+    undefined
+  >({
+    endpoint: "/api/province/list",
+    method: "GET",
+    config: {},
+  });
+
+  const {
+    triggerFetch: registerHotel,
+    responseData: success,
+    finished,
+    error,
+  } = useAxios<any, any>({
+    endpoint: "/api/hotel/create",
+    method: "POST",
+    config: {},
+  });
+
+  useEffect(() => {
+    fetchProvinces?.();
+  }, []);
+
+  const router = useRouter();
+
+  useEffect(() => {
+    if (success) {
+      console.log(success);
+      router.back();
+      toast({
+        title: "Hotel Registered",
+        description: "Your hotel has been successfully registered.",
+      });
+    }
+  }, [success]);
+
+  useEffect(() => {
+    if (finished) {
+      // reset();
+      setHotel({
+        name: "",
+        address: "",
+        province_id: 0,
+        description: "",
+        thumbnail: undefined,
+        images: [],
+        open_at: "",
+        close_at: "",
+        facilities: [],
+        policies: [],
+      });
+    }
+  }, [finished]);
+
+  useEffect(() => {
+    if (error) {
+      console.log(error);
+      toast({
+        title: "Hotel Error",
+        description: error,
+        variant: "destructive",
+      });
+    }
+  }, [error]);
+  // console.log(provinceId);
+
+  const [hotel, setHotel] = useState<{
+    name: string;
+    province_id: number;
+    address: string;
+    description?: string;
+    thumbnail: File | undefined;
+    images?: File[] | null;
+    open_at: string;
+    close_at: string;
+    facilities?: string[];
+    policies?: string[];
+  }>({
     name: "",
     address: "",
-    province_id: "",
+    province_id: provinceId || 0,
     description: "",
-    thumbnail: null,
+    thumbnail: undefined,
     images: [],
     open_at: "",
     close_at: "",
     facilities: [],
     policies: [],
   });
-  
-  const [selectedProvince, setSelectedProvince] = useState<string>("");
 
   const onSubmit: SubmitHandler<HotelProps> = async (data) => {
-    // Trim whitespace from string fields
     const trimmedData = {
       ...data,
       name: data.name.trim(),
       address: data.address?.trim(),
-      province_id: data.province_id.trim(),
       description: data.description?.trim(),
-      open_at: data.open_at.trim(),
-      close_at: data.close_at.trim(),
     };
 
     const formData = new FormData();
     formData.append("name", trimmedData.name);
     formData.append("address", trimmedData.address || "");
-    formData.append("province_id", trimmedData.province_id);
+    formData.append("province_id", data.province_id);
     formData.append("description", trimmedData.description || "");
-    formData.append("open_at", trimmedData.open_at);
-    formData.append("close_at", trimmedData.close_at);
+    formData.append("open_at", data.open_at);
+    formData.append("close_at", data.close_at);
+    formData.append("thumbnail", trimmedData.thumbnail || "");
 
-    // Append thumbnail
-    if (trimmedData.thumbnail) {
-      formData.append("thumbnail", trimmedData.thumbnail);
-    }
+    // Append images to FormData
+    trimmedData.images?.forEach((image) => {
+      formData.append("images[]", image);
+    });
 
-    // Append additional images if they exist
-    if (trimmedData.images.length > 0) {
-      trimmedData.images.forEach((image) => {
-        formData.append("images[]", image); // Use "images[]" to send as an array
-      });
-    }
+    // Append facilities to FormData
+    trimmedData.facilities?.forEach((facility) => {
+      formData.append("facilities[]", facility);
+    });
 
-    // Append facilities as a JSON string
-    if (trimmedData.facilities) {
-      formData.append("facilities", JSON.stringify(trimmedData.facilities));
-    }
-
-    // Append policies as a JSON string
-    if (trimmedData.policies) {
-      formData.append("policies", JSON.stringify(trimmedData.policies));
-    }
+    // Append policies to FormData
+    trimmedData.policies?.forEach((policy) => {
+      formData.append("policies[]", policy);
+    });
 
     console.log("Submitting the form with the following data:", formData);
-
-    toast({
-      title: "Hotel Registered",
-      description: "Your hotel has been successfully registered.",
-    });
-
-    // Reset the form values
-    reset();
-    setHotel({
-      name: "",
-      address: "",
-      province_id: "",
-      description: "",
-      thumbnail: null,
-      images: [],
-      open_at: "",
-      close_at: "",
-      facilities: [],
-      policies: [],
-    });
+    registerHotel?.(formData);
   };
 
-  const handleThumbnailChange = (file: File | null) => {
+  const handleFacilityChange = (facility: string, checked: boolean) => {
+    const updatedFacilities = checked
+      ? [...hotel.facilities, facility]
+      : hotel.facilities.filter((f) => f !== facility);
+
+    setHotel((prev) => ({ ...prev, facilities: updatedFacilities }));
+    setValue("facilities", updatedFacilities); // Update react-hook-form state
+  };
+
+  const handleThumbnailChange = (file: File) => {
     setHotel((prev) => ({ ...prev, thumbnail: file }));
     setValue("thumbnail", file);
   };
@@ -133,25 +195,17 @@ const RegisterHotel = () => {
       hotel.images.filter((_, i) => i !== index)
     );
   };
-
-  const { triggerFetch: fetchProvinces, responseData: provinces } = useAxios<
-    Province[],
-    undefined
-  >({
-    endpoint: "/api/province/list",
-    method: "GET",
-    config: {},
-  });
-
-  useEffect(() => {
-    fetchProvinces?.();
-  }, []);
-
-  console.log(provinces);
-
+  const handleProvinceChange = (value: string) => {
+    setSelectedProvince(value);
+    const selectedProvinceData = provinces.find((p) => p.name === value);
+    const id = selectedProvinceData ? selectedProvinceData.id : null;
+    setProvinceId(id);
+    setValue("province_id", id);
+    setHotel((prev) => ({ ...prev, province_id: id || 0 }));
+  };
   return (
     <div className="container mx-auto p-4">
-      <form onSubmit={handleSubmit(onSubmit)} encType="multipart/form-data">
+      <form onSubmit={handleSubmit(onSubmit)}>
         <Card className="w-full max-w-2xl mx-auto">
           <CardHeader>
             <CardTitle>Register Your Hotel</CardTitle>
@@ -203,29 +257,26 @@ const RegisterHotel = () => {
 
                 <Select
                   value={selectedProvince}
-                  onValueChange={(value) => {
-                     setSelectedProvince(value);  
-                  }}
+                  onValueChange={handleProvinceChange} // Update onValueChange
                 >
-                  <SelectTrigger className="">
+                  <SelectTrigger>
                     <SelectValue placeholder="Select a province" />
                   </SelectTrigger>
                   <SelectContent>
                     {provinces?.map((p) => (
-                      <SelectItem
-                        key={p.id}
-                        value={p.name}
-                        onClick={() => {
-                          setValue("province_id", p.id); 
-                        }}
-                      >
+                      <SelectItem key={p.id} value={p.name}>
                         {p.name}
                       </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
 
-                <input type="hidden" {...register('province_id', { required: "Province is required" })} />
+                <input
+                  type="hidden"
+                  {...register("province_id", {
+                    required: "Province is required",
+                  })}
+                />
 
                 {errors.province_id && (
                   <span className="text-red-500 pt-0 text-sm">
@@ -237,26 +288,17 @@ const RegisterHotel = () => {
               {/* facilities */}
               <div>
                 <Label htmlFor="facilities">Facilities</Label>
+
                 <div className="grid grid-cols-2 gap-2">
                   {facilities.map((facility, index) => (
                     <div key={index} className="flex items-center">
                       <Checkbox
                         id={`facility-${index}`}
                         value={facility}
-                        onCheckedChange={(checked) => {
-                          setHotel((prev) => ({
-                            ...prev,
-                            facilities: checked
-                              ? [...prev.facilities, facility]
-                              : prev.facilities?.filter((f) => f !== facility),
-                          }));
-                          setValue(
-                            "facilities",
-                            checked
-                              ? [...hotel.facilities, facility]
-                              : hotel.facilities?.filter((f) => f !== facility)
-                          );
-                        }}
+                        checked={hotel.facilities.includes(facility)} // Ensure checkbox reflects state
+                        onCheckedChange={(checked) =>
+                          handleFacilityChange(facility, checked)
+                        } // Use the new handler
                         className="mr-2"
                       />
                       <Label
@@ -274,6 +316,7 @@ const RegisterHotel = () => {
                   )}
                 </div>
               </div>
+
               {/* policies */}
               <div>
                 <Label htmlFor="policies">Policies</Label>
@@ -330,12 +373,13 @@ const RegisterHotel = () => {
                   </span>
                 )}
               </div>
+
               {/* Thumbnail Upload */}
               <div className="flex flex-col space-y-1.5">
                 <UploadThumbnail
                   isRequired
                   title="Please upload hotel profile"
-                  thumbnail={hotel.thumbnail}
+                  thumbnail={hotel.thumbnail!}
                   setThumbnail={handleThumbnailChange}
                   {...register("thumbnail", {
                     required: "Hotel profile is required",
@@ -373,7 +417,7 @@ const RegisterHotel = () => {
                     aria-label="Open At"
                     type="time"
                     {...register("open_at", {
-                      required: "Open At is required",
+                      required: "Opening hour is required",
                     })}
                   />
                   <p className="text-gray-600 text-sm">
@@ -395,7 +439,7 @@ const RegisterHotel = () => {
                     aria-label="Close At"
                     type="time"
                     {...register("close_at", {
-                      required: "Close At is required",
+                      required: "Closing hour is required",
                     })}
                   />
                   <p className="text-gray-600 text-sm">
@@ -414,12 +458,7 @@ const RegisterHotel = () => {
             <Button variant="outline" type="button" onClick={() => reset()}>
               Cancel
             </Button>
-            <div className="space-x-4">
-              <Button variant="secondary" type="button" onClick={() => reset()}>
-                Preview
-              </Button>
-              <Button type="submit">Register Hotel</Button>
-            </div>
+            <Button type="submit">Register Hotel</Button>
           </CardFooter>
         </Card>
       </form>

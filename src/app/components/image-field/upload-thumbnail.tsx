@@ -9,9 +9,9 @@ import { Label } from "../ui/label";
 
 interface UploadThumbnailProps {
   title: string;
-  thumbnail: File | null;
-  isRequired?: boolean | null;
-  setThumbnail: (thumbnail: File | null) => void;
+  thumbnail: File | undefined;
+  isRequired?: boolean;
+  setThumbnail: (file: File) => void;
 }
 
 const UploadThumbnail: React.FC<UploadThumbnailProps> = ({
@@ -46,7 +46,7 @@ const UploadThumbnail: React.FC<UploadThumbnailProps> = ({
   };
 
   const handleDeleteThumbnail = () => {
-    setThumbnail(null);
+    setThumbnail(undefined);
     if (thumbnailInputRef.current) {
       thumbnailInputRef.current.value = "";
     }

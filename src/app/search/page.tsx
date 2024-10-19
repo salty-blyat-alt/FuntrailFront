@@ -13,6 +13,7 @@ import { Province } from "../home/components/search-group";
 import CustomPagination from "../components/custom-pagination/custom-pagination";
 import { HotelProps } from "../data/mockupData";
 import Loading from "../components/loader/loading";
+import BackButton from "../components/back-button/back-button";
 
 export default function SearchPage() {
   const [name, setName] = useState("");
@@ -103,9 +104,8 @@ export default function SearchPage() {
     newSearchParams.set("province", provinceId);
     router.push(`?${newSearchParams.toString()}`);
   };
-  
+
   if (loading) {
-    // Show loading screen while content is loading
     return <Loading />;
   }
   return (
@@ -123,7 +123,8 @@ export default function SearchPage() {
 
       <div className="container mx-auto px-4 lg:px-12 py-8">
         {/* Breadcrumb */}
-        <div className="mb-4">
+        <div className="mb-4 flex gap-4">
+          <BackButton />
           <CustomBreadcrumb pathname={pathname} />
         </div>
 
