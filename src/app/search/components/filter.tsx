@@ -16,7 +16,6 @@ import { Label } from "@/app/components/ui/label";
 import { Province } from "@/app/home/components/search-group";
 import { ScrollArea } from "@/app/components/ui/scroll-area";
 import { RadioGroup, RadioGroupItem } from "@/app/components/ui/radio-group";
-import { useSearchParams } from "next/navigation";
 
 const Filter = ({
   selectedProvince,
@@ -28,6 +27,10 @@ const Filter = ({
   onProvinceChange: (provinceId: string) => void;
 }) => {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
+
+  const handleClearFilters = () => {
+    onProvinceChange(""); // Clear the selected province
+  };
 
   return (
     <Dialog open={isFilterOpen} onOpenChange={setIsFilterOpen}>
@@ -46,9 +49,13 @@ const Filter = ({
           provinces={provinces}
           onProvinceChange={onProvinceChange}
         />
-          <DialogFooter className="sm:justify-start">
+        <DialogFooter className="sm:justify-start">
+          {/* Clear Filters Button */}
+          <Button type="button" variant="outline" onClick={handleClearFilters}>
+            Clear Filters
+          </Button>
           <DialogClose asChild>
-            <Button type="button" variant="secondary">
+            <Button type="button" variant="secondary" className="ml-2">
               Close
             </Button>
           </DialogClose>
@@ -73,7 +80,7 @@ const FilterContent = ({
       <p className="muted text-nowrap">Filters others picked</p>
       <ScrollArea className="h-80">
         <RadioGroup
-          value={selectedProvince ? selectedProvince.toString() : ""}  // Controlled value instead of defaultValue
+          value={selectedProvince ? selectedProvince.toString() : ""} // Controlled value instead of defaultValue
           onValueChange={onProvinceChange} // Handle province change
         >
           {provinces?.map((province) => (

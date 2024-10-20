@@ -9,7 +9,7 @@ import {
   useEffect,
 } from "react";
 import useAxios from "../hooks/use-axios";
-import { getCookie } from "cookies-next";
+import { getCookie, setCookie } from "cookies-next";
 
 // Define the shape of the context value
 interface AuthContextType {
@@ -66,6 +66,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     // Update user state when the profile response changes
     if (profile) {
       setUser(profile);
+      setCookie("establishment_id", JSON.stringify(profile.establishment_id), { maxAge: 60 * 60 * 24 }); 
     }
   }, [profile]);
   // console.log("user", user);

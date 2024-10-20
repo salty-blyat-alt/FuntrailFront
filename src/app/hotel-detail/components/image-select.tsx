@@ -10,7 +10,14 @@ interface ImageSelectProps {
 const ImageSelect: React.FC<ImageSelectProps> = ({ images }) => {
   const [thumbnailIndex, setThumbnailIndex] = useState<number>(0);
 
-  const parsedImages: string[] = images ? JSON.parse(images) : [];
+  let parsedImages: string[] = [];
+
+  try {
+    parsedImages = images && images.trim() ? JSON.parse(images) : [];
+  } catch (error) {
+    console.error("Invalid JSON format:", error);
+    parsedImages = []; // Handle invalid JSON gracefully
+  }
 
   const handleImageClick = (index: number) => {
     setThumbnailIndex(index);

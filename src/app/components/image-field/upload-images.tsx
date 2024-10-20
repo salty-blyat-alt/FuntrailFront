@@ -1,6 +1,5 @@
 "use client";
-import { toast } from "@/app/hooks/use-toast"; // Ensure this is the correct path
-import { HotelProps } from "@/app/data/mockupData";
+import { toast } from "@/app/hooks/use-toast";
 import {
   Dispatch,
   SetStateAction,
@@ -12,6 +11,19 @@ import {
 import { UseFormSetValue } from "react-hook-form";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
+
+interface HotelProps {
+  name: string;
+  province_id: number;
+  address: string;
+  description?: string;
+  thumbnail: File | undefined;
+  images: (File | string)[];
+  open_at: string;
+  close_at: string;
+  facilities?: string[];
+  policies?: string[];
+}
 
 interface UploadImagesProps {
   hotel: HotelProps;
@@ -27,7 +39,6 @@ const UploadImages: React.FC<UploadImagesProps> = ({
   const imagesInputRef = useRef<HTMLInputElement>(null);
   const [isDragOver, setIsDragOver] = useState(false);
 
-  // Use useMemo for allowed types to prevent unnecessary re-renders
   const allowedTypes = useMemo(
     () => ["image/jpeg", "image/png", "image/gif"],
     []
@@ -44,13 +55,16 @@ const UploadImages: React.FC<UploadImagesProps> = ({
 
       if (validFiles.length > 0) {
         setHotel((prev) => {
-          const updatedImages = [...(prev.images || []), ...validFiles];
-          setValue("images", updatedImages); // Use the new images array
-          return { ...prev, images: updatedImages }; // Return updated state
+          const updatedImages = [...(prev.images || []), ...validFiles] as (
+            | File
+            | string
+          )[];
+
+          setValue("images", updatedImages);
+          return { ...prev, images: updatedImages };
         });
       }
 
-      // Notify user of invalid files
       if (invalidFiles.length > 0) {
         toast({
           title: "Invalid file type",
@@ -59,7 +73,7 @@ const UploadImages: React.FC<UploadImagesProps> = ({
         });
       }
     },
-    [allowedTypes, setHotel, setValue] // No need for hotel.images here
+    [allowedTypes, setHotel, setValue]
   );
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -106,13 +120,13 @@ const UploadImages: React.FC<UploadImagesProps> = ({
         onDragLeave={handleDragLeave}
         onClick={() => imagesInputRef.current?.click()}
       >
-        {hotel.images?.length === 0 ? (
+        {hotel.images.length === 0 ? (
           <span className={isDragOver ? "text-blue-500" : ""}>
             Drag & drop images here or click to choose
           </span>
         ) : (
           <span className={isDragOver ? "text-blue-500" : ""}>
-            {hotel.images?.length} file(s) chosen
+            {hotel.images.length} file(s) chosen
           </span>
         )}
       </div>

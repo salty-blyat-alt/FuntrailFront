@@ -46,9 +46,7 @@ export function Navbar() {
 
   const confirmLogout = async () => {
     const formData = new FormData();
-    // You can add any data you want to send with the logout request if needed
-    // formData.append('key', 'value');
-
+     
     // Trigger the logout with FormData
     await triggerLogout?.(formData);
 

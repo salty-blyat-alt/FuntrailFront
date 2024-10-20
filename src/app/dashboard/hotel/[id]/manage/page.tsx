@@ -13,6 +13,7 @@ import CustomTable, {
 } from "@/app/components/custom-table/custom-table";
 import { RoomProps } from "@/app/hotel-detail/components/room-list";
 import DeleteRoomDialog from "./components/delete-room-dialog";
+import { Navbar } from "@/app/components/navbar/navbar";
 
 export default function Manage() {
   const [selectedRoom, setSelectedRoom] = useState<number>();
@@ -81,32 +82,35 @@ export default function Manage() {
   };
 
   return (
-    <DashboardLayout navItems={hotelNavItem}>
-      <PageContainer scrollable={true}>
-        <div className="flex mb-2 justify-between">
-          <h2>Room Management</h2>
-          <Button onClick={handleOpenAddDialog} variant="outline">
-            <PlusIcon className="mr-2" /> Add Room
-          </Button>
-        </div>
+    <>
+      <Navbar />
+      <DashboardLayout navItems={hotelNavItem}>
+        <PageContainer scrollable={true}>
+          <div className="flex mb-2 justify-between">
+            <h2>Room Management</h2>
+            <Button onClick={handleOpenAddDialog} variant="outline">
+              <PlusIcon className="mr-2" /> Add Room
+            </Button>
+          </div>
 
-        <CustomTable
-          title="Rooms"
-          subtitle="Manage your rooms"
-          data={rooms}
-          loading={loading}
-          onEdit={handleEdit}
-          onDelete={handleOpenDeleteDialog}
-          headers={headers}
-        />
+          <CustomTable
+            title="Rooms"
+            subtitle="Manage your rooms"
+            data={rooms}
+            loading={loading}
+            onEdit={handleEdit}
+            onDelete={handleOpenDeleteDialog}
+            headers={headers}
+          />
 
-        <AddRoomDialog open={openAddDialog} onClose={handleCloseAddDialog} />
-        <DeleteRoomDialog
-          open={openDeleteDialog}
-          room_id={selectedRoom}
-          onClose={handleCloseDeleteDialog}
-        />
-      </PageContainer>
-    </DashboardLayout>
+          <AddRoomDialog open={openAddDialog} onClose={handleCloseAddDialog} />
+          <DeleteRoomDialog
+            open={openDeleteDialog}
+            room_id={selectedRoom}
+            onClose={handleCloseDeleteDialog}
+          />
+        </PageContainer>
+      </DashboardLayout>
+    </>
   );
 }

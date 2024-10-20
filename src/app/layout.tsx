@@ -45,12 +45,10 @@ export default function RootLayout({
             disableTransitionOnChange
             themes={["light", "dark", "purple"]}
           >
-            <Navbar />
             <TooltipProvider>
               <main className="mt-16">{children}</main>
               <Toaster />
             </TooltipProvider>
-            <Footer className=" mt-32 " />
           </ThemeProvider>
         </AuthProvider>
       </body>

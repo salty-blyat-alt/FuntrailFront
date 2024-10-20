@@ -16,10 +16,14 @@ import EditHotelDialog from "./components/edit-hotel-dialog";
 import { PenIcon } from "lucide-react"; 
 import { hotelNavItem } from "@/app/dashboard/routes/routes";
 import { mockHotel } from "@/app/data/mockupData";
+import { Navbar } from "@/app/components/navbar/navbar";
+import Footer from "@/app/components/footer/footer";
 
 const HotelSetting = () => {
   const [hotel, setHotel] = useState(mockHotel);
   return (
+    <>
+    <Navbar />
     <DashboardLayout navItems={hotelNavItem}>
       <PageContainer scrollable={true}>
         <Card className="overflow-hidden">
@@ -41,7 +45,8 @@ const HotelSetting = () => {
           </CardContent>
         </Card>
       </PageContainer>
-    </DashboardLayout>
+    </DashboardLayout> 
+    </>
   );
 };
 

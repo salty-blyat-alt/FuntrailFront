@@ -21,7 +21,7 @@ interface UserData {
 }
 
 export default function ProfilePage() {
-  const { user, updateUser } = useAuth()
+  const { user  } = useAuth()
   const [activeTab, setActiveTab] = useState("personal")
   const [editUser, setEditUser] = useState<UserData | null>(null)
 
@@ -32,9 +32,7 @@ export default function ProfilePage() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    if (editUser) {
-      updateUser(editUser)
-    }
+    
   }
 
   return (
