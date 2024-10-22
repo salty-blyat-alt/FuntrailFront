@@ -84,8 +84,6 @@ const BookingModal: React.FC<BookingModalProps> = ({
     handleCloseModal?.();
   }, [response, error]);
 
-  console.log("response", response);
-
   const formattedFrom = dateRange?.from
     ? format(dateRange.from, "dd/MM/yyyy")
     : "";

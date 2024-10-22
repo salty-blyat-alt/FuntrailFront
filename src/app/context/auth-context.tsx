@@ -41,6 +41,7 @@ interface AuthProviderProps {
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [user, setUser] = useState<User | null>(null);
+  const [hasFetchedProfile, setHasFetchedProfile] = useState(false); // Track if the profile has been fetched
   const access_token = getCookie("access_token");
   const { triggerFetch: fetchProfile, responseData: profile } = useAxios<
     any,
@@ -56,20 +57,26 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   });
 
   useEffect(() => {
-    // Fetch profile only if access token exists
-    if (access_token) {
+    // Fetch profile only if access token exists and it hasn't been fetched yet
+    if (access_token && !hasFetchedProfile) {
       fetchProfile?.();
+      setHasFetchedProfile(true); // Mark as fetched
     }
-  }, [access_token]);
+  }, [access_token, hasFetchedProfile]);
 
   useEffect(() => {
     // Update user state when the profile response changes
     if (profile) {
       setUser(profile);
-      setCookie("establishment_id", JSON.stringify(profile.establishment_id), { maxAge: 60 * 60 * 24 }); 
+      setCookie("establishment_id", profile.establishment_id, {
+        path: "/",
+        domain: process.env.NEXT_PUBLIC_DOMAIN,
+        secure: true,
+        sameSite: true,
+      });
     }
   }, [profile]);
-  // console.log("user", user);
+
   const contextValue = { user, setUser, fetchProfile };
 
   return (

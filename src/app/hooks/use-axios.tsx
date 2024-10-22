@@ -51,109 +51,6 @@ const fetchCsrfToken = async () => {
   }
 };
 
-const useAxios = <T, U>({
-  endpoint,
-  method = "GET",
-  config = {},
-  baseUrl = "localhost:8000",
-}: UseAxiosProps): UseAxiosReturn<T, U> => {
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [responseData, setResponseData] = useState<T | null>(null);
-  const [responseDataWithStat, setResponseDataWithStat] = useState<{
-    result: boolean;
-    result_code: number;
-    result_message: string;
-    body: T;
-  } | null>(null);
-  const [finished, setFinished] = useState(false);
-
-  useEffect(() => {
-    fetchCsrfToken();
-  }, []);
-
-  const fetchData = async (data?: U) => {
-    setLoading(true);
-    setError(null);
-    try {
-      const csrfToken = getCsrfTokenFromCookies();
-      const access_token = getAccessToken();
-
-      let requestOption = {
-        url: `http://${baseUrl ?? process.env.NEXT_PUBLIC_BASE_URL}${endpoint}`,
-        method,
-        ...config,
-        headers: {
-          ...config.headers,
-          Authorization: `Bearer ${access_token}`,
-          "X-XSRF-TOKEN": csrfToken,
-        },
-        withCredentials: true,
-      };
-
-      if (data) {
-        requestOption = {
-          ...requestOption,
-          data: data,
-        };
-      }
-      
-      const response: CustomAxiosResponse<T> = await axios({
-        ...requestOption,
-      });
-
-      // const statusCode = response.status; 
-
-      const { body, result, result_code, result_message } = response.data;
-console.log(body)
-      setResponseData(body);
-      // Set only the relevant data in responseDataWithStat
-      setResponseDataWithStat({ result, result_code, result_message, body });
-    } catch (err: any) {
-      if (err.response) {
-        // The request was made and the server responded with a status code that falls out of the range of 2xx
-        console.error("Error response data:", err.response.data);
-        console.error("Error response status:", err.response.status);
-        console.error("Error response headers:", err.response.headers);
-        
-        if (err.response.status === 401) {
-          window.location.href = "/auth/login";
-        }
-      } else if (err.request) {
-        // The request was made but no response was received
-        console.error("No response received:", err.request);
-      } else {
-        // Something happened in setting up the request that triggered an Error
-        console.error("Error message:", err.message);
-      }
-      
-      setError(err.message || "Something went wrong!");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const triggerFetch = (data?: U) => {
-    fetchData(data).finally(() => {
-      setFinished(true);
-      setTimeout(() => {
-        setFinished(false);
-      }, 0);
-    });
-  };
-
-  return {
-    loading,
-    error,
-    setResponseData,
-    responseDataWithStat,
-    setResponseDataWithStat,
-    responseData,
-    triggerFetch,
-    finished,
-  };
-};
-
 // Helper function to get CSRF token from cookies
 const getCsrfTokenFromCookies = () => {
   const name = "XSRF-TOKEN=";
@@ -185,6 +82,106 @@ const getAccessToken = () => {
     }
   }
   return null;
+};
+
+const useAxios = <T, U>({
+  endpoint,
+  method = "GET",
+  config = {},
+  baseUrl = "localhost:8000",
+}: UseAxiosProps): UseAxiosReturn<T, U> => {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [responseData, setResponseData] = useState<T | null>(null);
+  const [responseDataWithStat, setResponseDataWithStat] = useState<{
+    result: boolean;
+    result_code: number;
+    result_message: string;
+    body: T;
+  } | null>(null);
+  const [finished, setFinished] = useState(false);
+
+  useEffect(() => {
+    const csrfToken = getCsrfTokenFromCookies();
+    // Only fetch the CSRF token if it's not already present
+    if (!csrfToken) {
+      fetchCsrfToken();
+    }
+  }, []);
+
+  const fetchData = async (data?: U) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const csrfToken = getCsrfTokenFromCookies();
+      const access_token = getAccessToken();
+
+      let requestOption = {
+        url: `http://${baseUrl ?? process.env.NEXT_PUBLIC_BASE_URL}${endpoint}`,
+        method,
+        ...config,
+        headers: {
+          ...config.headers,
+          Authorization: `Bearer ${access_token}`,
+          "X-XSRF-TOKEN": csrfToken,
+        },
+        withCredentials: true,
+      };
+
+      if (data) {
+        requestOption = {
+          ...requestOption,
+          data: data,
+        };
+      }
+
+      const response: CustomAxiosResponse<T> = await axios({
+        ...requestOption,
+      });
+
+      const { body, result, result_code, result_message } = response.data;
+      setResponseData(body);
+      setResponseDataWithStat({ result, result_code, result_message, body });
+    } catch (err: any) {
+      if (err.response) {
+        console.error("Error response data:", err.response.data);
+        console.error("Error response status:", err.response.status);
+        console.error("Error response headers:", err.response.headers);
+
+        if (err.response.status === 401) {
+          window.location.href = "/auth/login";
+        }
+      } else if (err.request) {
+        console.error("No response received:", err.request);
+      } else {
+        console.error("Error message:", err.message);
+      }
+
+      setError(err.message || "Something went wrong!");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const triggerFetch = (data?: U) => {
+    fetchData(data).finally(() => {
+      setFinished(true);
+      setTimeout(() => {
+        setFinished(false);
+      }, 0);
+    });
+  };
+
+  return {
+    loading,
+    error,
+    setResponseData,
+    responseDataWithStat,
+    setResponseDataWithStat,
+    responseData,
+    triggerFetch,
+    finished,
+  };
 };
 
 export default useAxios;

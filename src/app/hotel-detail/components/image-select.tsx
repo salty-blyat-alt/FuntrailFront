@@ -29,7 +29,9 @@ const ImageSelect: React.FC<ImageSelectProps> = ({ images }) => {
       <div className="mx-auto relative aspect-video mb-4 max-w-lg">
         {parsedImages.length > 0 ? (
           <Image
+          priority
             fill
+            sizes={"40rem"}
             src={`${process.env.NEXT_PUBLIC_BASE_URL}${parsedImages[thumbnailIndex]}`}
             alt={`Image ${thumbnailIndex}`}
             className="rounded-lg object-cover"
@@ -54,6 +56,7 @@ const ImageSelect: React.FC<ImageSelectProps> = ({ images }) => {
             >
               <Image
                 fill
+                sizes={"40rem"}
                 src={`${process.env.NEXT_PUBLIC_BASE_URL}${image}`}
                 alt={`Thumbnail ${index}`}
                 className="rounded-lg object-cover"

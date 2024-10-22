@@ -7,7 +7,7 @@ import logo from "@public/logo/logo.svg";
 
 export default function Footer({ className = "" }) {
   return (
-    <footer className={`${className}py-12 transition-colors duration-200`}>
+    <footer className={`${className} py-12 transition-colors duration-200`}>
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
           <div className="col-span-1 md:col-span-2">

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ModeToggle } from "@/theme/toggle-theme";
 import logo from "@public/logo/logo.svg";
 import { User } from "lucide-react";
@@ -29,7 +29,7 @@ export function Navbar() {
   const {
     triggerFetch: triggerLogout,
     error,
-    responseData: response,
+    responseData: response
   } = useAxios<any, any>({
     endpoint: "/api/auth/logout",
     method: "POST",
@@ -43,37 +43,49 @@ export function Navbar() {
   const handleLogout = () => {
     setIsLogoutDialogOpen(true);
   };
-
-  const confirmLogout = async () => {
-    const formData = new FormData();
-     
-    // Trigger the logout with FormData
-    await triggerLogout?.(formData);
-
-    // Delete the access_token cookie
-    deleteCookie("access_token", {
-      path: "/",
-      domain: process.env.NEXT_PUBLIC_DOMAIN,
-    });
-
-    // Check response status
-    if (response?.message) {
+  useEffect(() => {
+    if (response) {
       setUser(null);
       toast({
         title: "Logged out successfully",
         variant: "success",
       });
     }
+  }, [response]);
+
+  useEffect(() => {
     if (error) {
       toast({
         title: "Something went wrong during logout",
         variant: "destructive",
       });
     }
+  }, [error]);
+
+  const confirmLogout = async () => {
+    const formData = new FormData();
+
+    // Trigger the logout with FormData
+    await triggerLogout?.(formData);
+
+    // Delete the necessary cookies
+    deleteCookie("access_token", {
+      path: "/",
+      domain: process.env.NEXT_PUBLIC_DOMAIN,
+    });
+    deleteCookie("establishment_id", {
+      path: "/",
+      domain: process.env.NEXT_PUBLIC_DOMAIN,
+    });
+    deleteCookie("user", {
+      path: "/",
+      domain: process.env.NEXT_PUBLIC_DOMAIN,
+    });
+
+    // Check response status
 
     setIsLogoutDialogOpen(false);
   };
-  console.log(user);
 
   return (
     <>

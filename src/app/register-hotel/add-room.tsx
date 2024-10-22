@@ -83,11 +83,6 @@ export default function AddRoom() {
 
   useEffect(() => {
     if (success) {
-      reset();
-      setRoomType("standard");
-      setCustomRoomType("");
-      setPreview(undefined);
-
       toast({
         title: "Room Added",
         description: "Room is added to your hotel successfully.",
@@ -100,6 +95,10 @@ export default function AddRoom() {
 
   useEffect(() => {
     if (finished) {
+      setRoomType("standard");
+      setCustomRoomType("");
+      setPreview(undefined);
+      reset();
       fetchRooms?.();
     }
   }, [finished]);
@@ -144,7 +143,7 @@ export default function AddRoom() {
       formData.append("room_id", deleteRoomId.toString()); // Ensure the ID is a string
 
       try {
-        await deleteRoom?.(formData); // Call deleteRoom with the FormData
+        deleteRoom?.(formData); // Call deleteRoom with the FormData
 
         toast({
           title: "Room Deleted",
@@ -159,7 +158,7 @@ export default function AddRoom() {
         toast({
           title: "Error",
           description: "Failed to delete the room. Please try again.",
-          variant: "error",
+          variant: "destructive",
         });
       } finally {
         setShowDialog(false);

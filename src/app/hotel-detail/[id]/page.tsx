@@ -40,12 +40,16 @@ export default function HotelDetail() {
       },
     },
   });
+
   useEffect(() => {
-    fetchHotel?.();
+    if(!hotel){
+      fetchHotel?.();
+    }
   }, []);
 
   const router = useRouter();
   const pathname = usePathname();
+  console.count();
 
   return (
     <>
@@ -99,7 +103,6 @@ export default function HotelDetail() {
             </TabsTrigger>
           </TabsList>
 
-          {/* Overview Tab */}
           <TabsContent value="overview">
             {hotel?.description ? (
               <p>{hotel.description}</p>
@@ -108,7 +111,6 @@ export default function HotelDetail() {
             )}
           </TabsContent>
 
-          {/* Info & Prices Tab */}
           <TabsContent value="info">
             {hotel ? (
               <>
@@ -130,7 +132,6 @@ export default function HotelDetail() {
             )}
           </TabsContent>
 
-          {/* Facilities Tab */}
           <TabsContent value="facilities">
             {Array.isArray(hotel?.facilities) && hotel.facilities.length > 0 ? (
               <ul>
@@ -158,7 +159,6 @@ export default function HotelDetail() {
             )}
           </TabsContent>
 
-          {/* Policies Tab */}
           <TabsContent value="policies">
             {Array.isArray(hotel?.facilities) && hotel.facilities.length > 0 ? (
               <ul>
@@ -186,10 +186,10 @@ export default function HotelDetail() {
             )}
           </TabsContent>
         </Tabs>
-        {/* Render rooms if available */}
+
         <RoomList hotelId={id.toString()} />
 
-        <HotelComment />
+        <HotelComment hotel_id={id.toString()} />
       </div>
     </>
   );

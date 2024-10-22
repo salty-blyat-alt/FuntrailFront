@@ -12,10 +12,7 @@ import { useState, useEffect } from "react";
 
 const CreateHotel = () => {
   const { user } = useAuth();
-  const [activeTab, setActiveTab] = useState(() => {
-    // Initialize state from localStorage or default to "register"
-    return localStorage.getItem("activeTab") || "register";
-  });
+  const [activeTab, setActiveTab] = useState("register");
 
   useEffect(() => {
     if (user?.user_type === "hotel") {
@@ -26,11 +23,6 @@ const CreateHotel = () => {
   const handleRegistrationComplete = () => {
     setActiveTab("add-room"); // Change to "add-room" tab when registration is complete
   };
-
-  // Update localStorage whenever the active tab changes
-  useEffect(() => {
-    localStorage.setItem("activeTab", activeTab);
-  }, [activeTab]);
 
   return (
     <div>

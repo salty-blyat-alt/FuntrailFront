@@ -2,11 +2,7 @@
 
 import { SearchIcon } from "lucide-react";
 import { Button } from "../../components/ui/button";
-import {
-  useCallback,
-  useEffect,
-  useState
-} from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
   Select,
@@ -69,20 +65,10 @@ const SearchGroup = () => {
 
   return (
     <div className="absolute container -translate-x-1/2 -bottom-5 left-1/2 right-1/2 px-10 sm:px-16">
-      <div className="grid grid-cols-[1fr_2fr_1fr] gap-x-4 mx-auto">
-        <Select value={selectedValue} onValueChange={setSelectedValue}>
-          <SelectTrigger>
-            <SelectValue placeholder="Hotel" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="hotel">Hotel</SelectItem>
-            <SelectItem value="restaurant">Restaurant</SelectItem>
-          </SelectContent>
-        </Select>
-
-        <Select value={selectedProvince} onValueChange={setSelectedProvince}>
+      <div className="grid grid-cols-[2fr_1fr] gap-x-4 mx-auto">
+        <Select value={selectedProvince} onValueChange={setSelectedProvince} >
           <SelectTrigger className="">
-            <SelectValue placeholder="Select a province" />
+            <SelectValue placeholder="Select a province"  />
           </SelectTrigger>
           <SelectContent>
             {provinces?.map((p) => (
