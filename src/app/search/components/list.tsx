@@ -14,6 +14,7 @@ const List = ({ item }: { item: HotelProps }) => {
     : "";
 
   return (
+    
     <Card>
       <CardContent className="p-4 flex flex-row sm:flex-col md:flex-row gap-4">
         <div className="w-full md:w-1/3">

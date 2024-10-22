@@ -3,14 +3,13 @@
 import PageContainer from "../../components/page-container";
 import DashboardLayout from "../../dashboard-layout";
 
-import StatsCard from "../../components/stats-card";
 import CustomTable, {
   HeaderProps,
 } from "@/app/components/custom-table/custom-table";
-import { hotelNavItem } from "../../routes/routes";
 import useAxios from "@/app/hooks/use-axios";
 import { useEffect } from "react";
-import { Navbar } from "@/app/components/navbar/navbar";
+import StatsCard from "../../components/stats-card";
+import { hotelNavItem } from "../../routes/routes";
 
 export default function HotelDashboard() {
   const headers: HeaderProps[] = [
@@ -58,7 +57,7 @@ export default function HotelDashboard() {
 
   return (
     <>
-      <Navbar />
+      
       <DashboardLayout navItems={hotelNavItem}>
         <PageContainer scrollable={true}>
           <div className="grid gap-2">

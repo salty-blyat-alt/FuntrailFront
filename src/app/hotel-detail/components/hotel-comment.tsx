@@ -2,9 +2,10 @@ import { Textarea } from "@/app/components/ui/textarea";
 import CommentCard from "./comment-card";
 import useAxios from "@/app/hooks/use-axios";
 import { StarIcon } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Button } from "@/app/components/ui/button";
+import { motion } from "framer-motion";
 import { toast } from "@/app/hooks/use-toast";
 
 export interface CommentProps {
@@ -37,6 +38,7 @@ export interface ReplyProps {
 
 const HotelComment = ({ hotel_id }: { hotel_id: string }) => {
   const [newRating, setNewRating] = useState(0);
+  const [shouldRefetch, setShouldRefetch] = useState(false);
 
   const { triggerFetch: fetchComments, responseData: comments } = useAxios<
     CommentProps[],
@@ -75,22 +77,33 @@ const HotelComment = ({ hotel_id }: { hotel_id: string }) => {
     method: "POST",
   });
 
+  // Initial fetch on mount
   useEffect(() => {
     fetchComments?.();
-  }, [finished]);
+  }, [hotel_id]); // Only fetch when hotel_id changes
 
+  // Handle successful comment submission
   useEffect(() => {
-    if (finished) {
+    if (finished && success) {
       reset();
       setNewRating(0);
+      setShouldRefetch(true);
       toast({
         title: "Success",
         description: "Comment added successfully",
         variant: "success",
       });
     }
-  }, [finished]);
-  console.count();
+  }, [finished, success, reset]);
+
+  // Handle refetching comments after successful submission
+  useEffect(() => {
+    if (shouldRefetch) {
+      fetchComments?.();
+      setShouldRefetch(false);
+    }
+  }, [shouldRefetch, fetchComments]);
+
   const onSubmit: SubmitHandler<{
     context: string;
     star: number;
@@ -98,12 +111,16 @@ const HotelComment = ({ hotel_id }: { hotel_id: string }) => {
   }> = async (data) => {
     const formData = {
       context: data.context,
-      star: newRating, // Use the newRating state
+      star: newRating,
       hotel_id: Number(hotel_id),
     };
-
-    addComment?.(formData); // Call the addComment function with the form data
+    addComment?.(formData);
   };
+
+  // Memoized refetch function for CommentCard
+  const handleRefetch = useCallback(() => {
+    setShouldRefetch(true);
+  }, []);
 
   return (
     <div className="mb-8">
@@ -111,12 +128,22 @@ const HotelComment = ({ hotel_id }: { hotel_id: string }) => {
         Guest Comments ({comments?.length || 0})
       </h2>
       <div className="space-y-4 mb-6">
-        {comments?.map((comment) => (
-          <CommentCard
+        {comments?.map((comment, index) => (
+          <motion.div
             key={comment.id}
-            refetchComments={fetchComments}
-            comment={comment}
-          />
+            initial={{ opacity: 0, y: -20 }} // Start slightly above
+            animate={{ opacity: 1, y: 0 }} // Animate to original position
+            transition={{
+              duration: 0.5, // Duration of the animation
+              delay: index * 0.1, // Staggered delay based on index
+            }}
+          >
+            <CommentCard
+              key={comment.id}
+              refetchComments={handleRefetch}
+              comment={comment}
+            />
+          </motion.div>
         ))}
       </div>
       <form onSubmit={handleSubmit(onSubmit)}>

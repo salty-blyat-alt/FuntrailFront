@@ -1,13 +1,12 @@
 "use client";
-import DashboardLayout from "@/app/dashboard/dashboard-layout";
-import React, { useEffect, useState } from "react";
-import PageContainer from "@/app/dashboard/components/page-container";
 import CustomTable, {
   HeaderProps,
 } from "@/app/components/custom-table/custom-table";
+import PageContainer from "@/app/dashboard/components/page-container";
+import DashboardLayout from "@/app/dashboard/dashboard-layout";
 import { hotelNavItem } from "@/app/dashboard/routes/routes";
 import useAxios from "@/app/hooks/use-axios";
-import { Navbar } from "@/app/components/navbar/navbar";
+import { useEffect, useState } from "react";
 
 const Orders = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -51,7 +50,7 @@ const Orders = () => {
 
   return (
     <>
-      <Navbar />
+      
       <DashboardLayout navItems={hotelNavItem}>
         <PageContainer scrollable={true}>
           <CustomTable

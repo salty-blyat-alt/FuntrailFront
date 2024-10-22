@@ -15,12 +15,12 @@ const CommentCard = ({
   refetchComments,
 }: {
   comment: CommentProps;
-  refetchComments: () => void;
+  refetchComments: ((data?: undefined) => void) | undefined;
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [showReplies, setShowReplies] = useState(false);
-  const [showOptions, setShowOptions] = useState(false); // State to handle options popup visibility
-  // use for deletion
+  const [showOptions, setShowOptions] = useState(false);
+  const [hasDeleteAttempted, setHasDeleteAttempted] = useState(false);
   const optionsRef = useRef(null);
 
   const toggleOptions = () => setShowOptions((prev) => !prev);
@@ -57,16 +57,17 @@ const CommentCard = ({
     responseData: successDelete,
     finished: deleteFinished,
   } = useAxios<any, any>({
-    endpoint: `/api/comment/delete`, // Use a dynamic endpoint with the ID
+    endpoint: `/api/comment/delete`,
     method: "POST",
     config: {},
   });
 
   const handleDelete = () => {
-    const id = comment?.id; // Get the comment ID
+    const id = comment?.id;
     if (id) {
+      setHasDeleteAttempted(true); // Set flag when delete is attempted
       deleteComment?.({ id: id });
-      setShowOptions(false); // Close the options popup after deletion
+      setShowOptions(false);
     }
   };
 
@@ -85,23 +86,26 @@ const CommentCard = ({
   const toggleExpand = () => setIsExpanded(!isExpanded);
   const toggleReplies = () => setShowReplies(!showReplies);
 
-  // Determine whether to show the full comment or a truncated version
-  const truncatedText = comment.context.slice(0, 100); // Show first 100 characters
+  const truncatedText = comment.context.slice(0, 100);
   const isLongText = comment.context.length > 100;
 
   useEffect(() => {
     reset();
-    refetchComments();
+    refetchComments?.();
   }, [successReply, finishedReply]);
 
+  // Modified delete success handler
   useEffect(() => {
-    refetchComments();
-    toast({
-      title: "Success",
-      description: "Comment deleted successfully",
-      variant: "success",
-    });
-  }, [successDelete, deleteFinished]);
+    if (hasDeleteAttempted && deleteFinished && successDelete) {
+      refetchComments?.();
+      toast({
+        title: "Success",
+        description: "Comment deleted successfully",
+        variant: "success",
+      });
+      setHasDeleteAttempted(false); // Reset the flag after handling
+    }
+  }, [successDelete, deleteFinished, hasDeleteAttempted]);
 
   const onSubmit: SubmitHandler<{
     context: string;
@@ -133,15 +137,14 @@ const CommentCard = ({
                 <EllipsisVertical
                   className="opacity-0 group-hover:opacity-100 p-1 rounded-full transition-all duration-200 ease-in-out
              hover:bg-slate-100 cursor-pointer"
-                  onClick={toggleOptions} // Toggle options popup on click
+                  onClick={toggleOptions}
                 />
-                {/* Options popup */}
                 {showOptions && (
-                  <div className="absolute top-8 right-0 w-24 bg-white border rounded shadow-lg z-10">
+                  <div className="absolute top-8 right-0 w-24 border rounded shadow-lg z-10">
                     <Button
                       ref={optionsRef}
                       variant="ghost"
-                      className="w-full text-left p-2 text-sm hover:bg-gray-100"
+                      className="w-full text-left p-2 text-sm "
                       onClick={handleDelete}
                     >
                       <Trash className="mr-2 h-4 w-4 text-red-500" />
@@ -177,7 +180,6 @@ const CommentCard = ({
               )}
             </p>
 
-            {/* Replies Section */}
             <div className="">
               {comment.replies?.length > 0 && (
                 <Button
@@ -221,7 +223,6 @@ const CommentCard = ({
                     </p>
                   )}
 
-                  {/* Reply Input */}
                   <form onSubmit={handleSubmit(onSubmit)}>
                     <div className="flex items-start space-x-2">
                       <Avatar className="h-8 w-8">
@@ -251,12 +252,11 @@ const CommentCard = ({
               )}
             </div>
 
-            {/* New Reply Button */}
             <Button
               size={"sm"}
               variant="link"
               onClick={() => {
-                setShowReplies(true); // Optionally show replies
+                setShowReplies(true);
               }}
               className="px-0 text-sm text-blue-500 hover:underline"
             >

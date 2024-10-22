@@ -1,57 +1,8 @@
-"use client";
-import { useEffect, useState } from "react";
-import { BentoGrid } from "./home/components/bento-grid";
-import GridCard from "./home/components/grid-card";
-import { Hero } from "./home/components/hero";
-import Slide from "./home/components/slide";
-import SearchGroup from "./home/components/search-group";
-import Loading from "./components/loader/loading";
-import { Navbar } from "./components/navbar/navbar";
-import Footer from "./components/footer/footer";
-
-export default function Home() {
-  const [loading, setLoading] = useState(true);
-
-  // Simulate a 2-second loading time
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setLoading(false);
-    }, 3000); // 2 seconds delay
-
-    return () => clearTimeout(timer); // Clean up the timer
-  }, []);  
-
+import type { AppProps } from "next/app";
+import Home from "./home/page";
+ 
+export default function MyApp({ Component, pageProps }: AppProps) {
   return (
-    <>
-      {loading ? (
-        <Loading />
-      ) : (
-        <>
-          <Navbar />
-          <div className="relative">
-            <Hero />
-            <SearchGroup />
-          </div>
-          <main className="container relative mx-auto space-y-16 px-6 md:px-16">
-            {/* Popular section */}
-            <GridCard />
-
-            <Slide
-              title={"Affordable options"}
-              subtitle={"Find the best deals that won't break the bank."}
-            />
-
-            {/* Genius card section */}
-            <BentoGrid className="mt-12" />
-
-            <Slide
-              title={"Eat with us for small cost"}
-              subtitle={"Delicious meals at prices you'll love."}
-            />
-          </main>
-          <Footer className="mt-32" />
-        </>
-      )}
-    </>
+    <Home />
   );
 }

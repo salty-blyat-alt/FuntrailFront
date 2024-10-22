@@ -1,11 +1,5 @@
 "use client";
 import Image from "next/image";
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "../../components/ui/tabs";
 import Link from "next/link";
 import useAxios from "@/app/hooks/use-axios";
 import { useEffect } from "react";

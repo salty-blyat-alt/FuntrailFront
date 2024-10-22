@@ -1,7 +1,11 @@
 "use client";
-import DashboardLayout from "@/app/dashboard/dashboard-layout";
 import PageContainer from "@/app/dashboard/components/page-container";
+import DashboardLayout from "@/app/dashboard/dashboard-layout";
 
+import HotelDetailPreview from "@/app/components/hotel-detail-preview/hotel-detail-preview";
+import { Button } from "@/app/components/ui/button";
+import { hotelNavItem } from "@/app/dashboard/routes/routes";
+import { mockHotel } from "@/app/data/mockupData";
 import {
   Card,
   CardContent,
@@ -9,21 +13,15 @@ import {
   CardHeader,
   CardTitle,
 } from "@components/ui/card";
-import HotelDetailPreview from "@/app/components/hotel-detail-preview/hotel-detail-preview";
-import { Button } from "@/app/components/ui/button";
+import { PenIcon } from "lucide-react";
 import { useState } from "react";
 import EditHotelDialog from "./components/edit-hotel-dialog";
-import { PenIcon } from "lucide-react"; 
-import { hotelNavItem } from "@/app/dashboard/routes/routes";
-import { mockHotel } from "@/app/data/mockupData";
-import { Navbar } from "@/app/components/navbar/navbar";
-import Footer from "@/app/components/footer/footer";
 
 const HotelSetting = () => {
   const [hotel, setHotel] = useState(mockHotel);
   return (
     <>
-    <Navbar />
+    
     <DashboardLayout navItems={hotelNavItem}>
       <PageContainer scrollable={true}>
         <Card className="overflow-hidden">

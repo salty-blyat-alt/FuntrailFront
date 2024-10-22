@@ -1,19 +1,18 @@
 "use client";
 
-import { Button } from "@/app/components/ui/button";
-import PageContainer from "@/app/dashboard/components/page-container";
-import DashboardLayout from "@/app/dashboard/dashboard-layout";
-import { PlusIcon } from "lucide-react";
-import { useEffect, useState } from "react";
-import AddRoomDialog from "./components/add-room-dialog";
-import { hotelNavItem } from "@/app/dashboard/routes/routes";
-import useAxios from "@/app/hooks/use-axios";
 import CustomTable, {
   HeaderProps,
 } from "@/app/components/custom-table/custom-table";
+import { Button } from "@/app/components/ui/button";
+import PageContainer from "@/app/dashboard/components/page-container";
+import DashboardLayout from "@/app/dashboard/dashboard-layout";
+import { hotelNavItem } from "@/app/dashboard/routes/routes";
+import useAxios from "@/app/hooks/use-axios";
 import { RoomProps } from "@/app/hotel-detail/components/room-list";
+import { PlusIcon } from "lucide-react";
+import { useEffect, useState } from "react";
+import AddRoomDialog from "./components/add-room-dialog";
 import DeleteRoomDialog from "./components/delete-room-dialog";
-import { Navbar } from "@/app/components/navbar/navbar";
 
 export default function Manage() {
   const [selectedRoom, setSelectedRoom] = useState<number>();
@@ -83,7 +82,7 @@ export default function Manage() {
 
   return (
     <>
-      <Navbar />
+      
       <DashboardLayout navItems={hotelNavItem}>
         <PageContainer scrollable={true}>
           <div className="flex mb-2 justify-between">

@@ -23,7 +23,6 @@ import {
   ReactPortal,
   useEffect,
 } from "react";
-import { Navbar } from "@/app/components/navbar/navbar";
 
 export default function HotelDetail() {
   const { id } = useParams();
@@ -42,9 +41,7 @@ export default function HotelDetail() {
   });
 
   useEffect(() => {
-    if(!hotel){
-      fetchHotel?.();
-    }
+    fetchHotel?.();
   }, []);
 
   const router = useRouter();
@@ -52,8 +49,7 @@ export default function HotelDetail() {
   console.count();
 
   return (
-    <>
-      <Navbar />
+   
       <div className="container mx-auto p-4">
         <div className="mb-4 text-sm breadcrumbs">
           <CustomBreadcrumb pathname={pathname} />
@@ -191,6 +187,6 @@ export default function HotelDetail() {
 
         <HotelComment hotel_id={id.toString()} />
       </div>
-    </>
+    
   );
 }

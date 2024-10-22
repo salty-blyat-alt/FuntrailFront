@@ -14,7 +14,7 @@ const Loading = () => {
 
   return (
     <div
-      className={`bg-secondary flex flex-col justify-center items-center fixed top-0 left-0 right-0 bottom-0 h-screen z-[100] transition-opacity duration-500 ${
+      className={`bg-primary-foreground flex flex-col justify-center items-center fixed top-0 left-0 right-0 bottom-0 h-screen z-[100] transition-opacity duration-500 ${
         fadeIn ? "opacity-100" : "opacity-0"
       }`}
     >
@@ -23,12 +23,12 @@ const Loading = () => {
         <div className="flex items-center space-x-3">
           <Image src={logo} alt="Logo" width={50} height={50} />
           <div className="flex flex-col">
-            <span className="text-2xl font-bold text-black tracking-wide">
+            <span className="text-2xl font-bold tracking-wide">
               Funtrail
             </span>
-            <p className="text-gray-500 text-sm flex items-baseline">
+            <p className="text-muted-foreground text-sm flex items-baseline">
               Please wait while we load your experience{" "}
-              <PulseLoader size={2}  color="rgba(107, 114, 128, 1)" /> 
+              <PulseLoader size={2} color="rgba(107, 114, 128, 1)" />
             </p>
           </div>
         </div>
