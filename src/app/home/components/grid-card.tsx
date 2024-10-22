@@ -4,6 +4,7 @@ import Link from "next/link";
 import useAxios from "@/app/hooks/use-axios";
 import { useEffect } from "react";
 import { Skeleton } from "@/app/components/ui/skeleton";
+import { motion } from "framer-motion";
 
 const GridCard = () => {
   const {
@@ -24,31 +25,22 @@ const GridCard = () => {
     fetchPopularHotels?.();
   }, []);
 
-  const items = [
-    { image: "/path/to/image1.jpg", alt: "Image 1" },
-    { image: "/path/to/image2.jpg", alt: "Image 2" },
-    { image: "/path/to/image3.jpg", alt: "Image 3" },
-  ];
-
   return (
     <section className="mt-20">
       <h2 className="my-4 text-2xl font-bold leading-none tracking">
         Popular searches
       </h2>
-      {/* <Tabs defaultValue="hotel">
-        <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="hotel">Hotel</TabsTrigger>
-          <TabsTrigger value="restaurant">Restaurant</TabsTrigger>
-        </TabsList> */}
-
-      {/* <TabsContent
-          className="grid gap-4 grid-cols-3 md:grid-cols-4 lg:grid-cols-6"
-          value="hotel"
-        > */}
       <div className="grid gap-4 grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
         {popularHotels?.map((h, index) => (
-          <Link key={index} href={`/hotel-detail/${h.hotel_id}`} passHref>
-            <div className="rounded-md border h-32 overflow-hidden">
+          <Link key={h.id} href={`/hotel-detail/${h.hotel_id}`} passHref>
+            <motion.div 
+               initial={{ opacity: 0, y: -20 }} // Start slightly above
+               animate={{ opacity: 1, y: 0 }} // Animate to original position
+               transition={{
+                 duration: 0.5, // Duration of the animation
+                 delay: index * 0.1, // Staggered delay based on index
+               }}
+                className="rounded-md border h-32 overflow-hidden">
               <Image
                 src={`${process.env.NEXT_PUBLIC_BASE_URL}${h.thumbnail}`}
                 width={500}
@@ -56,7 +48,7 @@ const GridCard = () => {
                 className="object-cover size-full hover:scale-110 duration-200 transition-all ease-in"
                 alt={h.hotel_name}
               />
-            </div>
+            </motion.div>
             {h.hotel_name}
           </Link>
         ))}
@@ -73,30 +65,6 @@ const GridCard = () => {
             </div>
           ))}
       </div>
-      {/* </TabsContent> */}
-
-      {/* <TabsContent
-          className="grid gap-4 grid-cols-3 md:grid-cols-4 lg:grid-cols-6"
-          value="restaurant"
-          >
-          {items.map((item, index) => (
-            <Link
-            className="rounded-md overflow-hidden"
-              href="/"
-              key={index}
-              passHref
-            >
-              <Image
-                src="https://via.placeholder.com/300"
-                width={300}
-                height={300}
-                className="object-cover hover:scale-110 duration-200 transition-all ease-in "
-                alt={item.alt || "placeholder"}
-              />
-            </Link>
-          ))}
-        </TabsContent>
-      </Tabs> */}
     </section>
   );
 };

@@ -29,7 +29,7 @@ export function Navbar() {
   const {
     triggerFetch: triggerLogout,
     error,
-    responseData: response
+    responseData: response,
   } = useAxios<any, any>({
     endpoint: "/api/auth/logout",
     method: "POST",
@@ -94,7 +94,7 @@ export function Navbar() {
           {/* Logo Section */}
           <div className="flex items-center">
             <Link href="/">
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center space-x-2 hover:opacity-75 cursor-pointer">
                 <Image src={logo} alt="Logo" width={36} height={36} />
                 <span className="text-xl font-bold">Funtrail</span>
               </div>

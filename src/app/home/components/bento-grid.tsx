@@ -20,12 +20,7 @@ export function BentoGrid({ className = "" }) {
     error,
     loading,
     responseData: popularProvinces,
-  } = useAxios<
-    // incoming
-    PopularProvinceProps[],
-    // outgoing
-    undefined
-  >({
+  } = useAxios<PopularProvinceProps[], undefined>({
     endpoint: "/api/popular/provinces",
     method: "GET",
     config: {
@@ -56,7 +51,7 @@ export function BentoGrid({ className = "" }) {
           return (
             <Link
               key={p.id}
-              className={`overflow-hidden h-52 rounded-md ${
+              className={`relative overflow-hidden h-52 rounded-md ${
                 index === 0 ? "col-span-2" : ""
               }`}
               href={`/search?province=${p?.id}`}
@@ -67,18 +62,21 @@ export function BentoGrid({ className = "" }) {
                 alt={p?.name}
                 width={500}
                 height={300}
-                className="rounded-md h-full w-full object-cover"
+                className="rounded-md h-full w-full object-cover transition-transform duration-300 transform hover:scale-105"
               />
+              <div className="absolute inset-0 bg-black bg-opacity-30 transition-opacity duration-300 opacity-0 hover:opacity-100 flex items-center justify-center">
+                <span className="text-white text-lg font-bold">{p.name}</span>
+              </div>
             </Link>
           );
         })}
         {loading && (
           <>
-            <Skeleton className=" h-52  rounded-md col-span-2" />
-            <Skeleton className=" h-52  rounded-md col-span-1" />
-            <Skeleton className=" h-52  rounded-md col-span-1" />
-            <Skeleton className=" h-52  rounded-md col-span-1" />
-            <Skeleton className=" h-52  rounded-md col-span-1" />
+            <Skeleton className="h-52 rounded-md col-span-2" />
+            <Skeleton className="h-52 rounded-md col-span-1" />
+            <Skeleton className="h-52 rounded-md col-span-1" />
+            <Skeleton className="h-52 rounded-md col-span-1" />
+            <Skeleton className="h-52 rounded-md col-span-1" />
           </>
         )}
       </div>
