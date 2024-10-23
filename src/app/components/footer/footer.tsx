@@ -1,13 +1,12 @@
 import Link from "next/link";
 import Image from "next/image";
-import { Facebook, Twitter, Instagram, Linkedin } from "lucide-react";
 import { Separator } from "@components/ui/separator";
 
 import logo from "@public/logo/logo.svg";
 
 export default function Footer({ className = "" }) {
   return (
-    <footer className={`${className} py-12 transition-colors duration-200`}>
+    <footer className={`${className}  py-12 transition-colors duration-200`}>
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
           <div className="col-span-1 md:col-span-2">
@@ -26,20 +25,6 @@ export default function Footer({ className = "" }) {
             <p className="text-sm mb-4">
               Empowering adventures and connecting trails worldwide.
             </p>
-            <div className="flex space-x-4">
-              <Link href="#" aria-label="Facebook">
-                <Facebook size={20} />
-              </Link>
-              <Link href="#" aria-label="Twitter">
-                <Twitter size={20} />
-              </Link>
-              <Link href="#" aria-label="Instagram">
-                <Instagram size={20} />
-              </Link>
-              <Link href="#" aria-label="LinkedIn">
-                <Linkedin size={20} />
-              </Link>
-            </div>
           </div>
           <div>
             <h3 className="text-lg font-semibold mb-4  ">Quick Links</h3>

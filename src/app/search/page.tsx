@@ -14,6 +14,7 @@ import { Input } from "../components/ui/input";
 import { HotelProps } from "../data/mockupData";
 import { Province } from "../home/components/search-group";
 import useAxios from "../hooks/use-axios";
+import { Search } from "lucide-react";
 
 export default function SearchPage() {
   const [name, setName] = useState("");
@@ -121,14 +122,19 @@ export default function SearchPage() {
 
   return (
     <div className="min-h-screen">
-      <div className="bg-secondary py-20 relative text-primary-foreground">
-        <div className="absolute -bottom-5 container -translate-x-1/2 left-1/2 right-1/2 ">
-          <Input
-            className="bg-input text-foreground"
-            placeholder="Search"
-            type="text"
-            onChange={handleSearch}
-          />
+      <div className="py-20  relative flex justify-center items-center text-primary-foreground bg-primary">
+        <div className="container mx-auto px-4 lg:px-12 text-primary-foreground">
+          <h1 className="text-3xl font-bold mb-4">Find Your Perfect Stay</h1>
+          <div className="relative">
+            <Search className="absolute left-2 top-2.5 h-4 w-4" />
+            <Input
+              placeholder="Search"
+              className="pl-8"
+              type="text" 
+              value={name} 
+              onChange={handleSearch}
+            />
+          </div>
         </div>
       </div>
 
@@ -165,7 +171,7 @@ export default function SearchPage() {
             </div>
           </div>
 
-          <div className="w-full md:w-3/4">
+          <div className="w-full md:w-3/4 mx-auto">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-2">
               <h3>Results: {response?.paginate.total || 0} properties found</h3>
 

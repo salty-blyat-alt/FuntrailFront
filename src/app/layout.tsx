@@ -40,8 +40,12 @@ export default function RootLayout({
   }, []);
 
   const pathname = usePathname();
-  const noLayoutPages = ["/dashboard", "/auth/login", "/auth/register"];
-  const isLayoutRequired = !noLayoutPages.includes(pathname);
+  const noLayoutPages = ["/auth/login", "/auth/register"];
+
+  // Add pattern matching for dynamic hotel route
+  const isDynamicHotelRoute = pathname.startsWith("/dashboard/hotel/");
+  const isLayoutRequired =
+    !noLayoutPages.includes(pathname) && !isDynamicHotelRoute;
 
   return (
     <html lang="en" suppressHydrationWarning>
@@ -69,10 +73,10 @@ export default function RootLayout({
               ) : (
                 <>
                   {isLayoutRequired && <Navbar />}
-                  <main className={isLayoutRequired ? "mt-16" : ""}>
+                  <main className={isLayoutRequired ? "mt-12" : ""}>
                     {children}
                   </main>
-                  {isLayoutRequired && <Footer />}
+                  {isLayoutRequired && <Footer className="mt-32"/>}
                 </>
               )}
               <Toaster />

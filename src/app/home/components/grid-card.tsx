@@ -33,14 +33,15 @@ const GridCard = () => {
       <div className="grid gap-4 grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
         {popularHotels?.map((h, index) => (
           <Link key={h.id} href={`/hotel-detail/${h.hotel_id}`} passHref>
-            <motion.div 
-               initial={{ opacity: 0, y: -20 }} // Start slightly above
-               animate={{ opacity: 1, y: 0 }} // Animate to original position
-               transition={{
-                 duration: 0.5, // Duration of the animation
-                 delay: index * 0.1, // Staggered delay based on index
-               }}
-                className="rounded-md border h-32 overflow-hidden">
+            <motion.div
+              initial={{ opacity: 0, y: -20 }} // Start slightly above
+              animate={{ opacity: 1, y: 0 }} // Animate to original position
+              transition={{
+                duration: 0.5, // Duration of the animation
+                delay: index * 0.1, // Staggered delay based on index
+              }}
+              className="rounded-md border h-32 overflow-hidden"
+            >
               <Image
                 src={`${process.env.NEXT_PUBLIC_BASE_URL}${h.thumbnail}`}
                 width={500}

@@ -184,7 +184,6 @@ export default function RoomList({ hotelId }: { hotelId: string }) {
                         size="sm"
                         onClick={() => addToBookingCart(room)}
                         disabled={
-                          // room.status === "busy" ||
                           bookingCart.some((r) => r.id === room.id)
                         }
                       >

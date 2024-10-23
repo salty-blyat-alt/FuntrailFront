@@ -1,30 +1,29 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { ModeToggle } from "@/theme/toggle-theme";
-import logo from "@public/logo/logo.svg";
-import { User } from "lucide-react";
+import { useState, useEffect, ReactNode } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
-import { Button } from "../ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "../ui/dropdown-menu";
-import useAxios from "@/app/hooks/use-axios";
-import { useToast } from "@/app/hooks/use-toast";
-import { Dialog, DialogContent, DialogFooter, DialogTitle } from "../ui/dialog";
-import { deleteCookie } from "cookies-next";
+import { User, Menu, X, LogOut, Sun, Moon } from "lucide-react";
 import { useAuth } from "@/app/context/auth-context";
+import { useToast } from "@/app/hooks/use-toast";
+import useAxios from "@/app/hooks/use-axios";
+import { deleteCookie } from "cookies-next";
+import { useTheme } from "next-themes";
+import { Button } from "@components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogTitle,
+} from "@components/ui/dialog";
 
 export function Navbar() {
   const [isLogoutDialogOpen, setIsLogoutDialogOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { setUser, user } = useAuth();
   const { toast } = useToast();
+  const { theme, setTheme } = useTheme();
 
   const {
     triggerFetch: triggerLogout,
@@ -43,6 +42,7 @@ export function Navbar() {
   const handleLogout = () => {
     setIsLogoutDialogOpen(true);
   };
+
   useEffect(() => {
     if (response) {
       setUser(null);
@@ -51,7 +51,7 @@ export function Navbar() {
         variant: "success",
       });
     }
-  }, [response]);
+  }, [response, setUser, toast]);
 
   useEffect(() => {
     if (error) {
@@ -60,15 +60,11 @@ export function Navbar() {
         variant: "destructive",
       });
     }
-  }, [error]);
+  }, [error, toast]);
 
   const confirmLogout = async () => {
     const formData = new FormData();
-
-    // Trigger the logout with FormData
     await triggerLogout?.(formData);
-
-    // Delete the necessary cookies
     deleteCookie("access_token", {
       path: "/",
       domain: process.env.NEXT_PUBLIC_DOMAIN,
@@ -81,97 +77,161 @@ export function Navbar() {
       path: "/",
       domain: process.env.NEXT_PUBLIC_DOMAIN,
     });
-
-    // Check response status
-
     setIsLogoutDialogOpen(false);
+  };
+
+  const toggleTheme = () => {
+    setTheme(theme === "dark" ? "light" : "dark");
   };
 
   return (
     <>
-      <nav className="fixed top-0 left-0 right-0 z-[60] py-4 px-4 shadow bg-background">
-        <div className="container mx-auto flex items-center justify-between">
-          {/* Logo Section */}
-          <div className="flex items-center">
-            <Link href="/">
-              <div className="flex items-center space-x-2 hover:opacity-75 cursor-pointer">
-                <Image src={logo} alt="Logo" width={36} height={36} />
-                <span className="text-xl font-bold">Funtrail</span>
-              </div>
+      <motion.nav
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5 }}
+        className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md"
+      >
+        <div className="container mx-auto px-4 py-2">
+          <div className="flex items-center justify-between">
+            <Link href="/" className="flex items-center space-x-2">
+              <Image
+                src="/logo/logo.svg"
+                alt="Funtrail Logo"
+                width={36}
+                height={36}
+              />
+              <span className="text-xl font-bold">Funtrail</span>
             </Link>
-          </div>
 
-          {/* Desktop Links */}
-          <div className="flex items-center space-x-2">
-            {user?.user_type !== "hotel" && (
-              <Button>
-                <Link href="/register-hotel">Join Us</Link>
+            <div className="hidden md:flex items-center space-x-4">
+              <NavLink href="/">Home</NavLink>
+              {user?.user_type !== "hotel" && (
+                <NavLink href="/register-hotel">Join Us</NavLink>
+              )}
+              <Button variant="ghost" size="icon" onClick={toggleTheme}>
+                {theme === "dark" ? (
+                  <Sun className="h-5 w-5" />
+                ) : (
+                  <Moon className="h-5 w-5" />
+                )}
               </Button>
-            )}
+              {user?.user_type === "hotel" && (
+                <NavLink href="/dashboard/hotel/id">Dashboard</NavLink>
+              )}
+              <UserMenu user={user} handleLogout={handleLogout} />
+            </div>
 
-            {/* Account Dropdown */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                {user?.profile_img ? (
-                  <Image
-                    width={300}
-                    height={300}
-                    src={process.env.NEXT_PUBLIC_BASE_URL + user.profile_img}
-                    alt="User profile"
-                    className="size-8 rounded-md hover:cursor-pointer"
-                  />
-                ) : (
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    className="overflow-hidden"
-                  >
-                    <User className="h-4 w-4" />
-                  </Button>
-                )}
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                {user ? (
-                  <>
-                    <DropdownMenuLabel>Setting</DropdownMenuLabel>
-                    <DropdownMenuItem asChild>
-                      <Link href="/profile">Profile</Link>
-                    </DropdownMenuItem>
-                  </>
-                ) : (
-                  <>
-                    {/* Login */}
-                    <DropdownMenuItem asChild>
-                      <Link href="/auth/login">Login</Link>
-                    </DropdownMenuItem>
-                    {/* Register */}
-                    <DropdownMenuItem asChild>
-                      <Link href="/auth/register">Register</Link>
-                    </DropdownMenuItem>
-                  </>
-                )}
-
-                {user?.user_type === "hotel" && (
-                  <>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem asChild>
-                      <Link href="/dashboard/hotel/id">Dashboard</Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                  </>
-                )}
-
-                {user && (
-                  <DropdownMenuItem onSelect={handleLogout}>
-                    Logout
-                  </DropdownMenuItem>
-                )}
-              </DropdownMenuContent>
-            </DropdownMenu>
-            <ModeToggle />
+            <Button
+              variant="ghost"
+              size="icon"
+              className="md:hidden"
+              onClick={() => setIsMobileMenuOpen(true)}
+            >
+              <Menu className="h-6 w-6" />
+            </Button>
           </div>
         </div>
-      </nav>
+      </motion.nav>
+
+      <AnimatePresence>
+        {isMobileMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0, x: "100%" }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: "100%" }}
+            transition={{ type: "spring", stiffness: 300, damping: 30 }}
+            className="fixed inset-0 z-50 bg-background md:hidden"
+          >
+            <div className="flex flex-col h-full p-4">
+              <div className="flex justify-between items-center mb-8">
+                <Link href="/" className="flex items-center space-x-2">
+                  <Image
+                    src="/logo/logo.svg"
+                    alt="Funtrail Logo"
+                    width={36}
+                    height={36}
+                  />
+                  <span className="text-xl font-bold">Funtrail</span>
+                </Link>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  <X className="h-6 w-6" />
+                </Button>
+              </div>
+              <div className="flex flex-col space-y-4">
+                <NavLink href="/" onClick={() => setIsMobileMenuOpen(false)}>
+                  Home
+                </NavLink>
+                {user?.user_type !== "hotel" && (
+                  <NavLink
+                    href="/register-hotel"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    Join Us
+                  </NavLink>
+                )}
+                {user?.user_type === "hotel" && (
+                  <NavLink
+                    href="/dashboard/hotel/id"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    Dashboard
+                  </NavLink>
+                )}
+                {user ? (
+                  <>
+                    <NavLink
+                      href="/profile"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      Profile
+                    </NavLink>
+                    <Button
+                      variant="ghost"
+                      className="justify-start"
+                      onClick={handleLogout}
+                    >
+                      <LogOut className="h-5 w-5 mr-2" />
+                      Logout
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <NavLink
+                      href="/auth/login"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      Login
+                    </NavLink>
+                    <NavLink
+                      href="/auth/register"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      Register
+                    </NavLink>
+                  </>
+                )}
+                <Button
+                  variant="ghost"
+                  className="justify-start"
+                  onClick={toggleTheme}
+                >
+                  {theme === "dark" ? (
+                    <Sun className="h-5 w-5 mr-2" />
+                  ) : (
+                    <Moon className="h-5 w-5 mr-2" />
+                  )}
+                  {theme === "dark" ? "Light Mode" : "Dark Mode"}
+                </Button>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <Dialog open={isLogoutDialogOpen} onOpenChange={setIsLogoutDialogOpen}>
         <DialogContent>
@@ -188,5 +248,91 @@ export function Navbar() {
         </DialogContent>
       </Dialog>
     </>
+  );
+}
+
+function NavLink({
+  href,
+  children,
+  onClick,
+}: {
+  href?: string;
+  children: ReactNode;
+  onClick?: () => void;
+}) {
+  return (
+    <Link
+      href={href || '#'}
+      className="text-muted-foreground hover:text-foreground transition-colors"
+      onClick={onClick}
+    >
+      {children}
+    </Link>
+  );
+}
+
+function UserMenu({ user, handleLogout }) {
+  return (
+    <div className="relative group">
+      <Button variant="ghost" className="p-2">
+        {user?.profile_img ? (
+          <Image
+            width={32}
+            height={32}
+            src={process.env.NEXT_PUBLIC_BASE_URL + user.profile_img}
+            alt="User profile"
+            className="rounded-full"
+          />
+        ) : (
+          <User className="h-5 w-5" />
+        )}
+      </Button>
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: 10 }}
+        className="absolute right-0 mt-2 w-48 bg-popover rounded-md shadow-lg invisible group-hover:visible transition-all duration-300"
+      >
+        {user ? (
+          <div className="py-1">
+            <Link
+              href="/profile"
+              className="block px-4 py-2 text-sm hover:bg-muted"
+            >
+              Profile
+            </Link>
+            {user.user_type === "hotel" && (
+              <Link
+                href="/dashboard/hotel/id"
+                className="block px-4 py-2 text-sm hover:bg-muted"
+              >
+                Dashboard
+              </Link>
+            )}
+            <button
+              onClick={handleLogout}
+              className="block w-full text-left px-4 py-2 text-sm hover:bg-muted"
+            >
+              Logout
+            </button>
+          </div>
+        ) : (
+          <div className="py-1">
+            <Link
+              href="/auth/login"
+              className="block px-4 py-2 text-sm hover:bg-muted"
+            >
+              Login
+            </Link>
+            <Link
+              href="/auth/register"
+              className="block px-4 py-2 text-sm hover:bg-muted"
+            >
+              Register
+            </Link>
+          </div>
+        )}
+      </motion.div>
+    </div>
   );
 }
