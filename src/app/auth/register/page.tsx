@@ -1,16 +1,19 @@
 "use client";
 
+import BackButton from "@/app/components/back-button/back-button";
 import { Button } from "@/app/components/ui/button";
 import { Input } from "@/app/components/ui/input";
 import { Label } from "@/app/components/ui/label";
 import { useAuth } from "@/app/context/auth-context";
 import useAxios from "@/app/hooks/use-axios";
+import { toast } from "@/app/hooks/use-toast";
 import { hasCookie, setCookie } from "cookies-next";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
+import img from "@public/auth_pic/register.jpg";
 
 const Register = () => {
   const { fetchProfile } = useAuth();
@@ -35,6 +38,17 @@ const Register = () => {
     config: {},
   });
 
+  useEffect(() => {
+    if (responseError) {
+      // Check if there is a response error and display the toast
+      toast({
+        title: "Error",
+        description:
+          success?.result_message || "An error occurred during registration.",
+        variant: "destructive",
+      });
+    }
+  }, [responseError]);
   const {
     register,
     handleSubmit,
@@ -61,8 +75,14 @@ const Register = () => {
     reset();
   };
   const router = useRouter();
+
   useEffect(() => {
     if (success) {
+      toast({
+        title: "Success",
+        description: "You logged in successfully.",
+        variant: "success",
+      });
       // Set cookie to expire in 7 days
       setCookie("access_token", success.token);
       fetchProfile?.();
@@ -76,13 +96,14 @@ const Register = () => {
 
   return (
     <div className="w-full my-auto min-h-dvh flexreverse lg:grid lg:grid-cols-2 overflow-hidden">
-      <div className="hidden bg-muted lg:block">
+      <div className="relative overflow-hidden hidden bg-muted lg:block">
+        <BackButton className="absolute z-10 top-10 left-10" path="/" />
         <Image
-          src="/placeholder.svg"
+          src={img} 
           alt="Image"
-          width="1920"
-          height="1080"
-          className="object-cover dark:brightness-[0.2] dark:grayscale"
+          width={"1920"}
+          height={"1080"}
+          className="h-full object-cover object-center w-auto blur-sm"
         />
       </div>
       <div className="pt-[40%]">
@@ -167,9 +188,6 @@ const Register = () => {
             <Button type="submit" className="w-full">
               Register
             </Button>
-            {responseError && (
-              <span className="text-red-500">{responseError.message}</span>
-            )}
           </form>
           <div className="mt-4 text-center text-sm">
             Already have an account?{" "}

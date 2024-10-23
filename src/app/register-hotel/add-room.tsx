@@ -83,6 +83,7 @@ export default function AddRoom() {
 
   useEffect(() => {
     if (success) {
+      fetchRooms?.()
       toast({
         title: "Room Added",
         description: "Room is added to your hotel successfully.",
@@ -147,7 +148,7 @@ export default function AddRoom() {
 
         toast({
           title: "Room Deleted",
-          description: `Room ID ${deleteRoomId} has been deleted successfully.`,
+          description: `Room has been deleted successfully.`,
           variant: "success",
         });
 

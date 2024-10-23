@@ -4,7 +4,7 @@ import CustomTable, {
 } from "@/app/components/custom-table/custom-table";
 import PageContainer from "@/app/dashboard/components/page-container";
 import DashboardLayout from "@/app/dashboard/dashboard-layout";
-import { hotelNavItem } from "@/app/dashboard/routes/routes";
+import useHotelNavItems, { hotelNavItem } from "@/app/dashboard/routes/routes";
 import useAxios from "@/app/hooks/use-axios";
 import { useEffect, useState } from "react";
 
@@ -47,11 +47,11 @@ const Orders = () => {
   useEffect(() => {
     fetchOrderHistory?.();
   }, [perPage, currentPage]); // Fetch data when page or perPage changes
-
+  const hotelNavItems = useHotelNavItems();
   return (
     <>
       
-      <DashboardLayout navItems={hotelNavItem}>
+      <DashboardLayout navItems={hotelNavItems}>
         <PageContainer scrollable={true}>
           <CustomTable
             title="Pending Orders"

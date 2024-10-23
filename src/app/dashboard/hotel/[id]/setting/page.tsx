@@ -4,7 +4,7 @@ import DashboardLayout from "@/app/dashboard/dashboard-layout";
 
 import HotelDetailPreview from "@/app/components/hotel-detail-preview/hotel-detail-preview";
 import { Button } from "@/app/components/ui/button";
-import { hotelNavItem } from "@/app/dashboard/routes/routes";
+import useHotelNavItems from "@/app/dashboard/routes/routes";
 import { mockHotel } from "@/app/data/mockupData";
 import {
   Card,
@@ -19,10 +19,31 @@ import EditHotelDialog from "./components/edit-hotel-dialog";
 
 const HotelSetting = () => {
   const [hotel, setHotel] = useState(mockHotel);
+  const hotelNavItems = useHotelNavItems();
+
+  const handleHotelPageClick = () => {
+    setRedirectUrl(`/hotel-detail/${user?.establishment_id}`);
+    setDialogOpen(true);
+  };
+
+  const handleConfirm = () => {
+    if (redirectUrl) {
+      window.location.href = redirectUrl; // Redirect to hotel page
+    }
+    setDialogOpen(false); // Close the dialog
+  }; 
   return (
     <>
     
-    <DashboardLayout navItems={hotelNavItem}>
+     <DashboardLayout navItems={hotelNavItems.map(item => {
+        if (item.title === "Hotel Page") {
+          return {
+            ...item,
+            onClick: handleHotelPageClick, // Attach click handler
+          };
+        }
+        return item;
+      })}>
       <PageContainer scrollable={true}>
         <Card className="overflow-hidden">
           <CardHeader className="bg-muted/50">

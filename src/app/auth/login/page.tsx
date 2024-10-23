@@ -11,6 +11,8 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { hasCookie, setCookie } from "cookies-next";
 import { useAuth } from "@/app/context/auth-context";
+import BackButton from "@/app/components/back-button/back-button";
+import img from "@public/auth_pic/login.jpg";
 
 function Login() {
   const {
@@ -60,7 +62,8 @@ function Login() {
 
   return (
     <div className="w-full min-h-dvh my-auto lg:grid lg:grid-cols-2 overflow-hidden">
-      <div className="pt-[40%]">
+      <div className="pt-[40%] relative">
+        <BackButton className="absolute z-10 top-10 left-10" path="/" />
         <div className="mx-auto grid w-[350px] gap-6">
           <div className="grid gap-2 text-center">
             <h1 className="text-3xl font-bold">Login</h1>
@@ -122,11 +125,11 @@ function Login() {
       </div>
       <div className="hidden bg-muted lg:block">
         <Image
-          src="/placeholder.svg"
+          src={img}
           alt="Image"
-          width={1920}
-          height={1080}
-          className="h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
+          width={"1920"}
+          height={"1080"}
+          className="h-full object-cover object-right-bottom w-auto blur-sm" 
         />
       </div>
     </div>

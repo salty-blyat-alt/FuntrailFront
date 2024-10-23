@@ -9,8 +9,7 @@ import CustomTable, {
 import useAxios from "@/app/hooks/use-axios";
 import { useEffect } from "react";
 import StatsCard from "../../components/stats-card";
-import { hotelNavItem } from "../../routes/routes";
-
+import useHotelNavItems from "../../routes/routes";
 export default function HotelDashboard() {
   const headers: HeaderProps[] = [
     { key: "id", label: "ID", hidden: true },
@@ -54,11 +53,11 @@ export default function HotelDashboard() {
     };
     fetchData?.();
   }, []);
-
+  const hotelNavItems = useHotelNavItems();
   return (
     <>
       
-      <DashboardLayout navItems={hotelNavItem}>
+      <DashboardLayout navItems={hotelNavItems}>
         <PageContainer scrollable={true}>
           <div className="grid gap-2">
             <div className="flex gap-2">

@@ -4,7 +4,7 @@ import { useState, useEffect, ReactNode } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
-import { User, Menu, X, LogOut, Sun, Moon } from "lucide-react";
+import { User, Menu, X, LogOut, Sun, Moon, ShoppingCart } from "lucide-react";
 import { useAuth } from "@/app/context/auth-context";
 import { useToast } from "@/app/hooks/use-toast";
 import useAxios from "@/app/hooks/use-axios";
@@ -17,6 +17,7 @@ import {
   DialogFooter,
   DialogTitle,
 } from "@components/ui/dialog";
+import { useRouter } from "next/navigation";
 
 export function Navbar() {
   const [isLogoutDialogOpen, setIsLogoutDialogOpen] = useState(false);
@@ -84,6 +85,7 @@ export function Navbar() {
     setTheme(theme === "dark" ? "light" : "dark");
   };
 
+  const router = useRouter();
   return (
     <>
       <motion.nav
@@ -104,10 +106,23 @@ export function Navbar() {
               <span className="text-xl font-bold">Funtrail</span>
             </Link>
 
-            <div className="hidden md:flex items-center space-x-4">
+            <div className="hidden md:flex items-center space-x-2">
               <NavLink href="/">Home</NavLink>
+              <NavLink href="/search">Explore</NavLink>
+
+              {user?.user_type === "hotel" && (
+                <NavLink href="/dashboard/hotel/id">Dashboard</NavLink>
+              )}
+            </div>
+
+            <div className="hidden md:flex items-center space-x-2">
               {user?.user_type !== "hotel" && (
-                <NavLink href="/register-hotel">Join Us</NavLink>
+                <Button
+                  size="sm"
+                  onClick={() => router.push("/register-hotel")}
+                >
+                  Join Us
+                </Button>
               )}
               <Button variant="ghost" size="icon" onClick={toggleTheme}>
                 {theme === "dark" ? (
@@ -116,9 +131,13 @@ export function Navbar() {
                   <Moon className="h-5 w-5" />
                 )}
               </Button>
-              {user?.user_type === "hotel" && (
-                <NavLink href="/dashboard/hotel/id">Dashboard</NavLink>
-              )}
+              <Button
+                onClick={() => router.push("/order-history")}
+                variant="ghost"
+                size="icon"
+              >
+                <ShoppingCart className="h-5 w-5" />
+              </Button>
               <UserMenu user={user} handleLogout={handleLogout} />
             </div>
 
@@ -262,7 +281,7 @@ function NavLink({
 }) {
   return (
     <Link
-      href={href || '#'}
+      href={href || "#"}
       className="text-muted-foreground hover:text-foreground transition-colors"
       onClick={onClick}
     >
