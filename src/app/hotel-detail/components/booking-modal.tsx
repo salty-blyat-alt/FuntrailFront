@@ -7,14 +7,14 @@ import {
 } from "@/app/components/ui/dialog";
 import { toast } from "@/app/hooks/use-toast";
 import { DialogTitle } from "@radix-ui/react-dialog";
-import React, { Dispatch, SetStateAction, useEffect } from "react";
+import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { RoomProps } from "./room-list";
 import { SubmitHandler, useForm } from "react-hook-form";
 import useAxios from "@/app/hooks/use-axios";
-import dayjs from "dayjs";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { DateRange } from "react-day-picker";
 import { format } from "date-fns";
+
 export interface BookingModalProps {
   bookingCart?: RoomProps[];
   isBookingModalOpen?: boolean;
@@ -23,6 +23,7 @@ export interface BookingModalProps {
   handleCloseModal?: () => void;
   dateRange: DateRange | undefined;
 }
+
 export interface BookingDetailProps {
   room_ids: number[];
   hotel_id: string;
@@ -39,12 +40,17 @@ const BookingModal: React.FC<BookingModalProps> = ({
   setBookingCart,
   dateRange,
 }) => {
+  const [isLoading, setIsLoading] = useState(false);
+
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const session_id_param = searchParams.get("session_id");
+
   const { handleSubmit } = useForm<BookingDetailProps>({
     defaultValues: {
-      date_start: dateRange?.from
-        ? dayjs(dateRange.from).format("DD/MM/YYYY")
-        : "",
-      date_end: dateRange?.to ? dayjs(dateRange.to).format("DD/MM/YYYY") : "",
+      date_start: dateRange?.from ? format(dateRange.from, "dd/MM/yyyy") : "",
+      date_end: dateRange?.to ? format(dateRange.to, "dd/MM/yyyy") : "",
       hotel_id: bookingCart?.[0]?.hotel_id?.toString() || "",
       room_ids: [],
     },
@@ -57,53 +63,121 @@ const BookingModal: React.FC<BookingModalProps> = ({
   } = useAxios<any, any>({
     endpoint: "/api/hotel/book",
     method: "POST",
-    config: {},
+    config: {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    },
   });
 
-  const router = useRouter();
-
   useEffect(() => {
-    if (response?.result === true) {
-      const paymentUrl = response.body?.session?.payment_url;
+    if (response?.body) {
+      // Store booking details in localStorage for post-payment verification
+      localStorage.setItem(
+        "pendingBooking",
+        JSON.stringify({
+          hotelId: bookingCart?.[0]?.hotel_id,
+          roomIds: bookingCart?.map((room) => room.id),
+          dateRange: {
+            from: dateRange?.from,
+            to: dateRange?.to,
+          },
+        })
+      );
+
+      // Redirect to Stripe Checkout
+      window.location.href = response.body;
+
+      // Clear cart
       setBookingCart([]);
-      if (paymentUrl) {
-        router.push(paymentUrl);
-        toast({
-          title: "Booking Successful",
-          description: `You have successfully booked ${bookingCart?.length} room(s).`,
-          variant: "success",
-        });
-      }
+
+      toast({
+        title: "Redirecting to payment",
+        description: "Please complete your payment to confirm the booking.",
+        variant: "default",
+      });
     } else if (error) {
       toast({
         title: "Booking Failed",
-        description: "An unknown error occurred.",
+        description: error || "An unknown error occurred.",
+        variant: "destructive",
+      });
+      setIsLoading(false);
+    }
+  }, [response, error]);
+
+  const {
+    triggerFetch: triggerSuccess,
+    responseDataWithStat: bookSuccess,
+    finished: finishedBooking,
+    error: errPayment,
+  } = useAxios<any, undefined>({
+    endpoint: `/api/success/${session_id_param}`,
+    method: "GET",
+    config: {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    },
+  });
+
+  useEffect(() => {
+    if (session_id_param) {
+      triggerSuccess?.();
+    }
+  }, [session_id_param]);
+
+  useEffect(() => {
+    if (errPayment) {
+      toast({
+        title: "Payment Failed",
+        description: "Your payment has been failed.",
         variant: "destructive",
       });
     }
-    handleCloseModal?.();
-  }, [response, error]);
+  }, [errPayment]);
 
-  const formattedFrom = dateRange?.from
-    ? format(dateRange.from, "dd/MM/yyyy")
-    : "";
-
-  const formattedTo = dateRange?.to ? format(dateRange.to, "dd/MM/yyyy") : "";
+  useEffect(() => {
+    if (bookSuccess && finishedBooking) {
+      window.history.replaceState(null, "", pathname);
+      toast({
+        title: "Payment Successful",
+        description: "Your payment has been processed successfully.",
+        variant: "success",
+      });
+    }
+  }, [bookSuccess, finishedBooking]);
 
   const onSubmit: SubmitHandler<BookingDetailProps> = async () => {
-    const formData = new FormData();
-    bookingCart?.forEach((item) => {
-      if (item?.id) {
-        formData.append("room_ids[]", item.id.toString());
+    setIsLoading(true);
+
+    try {
+      const bookingData = {
+        room_ids: bookingCart?.map((room) => room.id) || [],
+        hotel_id: bookingCart?.[0]?.hotel_id?.toString() || "",
+        date_start: dateRange?.from ? format(dateRange.from, "dd/MM/yyyy") : "",
+        date_end: dateRange?.to ? format(dateRange.to, "dd/MM/yyyy") : "",
+      };
+
+      // Validate booking data
+      if (
+        !bookingData.room_ids.length ||
+        !bookingData.hotel_id ||
+        !bookingData.date_start ||
+        !bookingData.date_end
+      ) {
+        throw new Error("Please select rooms and dates for your booking");
       }
-    });
 
-    const hotelId = bookingCart?.[0]?.hotel_id?.toString() || "";
-    formData.append("hotel_id", hotelId);
-
-    formData.append("date_start", formattedFrom || "");
-    formData.append("date_end", formattedTo || "");
-    triggerBook?.(formData);
+      await triggerBook?.(bookingData);
+    } catch (err: any) {
+      toast({
+        title: "Validation Error",
+        description: err.message,
+        variant: "destructive",
+      });
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -112,9 +186,45 @@ const BookingModal: React.FC<BookingModalProps> = ({
         <AlertDialogHeader>
           <DialogTitle>Complete Your Booking</DialogTitle>
         </AlertDialogHeader>
+
+        {/* Booking Summary */}
+        <div className="py-4">
+          <h3 className="font-medium mb-2">Booking Summary</h3>
+          <div className="space-y-2 text-sm">
+            <p>
+              Check-in:{" "}
+              {dateRange?.from ? format(dateRange.from, "PP") : "Not selected"}
+            </p>
+            <p>
+              Check-out:{" "}
+              {dateRange?.to ? format(dateRange.to, "PP") : "Not selected"}
+            </p>
+            <p>Rooms: {bookingCart?.length || 0}</p>
+          </div>
+        </div>
+
         <DialogFooter className="flex gap-x-4">
-          <form onSubmit={handleSubmit(onSubmit)}>
-            <Button type="submit">Pay via Stripe</Button>
+          <form onSubmit={handleSubmit(onSubmit)} className="w-full">
+            <div className="flex gap-x-4">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={handleCloseModal}
+                disabled={isLoading}
+              >
+                Cancel
+              </Button>
+              <Button type="submit" disabled={isLoading} className="flex-1">
+                {isLoading ? (
+                  <span className="flex items-center gap-2">
+                    <span className="h-4 w-4 animate-spin rounded-full border-2 border-r-transparent" />
+                    Processing...
+                  </span>
+                ) : (
+                  "Proceed to Payment"
+                )}
+              </Button>
+            </div>
           </form>
         </DialogFooter>
       </DialogContent>

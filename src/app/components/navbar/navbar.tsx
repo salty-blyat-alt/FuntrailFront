@@ -131,13 +131,16 @@ export function Navbar() {
                   <Moon className="h-5 w-5" />
                 )}
               </Button>
-              <Button
-                onClick={() => router.push("/order-history")}
-                variant="ghost"
-                size="icon"
-              >
-                <ShoppingCart className="h-5 w-5" />
-              </Button>
+              {user && (
+                <Button
+                  onClick={() => router.push("/order-history")}
+                  variant="ghost"
+                  size="icon"
+                >
+                  <ShoppingCart className="h-5 w-5" />
+                </Button>
+              )}
+
               <UserMenu user={user} handleLogout={handleLogout} />
             </div>
 
@@ -296,14 +299,14 @@ function UserMenu({ user, handleLogout }) {
       <Button variant="ghost" className="p-2">
         {user?.profile_img ? (
           <Image
-            width={32}
-            height={32}
+            width={70}
+            height={70}
             src={process.env.NEXT_PUBLIC_BASE_URL + user.profile_img}
             alt="User profile"
-            className="rounded-full"
+            className="rounded-full size-7 object-cover object-center"
           />
         ) : (
-          <User className="h-5 w-5" />
+          <User className="size-5" />
         )}
       </Button>
       <motion.div

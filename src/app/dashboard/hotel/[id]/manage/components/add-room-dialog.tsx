@@ -32,8 +32,8 @@ const AddRoomDialog: React.FC<AddRoomDialogProps> = ({ open, onClose }) => {
   } = useForm<FormData>();
 
   const { triggerFetch: addRoom, responseData: success } = useAxios<
-    any,
-    FormData
+  FormData,
+    any
   >({
     endpoint: "/api/hotel/add-room",
     config: {},

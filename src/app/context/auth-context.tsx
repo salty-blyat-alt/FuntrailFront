@@ -29,6 +29,7 @@ interface User {
   phone_number?: string;
   profile_img?: string;
   establishment_id?: number;
+  created_at?: string;
 }
 
 // Create the AuthContext with default values

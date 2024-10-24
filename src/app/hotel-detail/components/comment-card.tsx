@@ -122,7 +122,9 @@ const CommentCard = ({
 
   return (
     <Card key={comment.id} className="shadow-lg rounded-lg mb-4 group relative">
-      <CardContent className="pt-6">
+      <div className="p-4">
+        
+      {/* <CardContent > */}
         <div className="flex items-start space-x-4">
           <Avatar className="h-10 w-10">
             <AvatarFallback>{comment.username.charAt(0)}</AvatarFallback>
@@ -264,7 +266,9 @@ const CommentCard = ({
             </Button>
           </div>
         </div>
-      </CardContent>
+      {/* </CardContent> */}
+      </div>
+
     </Card>
   );
 };

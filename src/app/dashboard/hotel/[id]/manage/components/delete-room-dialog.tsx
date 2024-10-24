@@ -23,8 +23,8 @@ const DeleteRoomDialog = ({
   onClose,
 }: DeleteRoomDialogProps) => {
   const { triggerFetch: deleteRoom, responseData: success } = useAxios<
-    any,
-    { room_id?: number }
+  FormData,
+   any
   >({
     endpoint: "/api/hotel/delete-room",
     method: "POST",

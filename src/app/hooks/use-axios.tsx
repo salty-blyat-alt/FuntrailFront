@@ -1,4 +1,6 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
+import { deleteCookie } from "cookies-next";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export type AxiosMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
@@ -108,7 +110,7 @@ const useAxios = <T, U>({
       fetchCsrfToken();
     }
   }, []);
-
+const router = useRouter()
   const fetchData = async (data?: U) => {
     setLoading(true);
     setError(null);
@@ -149,6 +151,11 @@ const useAxios = <T, U>({
         console.error("Error response headers:", err.response.headers);
 
         if (err.response.status === 401) {
+           deleteCookie("access_token", {
+            path: "/",
+            domain: process.env.NEXT_PUBLIC_DOMAIN,
+          });
+          // Optionally redirect to login page
           window.location.href = "/auth/login";
         }
       } else if (err.request) {

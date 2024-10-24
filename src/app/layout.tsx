@@ -11,7 +11,6 @@ import Footer from "./components/footer/footer";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import Loading from "./components/loader/loading";
-import PageTransition from "./components/page-transition/page-transition";
 
 const geistSans = localFont({
   src: "../../public/fonts/GeistVF.woff",
@@ -31,23 +30,19 @@ export default function RootLayout({
 }>) {
   const [loading, setLoading] = useState(true);
 
+  // Simulate a loading time for demonstration
   useEffect(() => {
-    const hasSeenLoading = localStorage.getItem("hasSeenLoading");
-
-    if (!hasSeenLoading) {
-      const timer = setTimeout(() => {
-        setLoading(false);
-        localStorage.setItem("hasSeenLoading", "true");
-      }, 3000);
-
-      return () => clearTimeout(timer);
-    } else {
+    const timer = setTimeout(() => {
       setLoading(false);
-    }
+    }, 3000); // Adjust this duration as needed
+
+    return () => clearTimeout(timer); // Clean up the timer
   }, []);
 
   const pathname = usePathname();
   const noLayoutPages = ["/auth/login", "/auth/register"];
+
+  // Add pattern matching for dynamic hotel route
   const isDynamicHotelRoute = pathname.startsWith("/dashboard/hotel/");
   const isLayoutRequired =
     !noLayoutPages.includes(pathname) && !isDynamicHotelRoute;
@@ -57,6 +52,7 @@ export default function RootLayout({
       <head>
         <title>Funtrail</title>
         <link rel="icon" href="/logo/logo.svg" />
+        {/* Additional meta tags for better SEO */}
         <meta name="description" content="Explore fun trails and adventures." />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </head>
@@ -78,9 +74,9 @@ export default function RootLayout({
                 <>
                   {isLayoutRequired && <Navbar />}
                   <main className={isLayoutRequired ? "mt-12" : ""}>
-                    <PageTransition>{children}</PageTransition>
+                    {children}
                   </main>
-                  {isLayoutRequired && <Footer className="mt-32" />}
+                  {isLayoutRequired && <Footer className="mt-32"/>}
                 </>
               )}
               <Toaster />
@@ -90,4 +86,4 @@ export default function RootLayout({
       </body>
     </html>
   );
-}
+} 

@@ -31,7 +31,7 @@ export function Hero() {
                 visitors from around the world.
               </p>
               <Link  href="/search">
-                <Button size="lg">Explore</Button>
+                <Button variant={'outline'} size="lg">Explore</Button>
               </Link>
             </div>
           </div>

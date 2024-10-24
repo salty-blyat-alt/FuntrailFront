@@ -19,7 +19,6 @@ export type Province = {
 };
 
 const SearchGroup = () => {
-  const [selectedValue, setSelectedValue] = useState<string>("hotel");
   const [selectedProvince, setSelectedProvince] = useState<string>("");
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -64,11 +63,11 @@ const SearchGroup = () => {
   }, []);
 
   return (
-    <div className="absolute container -translate-x-1/2 -bottom-5 left-1/2 right-1/2 px-10 sm:px-16">
-      <div className="grid grid-cols-[2fr_1fr] gap-x-4 mx-auto">
-        <Select value={selectedProvince} onValueChange={setSelectedProvince} >
-          <SelectTrigger className="">
-            <SelectValue placeholder="Select a province"  />
+    <div className="absolute container -translate-x-1/2  -bottom-5 left-1/2 right-1/2 px-10 sm:px-16">
+      <div className="flex gap-x-4 ">
+        <Select value={selectedProvince} onValueChange={setSelectedProvince}>
+          <SelectTrigger className="col-span-1">
+            <SelectValue placeholder="Select a province" />
           </SelectTrigger>
           <SelectContent>
             {provinces?.map((p) => (
@@ -79,12 +78,11 @@ const SearchGroup = () => {
           </SelectContent>
         </Select>
 
-        {/* {selectedValue === "hotel" && (
-        <CalendarDateRangePicker date={date} setDate={setDate} />
-      )} */}
-        <Button onClick={handleSearch}>
-          <SearchIcon className="mr-2 h-4 w-4" /> Search
-        </Button>
+        <div>
+          <Button onClick={handleSearch}>
+            <SearchIcon className="mr-2 h-4 w-4" /> Search
+          </Button>
+        </div>
       </div>
     </div>
   );
