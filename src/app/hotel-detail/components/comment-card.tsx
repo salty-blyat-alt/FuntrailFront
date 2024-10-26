@@ -222,14 +222,12 @@ const CommentCard = ({
                 </span>
                 <Popover>
                   <PopoverTrigger asChild>
-                    <Button variant={"ghost"} size={'sm'} className="rounded-full  ">
-                      <EllipsisVertical />
-                    </Button>
+                    <EllipsisVertical className="rounded-full p-1 hover:bg-slate-100 cursor-pointer transition-all duration-200 ease-in-out" />
                   </PopoverTrigger>
-                  <PopoverContent className="w-fit">
+                  <PopoverContent className="w-28 p-2 border rounded-lg shadow-lg bg-white space-y-1">
                     <Button
                       variant="ghost"
-                      className="w-full flex justify-start   text-sm "
+                      className="w-full flex items-center justify-start px-2 py-1 text-sm rounded hover:bg-slate-100 transition-colors duration-200 ease-in-out"
                       onClick={() => setIsEditing(true)}
                     >
                       <PenIcon className="mr-2 h-4 w-4" />
@@ -238,7 +236,7 @@ const CommentCard = ({
 
                     <Button
                       variant="ghost"
-                      className="w-full flex justify-start   text-sm "
+                      className="w-full flex items-center justify-start px-2 py-1 text-sm rounded hover:bg-slate-100 transition-colors duration-200 ease-in-out"
                       onClick={handleDelete}
                     >
                       <Trash className="mr-2 h-4 w-4 text-red-500" />
@@ -272,14 +270,23 @@ const CommentCard = ({
                 />
 
                 {/* Submit Button to save changes and toggle editing state */}
-                <Button
-                  onClick={() => {
-                    handleEdit(comment.id);
-                    setIsEditing(false); // Change editing state on submit
-                  }}
-                >
-                  Submit
-                </Button>
+                <div className="flex gap-x-2 mt-2">
+                  <Button variant={'ghost'}
+                    onClick={() => {
+                      setIsEditing(false); // Change editing state on submit
+                    }}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      handleEdit(comment.id);
+                      setIsEditing(false); // Change editing state on submit
+                    }}
+                  >
+                    Save
+                  </Button>
+                </div>
               </div>
             ) : (
               <p>

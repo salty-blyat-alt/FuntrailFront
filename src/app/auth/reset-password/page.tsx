@@ -2,36 +2,36 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { Button } from "@components/ui/button";
-import { Label } from "@components/ui/label";
-import { Input } from "@components/ui/input";
-import { SubmitHandler, useForm } from "react-hook-form";
-import useAxios from "@/app/hooks/use-axios";
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { hasCookie, setCookie } from "cookies-next";
-import { useAuth } from "@/app/context/auth-context";
 import BackButton from "@/app/components/back-button/back-button";
 import img from "@public/auth_pic/login.jpg";
+import { Button } from "@/app/components/ui/button";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { Label } from "@/app/components/ui/label";
+import { Input } from "@/app/components/ui/input";
+import useAxios from "@/app/hooks/use-axios";
+import { useEffect } from "react";
 import { toast } from "@/app/hooks/use-toast";
+import { useRouter, useSearchParams } from "next/navigation";
 
-function Login() {
+function ForgotPassword() {
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<{ email: string; password: string }>();
-
-  const { fetchProfile } = useAuth();
-
+  } = useForm<{
+    email: string;
+    token: string;
+    password: string;
+    password_confirmation: string;
+  }>();
   const {
-    triggerFetch: triggerLogin,
+    triggerFetch: triggerForgotPassword,
     responseDataWithStat: errorStat,
     error,
     finished,
     responseData: response,
-  } = useAxios<any, FormData | { email: string; password: string }>({
-    endpoint: "/api/auth/login",
+  } = useAxios<any, FormData>({
+    endpoint: "/api/auth/forgot-password",
     method: "POST",
     config: {
       headers: {
@@ -39,57 +39,58 @@ function Login() {
       },
     },
   });
+  const searchParam = useSearchParams();
+  const token = searchParam.get("token") || "";
+  const emailParam = searchParam.get("email") || "";
+  console.log(token);
+
+  const onSubmit: SubmitHandler<{
+    email: string;
+    token: string;
+    password: string;
+    password_confirmation: string;
+  }> = (data) => {
+    const formData = new FormData();
+    formData.append("email", data.email);
+    formData.append("token", token);
+    formData.append("password", data.password);
+    formData.append("password_confirmation", data.password_confirmation);
+    console.log(formData);
+    triggerForgotPassword?.(formData);
+  };
 
   const router = useRouter();
-
   useEffect(() => {
     if (response && finished) {
-      // Set cookie to expire in 7 days
-      setCookie("access_token", response.access_token);
-      fetchProfile?.();
-      router.back();
+      router.push("/");
       toast({
         title: "Success",
-        description: "Logged in successfully",
+        description: "Password changed successfully",
         variant: "success",
       });
     }
-
-    // If an access token already exists in the cookies, redirect as well
-    if (hasCookie("access_token")) {
-      router.back();
-    }
-  }, [response, router, finished]);
+  }, [response, finished]);
 
   useEffect(() => {
     if (errorStat && error) {
       toast({
-        title: "Failed to log in",
+        title: "Failed to change password",
         description:
           errorStat?.result_message + ". code: " + errorStat.result_code,
         variant: "destructive",
       });
     }
   }, [errorStat, error]);
-
-  const onSubmit: SubmitHandler<{ email: string; password: string }> = (
-    data
-  ) => {
-    const formData = new FormData();
-    formData.append("email", data.email);
-    formData.append("password", data.password);
-    triggerLogin?.(formData);
-  };
-
   return (
     <div className="w-full min-h-dvh my-auto lg:grid lg:grid-cols-2 overflow-hidden">
       <div className="pt-[40%] relative">
         <BackButton className="absolute z-10 top-10 left-10" path="/" />
         <div className="mx-auto grid w-[350px] gap-6">
           <div className="grid gap-2 text-center">
-            <h1 className="text-3xl font-bold">Login</h1>
+            <h1 className="text-3xl font-bold">Reset Password</h1>
             <p className="text-balance text-muted-foreground">
-              Enter your email below to login to your account
+              Please enter your email. We will send you a verification code in
+              your email.
             </p>
           </div>
           <div className="grid gap-4">
@@ -100,6 +101,7 @@ function Login() {
                   id="email"
                   type="email"
                   placeholder="your_email@example.com"
+                  value={emailParam}
                   {...register("email", { required: "Email is required" })}
                   required
                 />
@@ -107,20 +109,13 @@ function Login() {
                   <span className="text-red-500">{errors.email.message}</span>
                 )}
               </div>
+
               <div className="grid gap-2">
-                <div className="flex items-center">
-                  <Label htmlFor="password">Password</Label>
-                  <Link
-                    href="/auth/forgot-password"
-                    className="ml-auto inline-block text-sm underline"
-                    passHref
-                  >
-                    Forgot your password?
-                  </Link>
-                </div>
+                <Label htmlFor="password">Password</Label>
                 <Input
                   id="password"
                   type="password"
+                  placeholder="password"
                   {...register("password", {
                     required: "Password is required",
                   })}
@@ -132,8 +127,27 @@ function Login() {
                   </span>
                 )}
               </div>
+              <div className="grid gap-2">
+                <Label htmlFor="password_confirmation">
+                  Password Confirmation
+                </Label>
+                <Input
+                  id="password_confirmation"
+                  type="password"
+                  placeholder="Password Confirmation"
+                  {...register("password_confirmation", {
+                    required: "Password Confirmation is required",
+                  })}
+                  required
+                />
+                {errors.password_confirmation && (
+                  <span className="text-red-500">
+                    {errors.password_confirmation.message}
+                  </span>
+                )}
+              </div>
               <Button type="submit" className="w-full mt-4">
-                Login
+                Reset password
               </Button>
             </form>
           </div>
@@ -158,4 +172,4 @@ function Login() {
   );
 }
 
-export default Login;
+export default ForgotPassword;

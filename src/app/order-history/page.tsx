@@ -9,11 +9,11 @@ import {
   CardHeader,
   CardTitle,
 } from "@components/ui/card";
-import { Badge } from "@components/ui/badge";
 import { ScrollArea } from "@components/ui/scroll-area";
 import useAxios from "../hooks/use-axios";
 import CurrentBooking from "./components/current-booking";
- 
+import HistoryBooking from "./components/history-booking";
+
 const orderHistory = [
   {
     id: 3,
@@ -76,6 +76,8 @@ export default function OrderHistory() {
   }, []);
 
   console.log(response);
+  const active_orders = response?.active_orders;
+  const history_orders = response?.history_orders;
 
   return (
     <div className="container mx-auto p-4 space-y-8">
@@ -85,7 +87,7 @@ export default function OrderHistory() {
         transition={{ duration: 0.5 }}
       >
         <h1 className="text-3xl font-bold mb-6">Your Bookings</h1>
-        <CurrentBooking currentOrders={response?.active_orders || []} />
+        <CurrentBooking currentOrders={active_orders ?? []} />
       </motion.div>
 
       <motion.div
@@ -99,34 +101,16 @@ export default function OrderHistory() {
             <CardDescription>Your past reservations</CardDescription>
           </CardHeader>
           <CardContent>
-            <ScrollArea className="h-[400px] pr-4">
-              <div className="space-y-8">
-                {orderHistory.map((order, index) => (
-                  <motion.div
-                    key={order.id}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.3, delay: index * 0.1 }}
-                    className="relative pl-8 pb-8 border-l border-muted-foreground last:pb-0"
-                  >
-                    <div className="absolute left-0 top-0 -translate-x-1/2 w-4 h-4 rounded-full bg-primary" />
-                    <div className="bg-muted p-4 rounded-lg">
-                      <div className="flex justify-between items-start mb-2">
-                        <p className="font-semibold">Room {order.room_id}</p>
-                        <Badge>{order.status}</Badge>
-                      </div>
-                      <p>
-                        {order.date_start }
-                       { order.date_end }
-                      </p>
-                      <p className="mt-2">Total: ${order.total}</p>
-                      <p className="text-sm text-muted-foreground">
-                        Booking ID: {order.u_id}
-                      </p>
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
+            <ScrollArea className="h-[40rem] pr-4">
+              {!history_orders || history_orders.length <= 0 ? (
+                <div className="flex justify-center items-center h-full">
+                  <p className="text-lg font-semibold text-muted-foreground">
+                    No booking record found.
+                  </p>
+                </div>
+              ) : (
+                <HistoryBooking orderHistory={history_orders ?? []} />
+              )}
             </ScrollArea>
           </CardContent>
         </Card>

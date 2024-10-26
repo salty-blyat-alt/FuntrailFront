@@ -7,6 +7,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { Button } from "@/app/components/ui/button";
 import { motion } from "framer-motion";
 import { toast } from "@/app/hooks/use-toast";
+import CustomPagination from "@/app/components/custom-pagination/custom-pagination";
 
 export interface CommentProps {
   id: number;
@@ -36,16 +37,34 @@ export interface ReplyProps {
   profile_img: string | null;
 }
 
+export interface PaginationProps {
+  total: number;
+  per_page: number;
+  current_page: number;
+  next_page_url: string | null;
+}
+
+export interface CommentResponseProps {
+  items?: CommentProps[];
+  paginate?: PaginationProps[];
+}
+
 const HotelComment = ({ hotel_id }: { hotel_id: string }) => {
   const [newRating, setNewRating] = useState(0);
   const [shouldRefetch, setShouldRefetch] = useState(false);
+  const [page, setPage] = useState<number>(1);
 
-  const { triggerFetch: fetchComments, responseData: comments } = useAxios<
-    CommentProps[],
-    undefined
-  >({
+  const {
+    triggerFetch: fetchComments,
+    loading,
+    responseData: response,
+  } = useAxios<any, undefined>({
     endpoint: `/api/comment/show/${hotel_id}`,
-    config: {},
+    config: {
+      params: {
+        page: page,
+      },
+    },
     method: "GET",
   });
 
@@ -93,7 +112,7 @@ const HotelComment = ({ hotel_id }: { hotel_id: string }) => {
   // Initial fetch on mount
   useEffect(() => {
     fetchComments?.();
-  }, [hotel_id]); // Only fetch when hotel_id changes
+  }, [hotel_id, page]); // Only fetch when hotel_id changes
 
   // Handle successful comment submission
   useEffect(() => {
@@ -135,35 +154,23 @@ const HotelComment = ({ hotel_id }: { hotel_id: string }) => {
     setShouldRefetch(true);
   }, []);
 
+  const comments = response?.items;
+  const pagination = response?.paginate;
+  console.log(pagination?.total);
+
+  const handlePageChange = (newPage: number) => {
+    console.log(newPage);
+    setPage(newPage);
+  };
+
   return (
     <div className="mb-8">
       <h2 className="text-2xl font-bold mb-4">
-        Guest Comments ({comments?.length || 0})
+        Guest Comments ({pagination?.total ?? 0})
       </h2>
-      <div className="space-y-4 mb-6">
-        {comments && comments.length > 0 ? ( // Check if comments exist
-          comments.map((comment, index) => (
-            <motion.div
-              key={comment.id}
-              initial={{ opacity: 0, y: -20 }} // Start slightly above
-              animate={{ opacity: 1, y: 0 }} // Animate to original position
-              transition={{
-                duration: 0.5, // Duration of the animation
-                delay: index * 0.1, // Staggered delay based on index
-              }}
-            >
-              <CommentCard
-                key={comment.id}
-                refetchComments={handleRefetch}
-                comment={comment}
-              />
-            </motion.div>
-          ))
-        ) : (
-          <p className="text-gray-500">No comments yet.</p> // Message when no comments
-        )}
-      </div>
-      <form onSubmit={handleSubmit(onSubmit)}>
+
+      {/* add comment */}
+      <form className="mb-4" onSubmit={handleSubmit(onSubmit)}>
         <h3 className="text-lg font-semibold mb-2">Leave a comment</h3>
         <div className="flex mb-2">
           {[1, 2, 3, 4, 5].map((star) => (
@@ -190,6 +197,36 @@ const HotelComment = ({ hotel_id }: { hotel_id: string }) => {
           Comment
         </Button>
       </form>
+
+      {/* display comments */}
+      <div className="space-y-4 mb-6">
+        {comments && pagination.total > 0 ? ( // Check if comments exist
+          comments.map((comment: CommentProps, index: number) => (
+            <motion.div
+              key={comment.id}
+              initial={{ opacity: 0, y: -20 }} // Start slightly above
+              animate={{ opacity: 1, y: 0 }} // Animate to original position
+              transition={{
+                duration: 0.5, // Duration of the animation
+                delay: index * 0.1, // Staggered delay based on index
+              }}
+            >
+              <CommentCard
+                key={comment.id}
+                refetchComments={handleRefetch}
+                comment={comment}
+              />
+            </motion.div>
+          ))
+        ) : (
+          <p className="text-gray-500">No comments yet.</p> // Message when no comments
+        )}
+      </div>
+      <CustomPagination
+        currentPage={response?.paginate.current_page}
+        totalPages={Math.ceil(response?.paginate.total / 10)}
+        onPageChange={handlePageChange}
+      />
     </div>
   );
 };

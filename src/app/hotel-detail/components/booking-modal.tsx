@@ -42,7 +42,6 @@ const BookingModal: React.FC<BookingModalProps> = ({
 }) => {
   const [isLoading, setIsLoading] = useState(false);
 
-  const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const session_id_param = searchParams.get("session_id");
@@ -60,7 +59,8 @@ const BookingModal: React.FC<BookingModalProps> = ({
     triggerFetch: triggerBook,
     error,
     responseDataWithStat: errorStat,
-    responseData: response 
+    responseData: response,
+    finished: finishedBook,
   } = useAxios<any, any>({
     endpoint: "/api/hotel/book",
     method: "POST",
@@ -70,6 +70,20 @@ const BookingModal: React.FC<BookingModalProps> = ({
       },
     },
   });
+  useEffect(() => {
+    if (response === "Rooms booked successfully") {
+      // Clear cart
+      setBookingCart([]);
+      setIsLoading(false); 
+      handleCloseModal?.();
+      console.log(errorStat)
+      toast({
+        title: "Payment Successful",
+        description: "Your payment has been processed successfully.",
+        variant: "success",
+      });
+    }
+  }, [response, finishedBook]);
 
   useEffect(() => {
     if (response?.body) {
@@ -97,7 +111,6 @@ const BookingModal: React.FC<BookingModalProps> = ({
         description: "Please complete your payment to confirm the booking.",
         variant: "default",
       });
-     
     }
   }, [response, error]);
 
@@ -111,7 +124,6 @@ const BookingModal: React.FC<BookingModalProps> = ({
       });
     }
   }, [errorStat, error]);
-
 
   const {
     triggerFetch: triggerSuccess,
@@ -145,7 +157,7 @@ const BookingModal: React.FC<BookingModalProps> = ({
   }, [errPayment]);
 
   useEffect(() => {
-    if (bookSuccess && finishedBooking) {
+    if (response && finishedBooking) {
       window.history.replaceState(null, "", pathname);
       toast({
         title: "Payment Successful",
@@ -153,7 +165,7 @@ const BookingModal: React.FC<BookingModalProps> = ({
         variant: "success",
       });
     }
-  }, [bookSuccess, finishedBooking]);
+  }, [response, finishedBooking]);
 
   const onSubmit: SubmitHandler<BookingDetailProps> = async () => {
     setIsLoading(true);
