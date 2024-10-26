@@ -63,7 +63,9 @@ const HotelComment = ({ hotel_id }: { hotel_id: string }) => {
   const {
     triggerFetch: addComment,
     responseData: success,
+    error,
     finished,
+    responseDataWithStat: errorStat,
   } = useAxios<
     any,
     {
@@ -76,6 +78,17 @@ const HotelComment = ({ hotel_id }: { hotel_id: string }) => {
     config: {},
     method: "POST",
   });
+
+  useEffect(() => {
+    if (errorStat && error) {
+      toast({
+        title: "Failed",
+        description:
+          errorStat?.result_message + ". code: " + errorStat.result_code,
+        variant: "destructive",
+      });
+    }
+  }, [errorStat, error]);
 
   // Initial fetch on mount
   useEffect(() => {
@@ -128,23 +141,27 @@ const HotelComment = ({ hotel_id }: { hotel_id: string }) => {
         Guest Comments ({comments?.length || 0})
       </h2>
       <div className="space-y-4 mb-6">
-        {comments?.map((comment, index) => (
-          <motion.div
-            key={comment.id}
-            initial={{ opacity: 0, y: -20 }} // Start slightly above
-            animate={{ opacity: 1, y: 0 }} // Animate to original position
-            transition={{
-              duration: 0.5, // Duration of the animation
-              delay: index * 0.1, // Staggered delay based on index
-            }}
-          >
-            <CommentCard
+        {comments && comments.length > 0 ? ( // Check if comments exist
+          comments.map((comment, index) => (
+            <motion.div
               key={comment.id}
-              refetchComments={handleRefetch}
-              comment={comment}
-            />
-          </motion.div>
-        ))}
+              initial={{ opacity: 0, y: -20 }} // Start slightly above
+              animate={{ opacity: 1, y: 0 }} // Animate to original position
+              transition={{
+                duration: 0.5, // Duration of the animation
+                delay: index * 0.1, // Staggered delay based on index
+              }}
+            >
+              <CommentCard
+                key={comment.id}
+                refetchComments={handleRefetch}
+                comment={comment}
+              />
+            </motion.div>
+          ))
+        ) : (
+          <p className="text-gray-500">No comments yet.</p> // Message when no comments
+        )}
       </div>
       <form onSubmit={handleSubmit(onSubmit)}>
         <h3 className="text-lg font-semibold mb-2">Leave a comment</h3>

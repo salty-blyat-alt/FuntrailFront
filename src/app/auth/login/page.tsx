@@ -13,6 +13,7 @@ import { hasCookie, setCookie } from "cookies-next";
 import { useAuth } from "@/app/context/auth-context";
 import BackButton from "@/app/components/back-button/back-button";
 import img from "@public/auth_pic/login.jpg";
+import { toast } from "@/app/hooks/use-toast";
 
 function Login() {
   const {
@@ -23,10 +24,13 @@ function Login() {
 
   const { fetchProfile } = useAuth();
 
-  const { triggerFetch: triggerLogin, responseData: response } = useAxios<
-    any,
-    FormData | { email: string; password: string }
-  >({
+  const {
+    triggerFetch: triggerLogin,
+    responseDataWithStat: errorStat,
+    error,
+    finished,
+    responseData: response,
+  } = useAxios<any, FormData | { email: string; password: string }>({
     endpoint: "/api/auth/login",
     method: "POST",
     config: {
@@ -39,17 +43,34 @@ function Login() {
   const router = useRouter();
 
   useEffect(() => {
-    if (response) {
+    if (response && finished) {
       // Set cookie to expire in 7 days
       setCookie("access_token", response.access_token);
       fetchProfile?.();
       router.back();
+      toast({
+        title: "Success",
+        description: "Logged in successfully",
+        variant: "success",
+      });
     }
+
     // If an access token already exists in the cookies, redirect as well
     if (hasCookie("access_token")) {
       router.back();
     }
-  }, [response, router]);
+  }, [response, router, finished]);
+
+  useEffect(() => {
+    if (errorStat && error) {
+      toast({
+        title: "Failed to log in",
+        description:
+          errorStat?.result_message + ". code: " + errorStat.result_code,
+        variant: "destructive",
+      });
+    }
+  }, [errorStat, error]);
 
   const onSubmit: SubmitHandler<{ email: string; password: string }> = (
     data
@@ -129,7 +150,7 @@ function Login() {
           alt="Image"
           width={"1920"}
           height={"1080"}
-          className="h-full object-cover object-right-bottom w-auto blur-sm" 
+          className="h-full object-cover object-right-bottom w-auto blur-sm"
         />
       </div>
     </div>

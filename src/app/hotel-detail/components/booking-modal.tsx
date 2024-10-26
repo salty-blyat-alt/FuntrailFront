@@ -59,7 +59,8 @@ const BookingModal: React.FC<BookingModalProps> = ({
   const {
     triggerFetch: triggerBook,
     error,
-    responseDataWithStat: response,
+    responseDataWithStat: errorStat,
+    responseData: response 
   } = useAxios<any, any>({
     endpoint: "/api/hotel/book",
     method: "POST",
@@ -96,15 +97,21 @@ const BookingModal: React.FC<BookingModalProps> = ({
         description: "Please complete your payment to confirm the booking.",
         variant: "default",
       });
-    } else if (error) {
-      toast({
-        title: "Booking Failed",
-        description: error || "An unknown error occurred.",
-        variant: "destructive",
-      });
-      setIsLoading(false);
+     
     }
   }, [response, error]);
+
+  useEffect(() => {
+    if (errorStat && error) {
+      toast({
+        title: "Failed to change password",
+        description:
+          errorStat?.result_message + ". code: " + errorStat.result_code,
+        variant: "destructive",
+      });
+    }
+  }, [errorStat, error]);
+
 
   const {
     triggerFetch: triggerSuccess,

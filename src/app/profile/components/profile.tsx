@@ -59,6 +59,7 @@ const Profile = ({
   const {
     triggerFetch: updateUser,
     responseData: success,
+    responseDataWithStat: errorStat,
     error,
     finished,
   } = useAxios<any, FormData>({
@@ -152,6 +153,18 @@ const Profile = ({
       updateUser?.(formData);
     }
   };
+
+  useEffect(() => {
+    if (errorStat && error) {
+      toast({
+        title: "Failed to update your information",
+        description:
+          errorStat?.result_message + ". code: " + errorStat.result_code,
+        variant: "destructive",
+      });
+    }
+  }, [errorStat, error]);
+
   return (
     <div className="space-y-6">
       <div className="flex items-center space-x-4">

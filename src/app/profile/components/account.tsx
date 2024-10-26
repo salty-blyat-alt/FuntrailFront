@@ -23,6 +23,7 @@ const Account = () => {
   const {
     triggerFetch: changePassword,
     responseData: success,
+    responseDataWithStat: errorStat,
     error,
     finished,
   } = useAxios<FormData, any>({
@@ -93,6 +94,18 @@ const Account = () => {
       });
     }
   }, [success, finished]);
+
+
+  useEffect(() => {
+    if (errorStat && error) {
+      toast({
+        title: "Failed to change password",
+        description:
+          errorStat?.result_message + ". code: " + errorStat.result_code,
+        variant: "destructive",
+      });
+    }
+  }, [errorStat, error]);
 
   return (
     <div className="space-y-6">
@@ -194,8 +207,7 @@ const Account = () => {
                 </div>
 
                 <Button type="submit">Submit</Button>
-              </form>
-              {error && <p className="text-red-500">{error}</p>}
+              </form> 
 
               {finished && <p>Processing...</p>}
             </DialogContent>

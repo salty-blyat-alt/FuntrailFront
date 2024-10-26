@@ -317,6 +317,12 @@ function UserMenu({ user, handleLogout }) {
       >
         {user ? (
           <div className="py-1">
+            <div className="py-1 px-4 border-b  ">
+              <p className="text-sm font-semibold  ">
+                Logged in as {user.username}
+              </p>
+              <p className="text-xs  text-muted-foreground">{user.email}</p>
+            </div>
             <Link
               href="/profile"
               className="block px-4 py-2 text-sm hover:bg-muted"

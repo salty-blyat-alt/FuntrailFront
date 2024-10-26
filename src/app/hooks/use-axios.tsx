@@ -110,7 +110,7 @@ const useAxios = <T, U>({
       fetchCsrfToken();
     }
   }, []);
-const router = useRouter()
+  
   const fetchData = async (data?: U) => {
     setLoading(true);
     setError(null);
@@ -141,15 +141,17 @@ const router = useRouter()
         ...requestOption,
       });
 
-      const { body, result, result_code, result_message } = response.data;
-      setResponseData(body);
-      setResponseDataWithStat({ result, result_code, result_message, body });
+      const { body  } = response.data;
+      setResponseData(body); 
     } catch (err: any) {
       if (err.response) {
+      const { body, result, result_code, result_message } = err.response.data;
+
         console.error("Error response data:", err.response.data);
         console.error("Error response status:", err.response.status);
         console.error("Error response headers:", err.response.headers);
-
+        setResponseDataWithStat({body, result, result_code, result_message});
+        
         if (err.response.status === 401) {
            deleteCookie("access_token", {
             path: "/",

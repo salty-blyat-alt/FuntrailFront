@@ -1,14 +1,20 @@
 import { useEffect, useRef, useState } from "react";
-import { Card, CardContent } from "@components/ui/card";
+import { Card } from "@components/ui/card";
 import { Avatar, AvatarFallback } from "@components/ui/avatar";
 import { Input } from "@components/ui/input";
 import { Button } from "@components/ui/button";
-import { EllipsisVertical, StarIcon, Trash } from "lucide-react";
+import { EllipsisVertical, PenIcon, StarIcon, Trash } from "lucide-react";
 import { CommentProps } from "./hotel-comment";
 import { useAuth } from "@/app/context/auth-context";
 import { SubmitHandler, useForm } from "react-hook-form";
 import useAxios from "@/app/hooks/use-axios";
 import { toast } from "@/app/hooks/use-toast";
+import Reply from "./reply";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/app/components/ui/popover";
 
 const CommentCard = ({
   comment,
@@ -17,28 +23,20 @@ const CommentCard = ({
   comment: CommentProps;
   refetchComments: ((data?: undefined) => void) | undefined;
 }) => {
+  const [isEditing, setIsEditing] = useState(false);
+  const [isEditingReply, setIsEditingReplying] = useState(false);
+  const [replyContext, setReplyContext] = useState("");
+  const [context, setContext] = useState("");
   const [isExpanded, setIsExpanded] = useState(false);
   const [showReplies, setShowReplies] = useState(false);
   const [showOptions, setShowOptions] = useState(false);
-  const [hasDeleteAttempted, setHasDeleteAttempted] = useState(false);
-  const optionsRef = useRef(null);
-
-  const toggleOptions = () => setShowOptions((prev) => !prev);
-
-  useEffect(() => {
-    const handleClickOutside = (event: { target: any }) => {
-      if (optionsRef.current && !optionsRef.current.contains(event.target)) {
-        setShowOptions(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
 
   const {
     triggerFetch: addReply,
     responseData: successReply,
     finished: finishedReply,
+    responseDataWithStat: errorCreateStat,
+    error,
   } = useAxios<
     any,
     {
@@ -55,6 +53,8 @@ const CommentCard = ({
   const {
     triggerFetch: deleteComment,
     responseData: successDelete,
+    responseDataWithStat: errorDeleteStat,
+    error: errorDelete,
     finished: deleteFinished,
   } = useAxios<any, any>({
     endpoint: `/api/comment/delete`,
@@ -62,11 +62,79 @@ const CommentCard = ({
     config: {},
   });
 
+  const {
+    triggerFetch: editComment,
+    responseData: editSuccess,
+    responseDataWithStat: errorEditStat,
+    error: errorEdit,
+    finished: editFinished,
+  } = useAxios<any, any>({
+    endpoint: `/api/comment/update`,
+    method: "POST",
+    config: {},
+  });
+
+  const handleEdit = (id: number) => {
+    if (id) {
+      editComment?.({ id: id, context: context });
+      refetchComments?.();
+      setShowOptions(false);
+    }
+  };
+
+  const handleEditReply = (id: number) => {
+    if (id) {
+      editComment?.({ id: id, context: replyContext });
+      refetchComments?.();
+      setShowOptions(false);
+    }
+  };
+
+  useEffect(() => {
+    if (editSuccess && editFinished) {
+      toast({
+        title: "Success",
+        description: "Comment edit successfully.",
+        variant: "success",
+      });
+      refetchComments?.();
+    }
+  }, [editSuccess, editFinished]);
+
+  useEffect(() => {
+    if (errorEditStat && errorEdit && editFinished) {
+      toast({
+        title: "Success",
+        description: "Comment edit successfully.",
+        variant: "success",
+      });
+      refetchComments?.();
+    }
+  }, [errorEditStat, errorEdit, editFinished]);
+
+  useEffect(() => {
+    if (successDelete && deleteFinished) {
+      toast({
+        title: "Success",
+        description: "Comment deleted successfully.",
+        variant: "success",
+      });
+      refetchComments?.();
+    }
+  }, [successDelete, deleteFinished]);
+
   const handleDelete = () => {
     const id = comment?.id;
     if (id) {
-      setHasDeleteAttempted(true); // Set flag when delete is attempted
       deleteComment?.({ id: id });
+      setShowOptions(false);
+    }
+  };
+
+  const handleDeleteReply = (id: number) => {
+    if (id) {
+      deleteComment?.({ id: id });
+      refetchComments?.();
       setShowOptions(false);
     }
   };
@@ -90,22 +158,38 @@ const CommentCard = ({
   const isLongText = comment.context.length > 100;
 
   useEffect(() => {
+    if (errorCreateStat && error) {
+      toast({
+        title: "Failed to comment",
+        description:
+          errorCreateStat?.result_message +
+          ". code: " +
+          errorCreateStat.result_code,
+        variant: "destructive",
+      });
+    }
+  }, [errorCreateStat, error]);
+
+  useEffect(() => {
+    if (errorDeleteStat && errorDelete) {
+      toast({
+        title: "Failed to delete",
+        description:
+          errorDeleteStat?.result_message +
+          ". code: " +
+          errorDeleteStat.result_code,
+        variant: "destructive",
+      });
+    }
+  }, [errorDeleteStat, errorDelete]);
+
+  useEffect(() => {
     reset();
     refetchComments?.();
   }, [successReply, finishedReply]);
-
-  // Modified delete success handler
   useEffect(() => {
-    if (hasDeleteAttempted && deleteFinished && successDelete) {
-      refetchComments?.();
-      toast({
-        title: "Success",
-        description: "Comment deleted successfully",
-        variant: "success",
-      });
-      setHasDeleteAttempted(false); // Reset the flag after handling
-    }
-  }, [successDelete, deleteFinished, hasDeleteAttempted]);
+    refetchComments?.();
+  }, [successDelete, deleteFinished]);
 
   const onSubmit: SubmitHandler<{
     context: string;
@@ -123,8 +207,8 @@ const CommentCard = ({
   return (
     <Card key={comment.id} className="shadow-lg rounded-lg mb-4 group relative">
       <div className="p-4">
-        
-      {/* <CardContent > */}
+        {/* <CardContent > */}
+
         <div className="flex items-start space-x-4">
           <Avatar className="h-10 w-10">
             <AvatarFallback>{comment.username.charAt(0)}</AvatarFallback>
@@ -136,24 +220,32 @@ const CommentCard = ({
                 <span className="text-sm text-muted-foreground">
                   {comment.commented_at}
                 </span>
-                <EllipsisVertical
-                  className="opacity-0 group-hover:opacity-100 p-1 rounded-full transition-all duration-200 ease-in-out
-             hover:bg-slate-100 cursor-pointer"
-                  onClick={toggleOptions}
-                />
-                {showOptions && (
-                  <div className="absolute top-8 right-0 w-24 border rounded shadow-lg z-10">
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button variant={"ghost"} size={'sm'} className="rounded-full  ">
+                      <EllipsisVertical />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-fit">
                     <Button
-                      ref={optionsRef}
                       variant="ghost"
-                      className="w-full text-left p-2 text-sm "
+                      className="w-full flex justify-start   text-sm "
+                      onClick={() => setIsEditing(true)}
+                    >
+                      <PenIcon className="mr-2 h-4 w-4" />
+                      Edit
+                    </Button>
+
+                    <Button
+                      variant="ghost"
+                      className="w-full flex justify-start   text-sm "
                       onClick={handleDelete}
                     >
                       <Trash className="mr-2 h-4 w-4 text-red-500" />
                       Delete
                     </Button>
-                  </div>
-                )}
+                  </PopoverContent>
+                </Popover>
               </div>
             </div>
 
@@ -169,18 +261,39 @@ const CommentCard = ({
                 />
               ))}
             </div>
+            {isEditing ? (
+              <div>
+                {/* Shadcnui Text Input with comment context as the initial value */}
+                <Input
+                  type="text"
+                  className="shadcnui-input" // Apply Shadcnui styles as needed
+                  value={context} // Prefilled with current comment context
+                  onChange={(e) => setContext(e.target.value)}
+                />
 
-            <p>
-              {isExpanded ? comment.context : truncatedText}
-              {isLongText && (
-                <span
-                  onClick={toggleExpand}
-                  className="text-blue-500 cursor-pointer hover:underline"
+                {/* Submit Button to save changes and toggle editing state */}
+                <Button
+                  onClick={() => {
+                    handleEdit(comment.id);
+                    setIsEditing(false); // Change editing state on submit
+                  }}
                 >
-                  {isExpanded ? "See Less" : "See More"}
-                </span>
-              )}
-            </p>
+                  Submit
+                </Button>
+              </div>
+            ) : (
+              <p>
+                {isExpanded ? comment.context : truncatedText}
+                {isLongText && (
+                  <span
+                    onClick={toggleExpand}
+                    className="text-blue-500 cursor-pointer hover:underline"
+                  >
+                    {isExpanded ? "See Less" : "See More"}
+                  </span>
+                )}
+              </p>
+            )}
 
             <div className="">
               {comment.replies?.length > 0 && (
@@ -199,25 +312,17 @@ const CommentCard = ({
               {showReplies && (
                 <div className="mt-2 pl-6 border-l-2 border-gray-200 space-y-4">
                   {comment.replies.length > 0 ? (
-                    comment.replies.map((reply) => (
-                      <div key={reply.id} className="space-y-1">
-                        <div className="flex items-start space-x-3">
-                          <Avatar className="h-8 w-8">
-                            <AvatarFallback>
-                              {reply.username.charAt(0)}
-                            </AvatarFallback>
-                          </Avatar>
-                          <div className="space-y-1">
-                            <h4 className="font-semibold text-sm">
-                              {reply.username}
-                            </h4>
-                            <span className="text-xs text-muted-foreground">
-                              {reply.commented_at}
-                            </span>
-                            <p className="text-gray-600">{reply.context}</p>
-                          </div>
-                        </div>
-                      </div>
+                    comment.replies?.map((reply) => (
+                      <Reply
+                        key={reply.id}
+                        reply={reply}
+                        context={replyContext}
+                        handleEdit={() => handleEditReply(reply.id)}
+                        setContext={setReplyContext}
+                        setIsEditing={setIsEditingReplying}
+                        isEditing={isEditingReply}
+                        onDelete={() => handleDeleteReply(reply.id)}
+                      />
                     ))
                   ) : (
                     <p className="text-sm text-muted-foreground">
@@ -225,21 +330,20 @@ const CommentCard = ({
                     </p>
                   )}
 
-                  <form onSubmit={handleSubmit(onSubmit)}>
+                  <form onSubmit={handleSubmit(onSubmit)} className="space-y-2">
                     <div className="flex items-start space-x-2">
                       <Avatar className="h-8 w-8">
                         <AvatarFallback>
                           {user?.profile_img ?? "U"}
                         </AvatarFallback>
                       </Avatar>
-                      <div>
+                      <div className="w-full">
                         <Input
                           type="text"
                           {...register("context", {
                             required: "Comment cannot be empty.",
                           })}
                           placeholder="Write a reply..."
-                          className="w-full"
                         />
                         {errors.context && (
                           <span className="text-red-500 text-xs">
@@ -247,6 +351,15 @@ const CommentCard = ({
                           </span>
                         )}
                       </div>
+                    </div>
+                    <div className="flex space-x-2">
+                      <Button
+                        variant="ghost"
+                        onClick={() => setShowReplies(false)}
+                        className="text-red-500"
+                      >
+                        Cancel
+                      </Button>
                       <Button type="submit">Reply</Button>
                     </div>
                   </form>
@@ -266,9 +379,8 @@ const CommentCard = ({
             </Button>
           </div>
         </div>
-      {/* </CardContent> */}
+        {/* </CardContent> */}
       </div>
-
     </Card>
   );
 };

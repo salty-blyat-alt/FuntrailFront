@@ -154,7 +154,7 @@ export default function SearchPage() {
                 onProvinceChange={handleProvinceChange}
               />
             </div>
-            <div className="hidden md:block sticky top-40">
+            <div className="hidden md:block sticky top-20">
               <FilterContent
                 isLoading={loadingProvinces}
                 selectedProvince={provinceId}

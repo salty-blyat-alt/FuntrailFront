@@ -2,7 +2,6 @@
 
 import { useEffect } from "react";
 import { motion } from "framer-motion";
-import { format } from "date-fns";
 import {
   Card,
   CardContent,
@@ -30,7 +29,7 @@ const orderHistory = [
     u_id: "USER125",
   },
   {
-    id: 3,
+    id: 4,
     room_id: 102,
     hotel_id: 1,
     user_id: 1,
@@ -43,7 +42,7 @@ const orderHistory = [
     u_id: "USER125",
   },
   {
-    id: 3,
+    id: 5,
     room_id: 102,
     hotel_id: 1,
     user_id: 1,
@@ -86,7 +85,7 @@ export default function OrderHistory() {
         transition={{ duration: 0.5 }}
       >
         <h1 className="text-3xl font-bold mb-6">Your Bookings</h1>
-        <CurrentBooking currentOrders={response?.active_orders || null} />
+        <CurrentBooking currentOrders={response?.active_orders || []} />
       </motion.div>
 
       <motion.div
