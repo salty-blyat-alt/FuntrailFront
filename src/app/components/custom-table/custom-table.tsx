@@ -1,5 +1,4 @@
 "use client";
-
 import { ChevronLeft, ChevronRight, MoreHorizontal } from "lucide-react";
 import { Button } from "@components/ui/button";
 import {
@@ -27,7 +26,7 @@ import {
   TableRow,
 } from "@components/ui/table";
 import { Badge } from "../ui/badge";
-import { AwaitedReactNode, Dispatch, JSXElementConstructor, Key, ReactElement, ReactNode, ReactPortal, SetStateAction } from "react";
+import Image from "next/image"; // Import Image component
 import {
   Select,
   SelectContent,
@@ -107,7 +106,7 @@ export default function CustomTable({
                 </TableCell>
               </TableRow>
             ) : data && data.length > 0 ? (
-              data.map((item: { [x: string]: string | number | bigint | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Promise<AwaitedReactNode> | null | undefined; id: Key | null | undefined; }) => (
+              data.map((item: DataProps) => (
                 <TableRow key={item.id}>
                   {headers.map(({ key, hidden }) => (
                     <TableCell key={key} className={hidden ? "hidden" : ""}>
@@ -134,6 +133,19 @@ export default function CustomTable({
                             </DropdownMenuItem>
                           </DropdownMenuContent>
                         </DropdownMenu>
+                      ) : key === "img" ? (
+                        // Check if the key is "img" and handle it accordingly
+                        <Image
+                          src={
+                            typeof item[key] === "string"
+                              ? process.env.NEXT_PUBLIC_BASE_URL + item[key]
+                              : URL.createObjectURL(item[key])
+                          }
+                          alt="Thumbnail"
+                          width={100}
+                          height={100}
+                          className="object-cover size-20 rounded-md"
+                        />
                       ) : Array.isArray(item[key]) ? (
                         // If the field is an array, display badges
                         <div className="flex gap-2">
@@ -160,7 +172,6 @@ export default function CustomTable({
           </TableBody>
         </Table>
       </CardContent>
-      
       {havePagination && (
         <CardFooter className="flex justify-between items-center">
           <div className="text-xs text-muted-foreground">
@@ -171,7 +182,6 @@ export default function CustomTable({
             </strong>{" "}
             of <strong>{totalItems}</strong> items
           </div>
-
           <div className="flex items-center gap-x-2 text-xs text-muted-foreground">
             <Button
               variant={"ghost"}
@@ -181,7 +191,6 @@ export default function CustomTable({
             >
               <ChevronLeft />
             </Button>
-
             <Select
               value={perPage.toString()}
               onValueChange={(value) => onPerPageChange(Number(value))} // Handle per-page change
@@ -196,7 +205,6 @@ export default function CustomTable({
                 <SelectItem value="25">25</SelectItem>
               </SelectContent>
             </Select>
-
             <Button
               variant={"ghost"}
               size={"sm"}

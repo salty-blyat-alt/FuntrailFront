@@ -21,25 +21,22 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/app/components/ui/dialog";
+import { RoomProps } from "@/app/hotel-detail/components/room-list";
 
-interface RoomProps {
-  room_type: string;
-  price_per_night: number;
-  img: File;
-} 
-
-export default function AddRoomDialog({
+export default function EditRoomDialog({
   open,
   fetchRooms,
+  selectedRow,
   onClose,
 }: {
   open: boolean;
   onClose: () => void;
+  selectedRow: RoomProps | undefined;
   fetchRooms: ((data?: undefined) => void) | undefined;
 }) {
   const [roomType, setRoomType] = useState("standard");
   const [preview, setPreview] = useState<File>();
-  const [customRoomType, setCustomRoomType] = useState(""); 
+  const [customRoomType, setCustomRoomType] = useState<string | undefined>("");
 
   const {
     register,
@@ -48,6 +45,29 @@ export default function AddRoomDialog({
     reset,
     setValue,
   } = useForm<RoomProps>();
+
+  useEffect(() => {
+    if (selectedRow) {
+      setValue("price_per_night", selectedRow.price_per_night);
+      setValue("img", selectedRow.img);
+      setValue("room_type", selectedRow.room_type);
+      setRoomType(
+        selectedRow.room_type === "standard" ||
+          selectedRow.room_type === "deluxe" ||
+          selectedRow.room_type === "suite"
+          ? selectedRow.room_type
+          : "other"
+      );
+      setCustomRoomType(
+        selectedRow.room_type !== "standard" &&
+          selectedRow.room_type !== "deluxe" &&
+          selectedRow.room_type !== "suite"
+          ? selectedRow.room_type
+          : ""
+      );
+      setPreview(undefined);
+    }
+  }, [selectedRow, setValue]);
 
   const handleThumbnailChange = (file: File) => {
     setPreview(file);
@@ -60,7 +80,7 @@ export default function AddRoomDialog({
     finished,
   } = useAxios<any, any>({
     method: "POST",
-    endpoint: "/api/hotel/add-room",
+    endpoint: `/api/hotel/update-room/${selectedRow?.id}`,
     config: {},
   });
 
@@ -68,12 +88,12 @@ export default function AddRoomDialog({
     if (success && finished) {
       fetchRooms?.();
       toast({
-        title: "Room Added",
-        description: "Room is added to your hotel successfully.",
+        title: "Room Updated",
+        description: "Room is updated successfully.",
         variant: "success",
       });
     }
-  }, [success, finished]);
+  }, [success, finished, fetchRooms]);
 
   useEffect(() => {
     if (finished) {
@@ -82,29 +102,33 @@ export default function AddRoomDialog({
       setPreview(undefined);
       reset();
       fetchRooms?.();
+      onClose();
     }
-  }, [finished]); 
+  }, [finished, reset, fetchRooms, onClose]);
 
   const onSubmit: SubmitHandler<RoomProps> = async (data) => {
     const finalRoomType = roomType === "other" ? customRoomType : roomType;
     const formData = new FormData();
-
     formData.append("room_type", finalRoomType);
-    formData.append("price_per_night", data.price_per_night.toString());
-    formData.append("img", data.img);
-    addRoom?.(formData);
+    if (data?.price_per_night) {
+      formData.append("price_per_night", data?.price_per_night.toString());
+    }
+    if (data.img && typeof data.img !== "string") {
+      formData.append("img", data.img);
+    }
+    try {
+      addRoom?.(formData);
+    } catch (err) {
+      console.error("Failed to update room:", err);
+    }
   };
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>
-            Please add some rooms to your hotel
-            <DialogDescription>
-              You can skip this and add rooms later in your dashboard
-            </DialogDescription>
-          </DialogTitle>
+          <DialogTitle>Edit Room</DialogTitle>
+          <DialogDescription>Update the details of your room</DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div>
@@ -168,12 +192,12 @@ export default function AddRoomDialog({
               </span>
             )}
           </div>
-          <div className="flex gap-x-2 ">
+          <div className="flex gap-x-2">
             <Button onClick={onClose} size={"sm"} variant={"outline"}>
               Done
             </Button>
             <Button size={"sm"} type="submit">
-              Add Room
+              Update Room
             </Button>
           </div>
         </form>

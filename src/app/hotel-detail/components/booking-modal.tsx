@@ -11,7 +11,7 @@ import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { RoomProps } from "./room-list";
 import { SubmitHandler, useForm } from "react-hook-form";
 import useAxios from "@/app/hooks/use-axios";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { redirect, usePathname, useRouter, useSearchParams } from "next/navigation";
 import { DateRange } from "react-day-picker";
 import { format } from "date-fns";
 
@@ -69,50 +69,33 @@ const BookingModal: React.FC<BookingModalProps> = ({
         "Content-Type": "application/json",
       },
     },
-  });
+  }); 
+
   useEffect(() => {
+    if (response?.startsWith("https://checkout.stripe.com/c/pay/")) { 
+      // Redirect to Stripe Checkout
+      console.log("response in custoemr",response)
+      
+      toast({
+        title: "Redirecting to payment",
+        description: "Please complete your payment to confirm the booking.",
+        variant: "default",
+      });
+      redirect(response);
+    }
+    // for owner
     if (response === "Rooms booked successfully") {
-      // Clear cart
-      setBookingCart([]);
-      setIsLoading(false); 
-      handleCloseModal?.();
-      console.log(errorStat)
+      console.log("response in owner",response) 
       toast({
         title: "Payment Successful",
         description: "Your payment has been processed successfully.",
         variant: "success",
       });
     }
+    setBookingCart([]);
+    setIsLoading(false);
+    handleCloseModal?.();
   }, [response, finishedBook]);
-
-  useEffect(() => {
-    if (response?.body) {
-      // Store booking details in localStorage for post-payment verification
-      localStorage.setItem(
-        "pendingBooking",
-        JSON.stringify({
-          hotelId: bookingCart?.[0]?.hotel_id,
-          roomIds: bookingCart?.map((room) => room.id),
-          dateRange: {
-            from: dateRange?.from,
-            to: dateRange?.to,
-          },
-        })
-      );
-
-      // Redirect to Stripe Checkout
-      window.location.href = response.body;
-
-      // Clear cart
-      setBookingCart([]);
-
-      toast({
-        title: "Redirecting to payment",
-        description: "Please complete your payment to confirm the booking.",
-        variant: "default",
-      });
-    }
-  }, [response, error]);
 
   useEffect(() => {
     if (errorStat && error) {
