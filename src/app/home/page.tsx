@@ -7,6 +7,7 @@ import GridCard from "./components/grid-card";
 import Slide from "./components/slide";
 import { BentoGrid } from "./components/bento-grid";
 import GeniusCard from "./components/genius-card";
+import Amenities from "./components/amenities";
 
 export default function Home() {
   return (
@@ -17,6 +18,8 @@ export default function Home() {
       </div>
       <main className="container relative mx-auto space-y-16 px-6 md:px-16">
         {/* Popular section */}
+        <Amenities />
+        
         <GridCard />
 
         <Slide
@@ -26,6 +29,7 @@ export default function Home() {
 
         {/* Genius card section */}
         <GeniusCard title={""} subtitle={""} />
+
         <BentoGrid className="mt-12" />
 
         <Slide

@@ -122,22 +122,21 @@ export default function SearchPage() {
 
   return (
     <div className="min-h-screen">
-      <div className="py-20  relative flex justify-center items-center text-primary-foreground bg-primary">
-        <div className="container mx-auto px-4 lg:px-12 text-primary-foreground">
+      <section className="w-full flex justify-center py-12 md:py-24 lg:py-32 bg-green-100 text-green-800">
+        <div className="container px-4 md:px-6   flex-col space-y-2 items-center ">
           <h1 className="text-3xl font-bold mb-4">Find Your Perfect Stay</h1>
           <div className="relative">
             <Search className="absolute left-2 top-2.5 h-4 w-4" />
             <Input
               placeholder="Search"
               className="pl-8"
-              type="text" 
-              value={name} 
+              type="text"
+              value={name}
               onChange={handleSearch}
             />
           </div>
         </div>
-      </div>
-
+      </section>
       <div className="container mx-auto px-4 lg:px-12 py-8">
         <div className="mb-4 flex gap-4">
           <BackButton path="/" />
