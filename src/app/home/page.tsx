@@ -17,7 +17,7 @@ export default function Home() {
         <SearchGroup />
       </div>
       <main className="container relative mx-auto space-y-16 px-6 md:px-16">
-        {/* Popular section */}
+      
         <Amenities />
         
         <GridCard />

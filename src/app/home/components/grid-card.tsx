@@ -55,7 +55,7 @@ const GridCard = () => {
         ))}
 
         {/* not working */}
-        {loading &&
+        {loading || !popularHotels &&
           Array.from({ length: 5 }).map((_, index) => (
             <div key={index} className="flex flex-col space-y-3">
               <Skeleton className="h-[125px] rounded-xl" />
