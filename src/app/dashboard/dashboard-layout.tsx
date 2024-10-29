@@ -21,6 +21,8 @@ const DashboardLayout = ({
         <Sidebar navItems={navItems} title={""} />
         <main className="w-full flex-1 bg-muted/40 overflow-hidden">
           <div className="p-4">
+            {/* admin navbar */}
+
             <CustomBreadcrumb pathname={pathname} />
           </div>
           {children}

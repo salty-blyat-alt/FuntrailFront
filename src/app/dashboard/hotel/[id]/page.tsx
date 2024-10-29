@@ -12,15 +12,15 @@ import StatsCard from "../../components/stats-card";
 import useHotelNavItems from "../../routes/routes";
 export default function HotelDashboard() {
   const headers: HeaderProps[] = [
-    { key: "id", label: "ID", hidden: true },
+    { key: "id", label: "Receipt ID", hidden: false },
     { key: "room_type", label: "Room Type", hidden: false },
     { key: "username", label: "Customer", hidden: false },
-    { key: "ordered_at", label: "Ordered At", hidden: false },
-    { key: "date_start", label: "Date From", hidden: false },
-    { key: "date_end", label: "Date To", hidden: false },
+    { key: "date_start", label: "Check in", hidden: false },
+    { key: "date_end", label: "Check out", hidden: false },
     { key: "hotel_id", label: "hotel_id", hidden: true },
     { key: "room_id", label: "room_id", hidden: true },
     { key: "total", label: "Total", hidden: false },
+    { key: "ordered_at", label: "Booked At", hidden: false },
   ];
 
   const { triggerFetch: fetchWeekRev, responseData: weekRev } = useAxios<

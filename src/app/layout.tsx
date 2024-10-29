@@ -1,7 +1,6 @@
 "use client";
 
 import { ThemeProvider } from "@/theme/theme-provider";
-import localFont from "next/font/local";
 import "../app/globals.css";
 import { Navbar } from "./components/navbar/navbar";
 import { Toaster } from "@components/ui/toaster";
@@ -11,17 +10,6 @@ import Footer from "./components/footer/footer";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import Loading from "./components/loader/loading";
-
-const geistSans = localFont({
-  src: "../../public/fonts/GeistVF.woff",
-  variable: "--font-geist-sans",
-  weight: "100 900",
-});
-const geistMono = localFont({
-  src: "../../public/fonts/GeistMonoVF.woff",
-  variable: "--font-geist-mono",
-  weight: "100 900",
-});
 
 export default function RootLayout({
   children,
@@ -57,7 +45,7 @@ export default function RootLayout({
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={` antialiased`}
       >
         <AuthProvider>
           <ThemeProvider
@@ -76,7 +64,7 @@ export default function RootLayout({
                   <main className={isLayoutRequired ? "mt-12" : ""}>
                     {children}
                   </main>
-                  {isLayoutRequired && <Footer className="mt-32"/>}
+                  {isLayoutRequired && <Footer className="mt-32" />}
                 </>
               )}
               <Toaster />
@@ -86,4 +74,4 @@ export default function RootLayout({
       </body>
     </html>
   );
-} 
+}

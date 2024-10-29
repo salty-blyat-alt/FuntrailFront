@@ -70,7 +70,7 @@ export function BentoGrid({ className = "" }) {
             </Link>
           );
         })}
-        {loading && (
+        {loading || !popularProvinces && (
           <>
             <Skeleton className="h-52 rounded-md col-span-2" />
             <Skeleton className="h-52 rounded-md col-span-1" />

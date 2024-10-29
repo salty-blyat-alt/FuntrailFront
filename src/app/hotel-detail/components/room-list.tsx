@@ -22,6 +22,14 @@ import {
   DialogContent,
   DialogTrigger,
 } from "@/app/components/ui/dialog";
+import { cn } from "@/lib/utils";
+import { CalendarIcon } from "lucide-react";
+import {
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+} from "@/app/components/ui/popover";
+import { Calendar } from "@/app/components/ui/calendar";
 
 export interface RoomProps {
   img?: string;
@@ -36,18 +44,12 @@ export interface RoomProps {
 
 export default function RoomList({ hotelId }: { hotelId: string }) {
   const [isBookingModalOpen, setIsBookingModalOpen] = useState<boolean>(false);
+  const [dateStart, setDateStart] = useState<Date>();
+  const [dateEnd, setDateEnd] = useState<Date>();
   const [bookingCart, setBookingCart] = useState<RoomProps[]>([]);
-  const [dateRange, setDateRange] = useState<DateRange | undefined>({
-    from: new Date(),
-    to: new Date(new Date().setDate(new Date().getDate() + 1)),
-  });
-  const [selectedRange, setSelectedRange] = useState<DateRange | undefined>(
-    undefined
-  );
 
   const handleApply = () => {
-    if (selectedRange && selectedRange.from && selectedRange.to) {
-      setDateRange(selectedRange);
+    if (dateStart && dateEnd) {
       fetchRooms?.();
     } else {
       toast({
@@ -58,35 +60,42 @@ export default function RoomList({ hotelId }: { hotelId: string }) {
     }
   };
 
-  // prep to send to backend with correct format
-  const formattedFrom = dateRange?.from
-    ? format(dateRange.from, "dd/MM/yyyy")
-    : "";
-  const formattedTo = dateRange?.to ? format(dateRange.to, "dd/MM/yyyy") : "";
-
   // get room
-  const { triggerFetch: fetchRooms, responseData: rooms } = useAxios<
-    RoomProps[],
-    undefined
-  >({
+  const {
+    triggerFetch: fetchRooms,
+    error,
+    responseDataWithStat,
+    finished,
+    responseData: rooms,
+  } = useAxios<RoomProps[], undefined>({
     endpoint: `/api/hotel/rooms/${hotelId}`,
     method: "GET",
     config: {
       params: {
-        date_start: formattedFrom,
-        date_end: formattedTo,
-      },
-      headers: {
-        Accept: "application/json",
+        date_start: dateStart ? format(dateStart, "dd/MM/yyyy") : undefined,
+        date_end: dateEnd ? format(dateEnd, "dd/MM/yyyy") : undefined,
       },
     },
   });
 
   useEffect(() => {
-    if (dateRange?.from && dateRange?.to) {
+    if (dateStart && dateEnd) {
       fetchRooms?.();
     }
-  }, [dateRange]);
+  }, [dateStart, dateEnd]);
+
+  useEffect(() => {
+    if (error && finished) {
+      toast({
+        title: "Fail",
+        description:
+          responseDataWithStat?.result_message +
+          ". code: " +
+          responseDataWithStat?.result_code,
+          variant: 'destructive'
+      });
+    }
+  }, [error, finished]);
 
   const addToBookingCart = (room: RoomProps) => {
     setBookingCart([...bookingCart, room]);
@@ -105,10 +114,10 @@ export default function RoomList({ hotelId }: { hotelId: string }) {
     fetchRooms?.();
   };
 
-  const handleDateChange = (newDate: DateRange | undefined) => {
-    setSelectedRange(newDate);
+  const dateRange = {
+    from: dateStart,
+    to: dateEnd,
   };
-
   return (
     <>
       <div
@@ -120,10 +129,63 @@ export default function RoomList({ hotelId }: { hotelId: string }) {
           <div className="flex flex-wrap gap-4 justify-between items-center mb-4">
             <h1 className="text-2xl font-bold">Available Rooms</h1>
             <div className="flex items-center gap-x-2">
-              <CalendarDateRangePicker
-                date={dateRange}
-                onDateChange={handleDateChange}
-              />
+              <div className="flex gap-x-4">
+                {/* check in date */}
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant={"outline"}
+                      className={cn(
+                        "w-[240px] justify-start text-left font-normal",
+                        !dateStart && "text-muted-foreground"
+                      )}
+                    >
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {dateStart ? (
+                        format(dateStart, "dd/MM/yyyy") // Adjusted format
+                      ) : (
+                        <span>Check in</span>
+                      )}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar
+                      mode="single"
+                      selected={dateStart}
+                      onSelect={setDateStart}
+                      initialFocus
+                    />
+                  </PopoverContent>
+                </Popover>
+
+                {/* checkout date */}
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant={"outline"}
+                      className={cn(
+                        "w-[240px] justify-start text-left font-normal",
+                        !dateEnd && "text-muted-foreground"
+                      )}
+                    >
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {dateEnd ? (
+                        format(dateEnd, "dd/MM/yyyy") // Adjusted format
+                      ) : (
+                        <span>Check out date</span>
+                      )}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar
+                      mode="single"
+                      selected={dateEnd}
+                      onSelect={setDateEnd}
+                      initialFocus
+                    />
+                  </PopoverContent>
+                </Popover>
+              </div>
 
               <Button onClick={handleApply} className="submit-button">
                 Apply Date
@@ -183,9 +245,7 @@ export default function RoomList({ hotelId }: { hotelId: string }) {
                       <Button
                         size="sm"
                         onClick={() => addToBookingCart(room)}
-                        disabled={
-                          bookingCart.some((r) => r.id === room.id)
-                        }
+                        disabled={bookingCart.some((r) => r.id === room.id)}
                       >
                         Add to Cart
                       </Button>

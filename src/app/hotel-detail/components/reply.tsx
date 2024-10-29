@@ -9,29 +9,8 @@ import {
   PopoverTrigger,
 } from "@/app/components/ui/popover";
 
-const Reply = ({
-  reply,
-  onDelete,
-  setIsEditing,
-  handleEdit,
-  setContext,
-  isEditing,
-  context,
-}) => {
-  const [showOptions, setShowOptions] = useState(false);
-  const optionsRef = useRef(null);
-
-  const toggleOptions = () => setShowOptions((prev) => !prev);
-
-  useEffect(() => {
-    const handleClickOutside = (event: { target: any }) => {
-      if (optionsRef.current && !optionsRef.current.contains(event.target)) {
-        setShowOptions(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+const Reply = ({ reply, onDelete, handleEdit, setContext, context }) => {
+  const [isEditing, setIsEditing] = useState(false);
 
   return (
     <div key={reply.id} className="space-y-1 group relative">
@@ -45,12 +24,12 @@ const Reply = ({
 
             <Popover>
               <PopoverTrigger asChild>
-                <EllipsisVertical className="rounded-full p-1 hover:bg-slate-100 cursor-pointer transition-all duration-200 ease-in-out" />
+                <EllipsisVertical className="rounded-full p-1   cursor-pointer transition-all duration-200 ease-in-out" />
               </PopoverTrigger>
-              <PopoverContent className="w-28 p-2 border rounded-lg shadow-lg bg-white space-y-1">
+              <PopoverContent className="w-28 p-2 border rounded-lg shadow-lg   space-y-1">
                 <Button
                   variant="ghost"
-                  className="w-full flex items-center justify-start px-2 py-1 text-sm rounded hover:bg-slate-100 transition-colors duration-200 ease-in-out"
+                  className="w-full flex items-center justify-start px-2 py-1 text-sm rounded   transition-colors duration-200 ease-in-out"
                   onClick={() => setIsEditing(true)}
                 >
                   <PenIcon className="mr-2 h-4 w-4" />
@@ -59,7 +38,7 @@ const Reply = ({
 
                 <Button
                   variant="ghost"
-                  className="w-full flex items-center justify-start px-2 py-1 text-sm rounded hover:bg-slate-100 transition-colors duration-200 ease-in-out"
+                  className="w-full flex items-center justify-start px-2 py-1 text-sm rounded  transition-colors duration-200 ease-in-out"
                   onClick={onDelete}
                 >
                   <Trash className="mr-2 h-4 w-4 text-red-500" />
@@ -78,7 +57,7 @@ const Reply = ({
                 type="text"
                 className="shadcnui-input" // Apply Shadcnui styles as needed
                 defaultValue={reply.context}
-                value={context} // Prefilled with current comment context
+                value={reply.context} // Prefilled with current comment context
                 onChange={(e) => setContext(e.target.value)}
               />
               <Button

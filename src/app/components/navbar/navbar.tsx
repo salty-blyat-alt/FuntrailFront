@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 import { User, Menu, X, LogOut, Sun, Moon, ShoppingCart } from "lucide-react";
-import { useAuth } from "@/app/context/auth-context";
+import { User as UserProps, useAuth } from "@/app/context/auth-context";
 import { useToast } from "@/app/hooks/use-toast";
 import useAxios from "@/app/hooks/use-axios";
 import { deleteCookie } from "cookies-next";
@@ -273,7 +273,7 @@ export function Navbar() {
   );
 }
 
-function NavLink({
+export function NavLink({
   href,
   children,
   onClick,
@@ -293,7 +293,7 @@ function NavLink({
   );
 }
 
-function UserMenu({ user, handleLogout }) {
+export function UserMenu({ user, handleLogout }: { user?: UserProps | null; handleLogout:()=>void }) {
   return (
     <div className="relative group">
       <Button variant="ghost" className="p-2">

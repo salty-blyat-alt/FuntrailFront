@@ -19,19 +19,7 @@ import EditHotelDialog from "./components/edit-hotel-dialog";
 
 const HotelSetting = () => {
   const [hotel, setHotel] = useState(mockHotel);
-  const hotelNavItems = useHotelNavItems();
-
-  const handleHotelPageClick = () => {
-    setRedirectUrl(`/hotel-detail/${user?.establishment_id}`);
-    setDialogOpen(true);
-  };
-
-  const handleConfirm = () => {
-    if (redirectUrl) {
-      window.location.href = redirectUrl; // Redirect to hotel page
-    }
-    setDialogOpen(false); // Close the dialog
-  }; 
+  const hotelNavItems = useHotelNavItems(); 
   return (
     <>
     

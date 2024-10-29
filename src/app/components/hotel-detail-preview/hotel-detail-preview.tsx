@@ -1,24 +1,44 @@
 import React from "react";
 import { Button } from "../ui/button";
-import { HeartIcon, MapPinIcon, ShareIcon } from "lucide-react";
+import { ArrowBigLeft, HeartIcon, MapPinIcon, ShareIcon } from "lucide-react";
 import ImageSelect from "@/app/hotel-detail/components/image-select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import { HotelProps } from "@/app/data/mockupData";
+import { useAuth } from "@/app/context/auth-context";
+import useAxios from "@/app/hooks/use-axios";
+import { usePathname, useRouter } from "next/navigation";
+import CustomBreadcrumb from "../custom-breadcrumb/custom-breadcrumb";
 
 const HotelDetailPreview = ({ hotel }: { hotel: HotelProps }) => {
+  const { user } = useAuth();
+  // const {} = useAxios<>({
+  //   endpoint: "",
+  // });
+  const pathname = usePathname();
+  const router = useRouter();
+
   const { images } = hotel;
+
   return (
-    <>
+    <div className="container mx-auto p-4">
+      <div className="mb-4 text-sm breadcrumbs">
+        <CustomBreadcrumb pathname={pathname} />
+      </div>
+
+      <Button
+        className="mb-4"
+        variant="outline"
+        size="sm"
+        onClick={() => router.back()}
+      >
+        <ArrowBigLeft />
+      </Button>
       <div className="flex justify-between items-start sm:items-center mb-4 gap-4">
         <h1 className="text-2xl font-bold">{hotel?.name}</h1>
         <div className="flex gap-2">
           <Button variant="outline" size="icon">
             <HeartIcon className="h-4 w-4" />
           </Button>
-          <Button variant="outline" size="icon">
-            <ShareIcon className="h-4 w-4" />
-          </Button>
-          <Button>Reserve</Button>
         </div>
       </div>
 
@@ -27,7 +47,7 @@ const HotelDetailPreview = ({ hotel }: { hotel: HotelProps }) => {
       </p>
 
       <div className="mb-4">
-         <ImageSelect images={images} />
+        <ImageSelect images={hotel?.images} />
       </div>
 
       <Tabs defaultValue="overview" className="mb-4">
@@ -45,45 +65,91 @@ const HotelDetailPreview = ({ hotel }: { hotel: HotelProps }) => {
             Policies
           </TabsTrigger>
         </TabsList>
+
         <TabsContent value="overview">
-          <p>{hotel.description}</p>
+          {hotel?.description ? (
+            <p>{hotel.description}</p>
+          ) : (
+            <p>No overview available.</p>
+          )}
         </TabsContent>
 
-        {/* Info & Prices Tab */}
         <TabsContent value="info">
-          <p>
-            <strong>Hotel Name:</strong> {hotel.name}
-          </p>
-          <p>
-            <strong>Address:</strong> {hotel.address}
-          </p>
-          <p>
-            <strong>Check-in Time:</strong> {hotel.open_at}
-          </p>
-          <p>
-            <strong>Check-out Time:</strong> {hotel.close_at}
-          </p>
+          {hotel ? (
+            <>
+              <p>
+                <strong>Hotel Name:</strong> {hotel.name || "N/A"}
+              </p>
+              <p>
+                <strong>Address:</strong> {hotel.address || "N/A"}
+              </p>
+              <p>
+                <strong>Check-in Time:</strong> {hotel.open_at || "N/A"}
+              </p>
+              <p>
+                <strong>Check-out Time:</strong> {hotel.close_at || "N/A"}
+              </p>
+            </>
+          ) : (
+            <p>No information available.</p>
+          )}
         </TabsContent>
 
-        {/* Facilities Tab */}
-        <TabsContent value="facilities">
+        {/* <TabsContent value="facilities">
+        {Array.isArray(hotel?.facilities) && hotel.facilities.length > 0 ? (
           <ul>
-            {hotel.facilities.map((facility, index) => (
-              <li key={index}>{facility}</li>
-            ))}
+            {hotel.facilities.map(
+              (
+                facility:
+                  | string
+                  | number
+                  | bigint
+                  | boolean
+                  | ReactElement<any, string | JSXElementConstructor<any>>
+                  | Iterable<ReactNode>
+                  | ReactPortal
+                  | Promise<AwaitedReactNode>
+                  | null
+                  | undefined,
+                index: Key | null | undefined
+              ) => (
+                <li key={index}>{facility}</li>
+              )
+            )}
           </ul>
-        </TabsContent>
+        ) : (
+          <p>No facilities available.</p>
+        )}
+      </TabsContent>
 
-        {/* Policies Tab */}
-        <TabsContent value="policies">
+      <TabsContent value="policies">
+        {Array.isArray(hotel?.facilities) && hotel.facilities.length > 0 ? (
           <ul>
-            {hotel.policies.map((policy, index) => (
-              <li key={index}>{policy}</li>
-            ))}
+            {hotel.facilities.map(
+              (
+                facility:
+                  | string
+                  | number
+                  | bigint
+                  | boolean
+                  | ReactElement<any, string | JSXElementConstructor<any>>
+                  | Iterable<ReactNode>
+                  | ReactPortal
+                  | Promise<AwaitedReactNode>
+                  | null
+                  | undefined,
+                index: Key | null | undefined
+              ) => (
+                <li key={index}>{facility}</li>
+              )
+            )}
           </ul>
-        </TabsContent>
+        ) : (
+          <p>No facilities available.</p>
+        )}
+      </TabsContent> */}
       </Tabs>
-    </>
+    </div>
   );
 };
 

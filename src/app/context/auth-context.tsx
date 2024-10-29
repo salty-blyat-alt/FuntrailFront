@@ -19,7 +19,7 @@ interface AuthContextType {
 }
 
 // Define the User type (you can customize this according to your needs)
-interface User {
+export interface User {
   id?: number;
   username?: string;
   email?: string;

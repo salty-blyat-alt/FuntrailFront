@@ -34,15 +34,14 @@ const Orders = () => {
     });
 
   const headers: HeaderProps[] = [
-    { key: "id", label: "ID", hidden: false },
+    { key: "id", label: "Receipt ID", hidden: false },
     { key: "username", label: "Customer", hidden: false },
     { key: "room_type", label: "Room Type", hidden: false },
-    { key: "ordered_at", label: "Ordered At", hidden: false },
-    { key: "date_start", label: "Date From", hidden: false },
-    { key: "date_end", label: "Date To", hidden: false },
+    { key: "date_start", label: "Checkin", hidden: false },
+    { key: "date_end", label: "Checkout", hidden: false },
     { key: "total", label: "Total", hidden: false },
-  ];
-  // console.log(orderHistory)
+    { key: "ordered_at", label: "Ordered At", hidden: false },
+  ]; 
 
   useEffect(() => {
     fetchOrderHistory?.();
@@ -54,8 +53,8 @@ const Orders = () => {
       <DashboardLayout navItems={hotelNavItems}>
         <PageContainer scrollable={true}>
           <CustomTable
-            title="Pending Orders"
-            subtitle="Manage the pending orders"
+            title="Order History"
+            subtitle=""
             data={orderHistory?.items}
             headers={headers}
             currentPage={orderHistory?.paginate.current_page}

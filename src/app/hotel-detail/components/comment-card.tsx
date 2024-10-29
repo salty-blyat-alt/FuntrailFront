@@ -222,12 +222,12 @@ const CommentCard = ({
                 </span>
                 <Popover>
                   <PopoverTrigger asChild>
-                    <EllipsisVertical className="rounded-full p-1 hover:bg-slate-100 cursor-pointer transition-all duration-200 ease-in-out" />
+                    <EllipsisVertical className="rounded-full p-1   cursor-pointer transition-all duration-200 ease-in-out" />
                   </PopoverTrigger>
-                  <PopoverContent className="w-28 p-2 border rounded-lg shadow-lg bg-white space-y-1">
+                  <PopoverContent className="w-28 p-2 border rounded-lg shadow-lg   space-y-1">
                     <Button
                       variant="ghost"
-                      className="w-full flex items-center justify-start px-2 py-1 text-sm rounded hover:bg-slate-100 transition-colors duration-200 ease-in-out"
+                      className="w-full flex items-center justify-start px-2 py-1 text-sm rounded   transition-colors duration-200 ease-in-out"
                       onClick={() => setIsEditing(true)}
                     >
                       <PenIcon className="mr-2 h-4 w-4" />
@@ -236,7 +236,7 @@ const CommentCard = ({
 
                     <Button
                       variant="ghost"
-                      className="w-full flex items-center justify-start px-2 py-1 text-sm rounded hover:bg-slate-100 transition-colors duration-200 ease-in-out"
+                      className="w-full flex items-center justify-start px-2 py-1 text-sm rounded   transition-colors duration-200 ease-in-out"
                       onClick={handleDelete}
                     >
                       <Trash className="mr-2 h-4 w-4 text-red-500" />
@@ -265,13 +265,14 @@ const CommentCard = ({
                 <Input
                   type="text"
                   className="shadcnui-input" // Apply Shadcnui styles as needed
-                  value={context} // Prefilled with current comment context
+                  value={comment.context} // Prefilled with current comment context
                   onChange={(e) => setContext(e.target.value)}
                 />
 
                 {/* Submit Button to save changes and toggle editing state */}
                 <div className="flex gap-x-2 mt-2">
-                  <Button variant={'ghost'}
+                  <Button
+                    variant={"ghost"}
                     onClick={() => {
                       setIsEditing(false); // Change editing state on submit
                     }}
