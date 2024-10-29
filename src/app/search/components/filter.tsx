@@ -1,7 +1,7 @@
 "use client";
 
 import { FilterIcon } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Button } from "../../components/ui/button";
 import {
   Dialog,
@@ -16,7 +16,7 @@ import { Label } from "@/app/components/ui/label";
 import { Province } from "@/app/home/components/search-group";
 import { ScrollArea } from "@/app/components/ui/scroll-area";
 import { RadioGroup, RadioGroupItem } from "@/app/components/ui/radio-group";
-import { Skeleton } from "@/app/components/ui/skeleton"; 
+import { Skeleton } from "@/app/components/ui/skeleton";
 
 const Filter = ({
   selectedProvince,
@@ -79,8 +79,7 @@ const FilterContent = ({
   provinces: Province[] | null;
   onProvinceChange: (provinceId: string) => void;
   isLoading: boolean;
-}) => {
-  console.log(isLoading)
+}) => { 
   return (
     <div className="space-y-2">
       <h2 className="text-nowrap">Filter by:</h2>

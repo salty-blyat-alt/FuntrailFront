@@ -42,7 +42,7 @@ function ForgotPassword() {
   const searchParam = useSearchParams();
   const token = searchParam.get("token") || "";
   const emailParam = searchParam.get("email") || "";
-  console.log(token);
+ 
 
   const onSubmit: SubmitHandler<{
     email: string;
@@ -55,7 +55,7 @@ function ForgotPassword() {
     formData.append("token", token);
     formData.append("password", data.password);
     formData.append("password_confirmation", data.password_confirmation);
-    console.log(formData);
+     
     triggerForgotPassword?.(formData);
   };
 

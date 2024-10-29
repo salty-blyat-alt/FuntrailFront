@@ -29,7 +29,6 @@ const CommentCard = ({
   const [context, setContext] = useState("");
   const [isExpanded, setIsExpanded] = useState(false);
   const [showReplies, setShowReplies] = useState(false);
-  const [showOptions, setShowOptions] = useState(false);
 
   const {
     triggerFetch: addReply,
@@ -78,7 +77,6 @@ const CommentCard = ({
     if (id) {
       editComment?.({ id: id, context: context });
       refetchComments?.();
-      setShowOptions(false);
     }
   };
 
@@ -86,7 +84,6 @@ const CommentCard = ({
     if (id) {
       editComment?.({ id: id, context: replyContext });
       refetchComments?.();
-      setShowOptions(false);
     }
   };
 
@@ -127,7 +124,6 @@ const CommentCard = ({
     const id = comment?.id;
     if (id) {
       deleteComment?.({ id: id });
-      setShowOptions(false);
     }
   };
 
@@ -135,7 +131,6 @@ const CommentCard = ({
     if (id) {
       deleteComment?.({ id: id });
       refetchComments?.();
-      setShowOptions(false);
     }
   };
 
@@ -228,7 +223,9 @@ const CommentCard = ({
                     <Button
                       variant="ghost"
                       className="w-full flex items-center justify-start px-2 py-1 text-sm rounded   transition-colors duration-200 ease-in-out"
-                      onClick={() => setIsEditing(true)}
+                      onClick={() => {
+                        setContext(comment.context)
+                        setIsEditing(true)}}
                     >
                       <PenIcon className="mr-2 h-4 w-4" />
                       Edit
@@ -265,7 +262,7 @@ const CommentCard = ({
                 <Input
                   type="text"
                   className="shadcnui-input" // Apply Shadcnui styles as needed
-                  value={comment.context} // Prefilled with current comment context
+                  value={context} // Prefilled with current comment context
                   onChange={(e) => setContext(e.target.value)}
                 />
 
@@ -326,9 +323,7 @@ const CommentCard = ({
                         reply={reply}
                         context={replyContext}
                         handleEdit={() => handleEditReply(reply.id)}
-                        setContext={setReplyContext}
-                        setIsEditing={setIsEditingReplying}
-                        isEditing={isEditingReply}
+                        setContext={setReplyContext} 
                         onDelete={() => handleDeleteReply(reply.id)}
                       />
                     ))
