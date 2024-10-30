@@ -5,6 +5,9 @@ import Sidebar from "./components/sidebar";
 import { usePathname } from "next/navigation";
 import React from "react";
 import CustomBreadcrumb from "../components/custom-breadcrumb/custom-breadcrumb";
+import {AdminNavbar} from "./components/admin-navbar";
+
+
 
 const DashboardLayout = ({
   children,
@@ -19,10 +22,9 @@ const DashboardLayout = ({
     <SidebarProvider>
       <div className="flex">
         <Sidebar navItems={navItems} title={""} />
-        <main className="w-full flex-1 bg-muted/40 overflow-hidden">
+        <main className="w-full flex-1 bg-muted/40 overflow-hidden mt-20">
           <div className="p-4">
-            {/* admin navbar */}
-
+            <AdminNavbar/>
             <CustomBreadcrumb pathname={pathname} />
           </div>
           {children}
