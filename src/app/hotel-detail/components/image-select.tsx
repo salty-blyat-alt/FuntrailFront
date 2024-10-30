@@ -28,8 +28,7 @@ const ImageSelect: React.FC<ImageSelectProps> = ({ images }) => {
 
   const handleImageClick = (index: number) => {
     setThumbnailIndex(index);
-  };
-  console.log(loading);
+  }; 
   return (
     <>
       {/* Display the main image */}

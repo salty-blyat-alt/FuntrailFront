@@ -37,8 +37,7 @@ function ResetPassword() {
     email: string; 
   }> = (data) => {
     const formData = new FormData();
-    formData.append("email", data.email);
-    console.log(formData);
+    formData.append("email", data.email); 
     triggerForgotPassword?.(formData);
   };
 

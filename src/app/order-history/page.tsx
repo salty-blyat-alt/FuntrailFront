@@ -74,8 +74,7 @@ export default function OrderHistory() {
   useEffect(() => {
     fetchHistory?.();
   }, []);
-
-  console.log(response);
+ 
   const active_orders = response?.active_orders;
   const history_orders = response?.history_orders;
 

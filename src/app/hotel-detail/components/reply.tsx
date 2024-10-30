@@ -30,7 +30,10 @@ const Reply = ({ reply, onDelete, handleEdit, setContext, context }) => {
                 <Button
                   variant="ghost"
                   className="w-full flex items-center justify-start px-2 py-1 text-sm rounded   transition-colors duration-200 ease-in-out"
-                  onClick={() => setIsEditing(true)}
+                  onClick={() => {
+                    setContext(reply.comment);
+                    setIsEditing(true);
+                  }}
                 >
                   <PenIcon className="mr-2 h-4 w-4" />
                   Edit
@@ -52,12 +55,11 @@ const Reply = ({ reply, onDelete, handleEdit, setContext, context }) => {
           </span>
           {isEditing ? (
             <div>
-              {/* Shadcnui Text Input with comment context as the initial value */}
               <Input
                 type="text"
                 className="shadcnui-input" // Apply Shadcnui styles as needed
                 defaultValue={reply.context}
-                value={reply.context} // Prefilled with current comment context
+                value={context}
                 onChange={(e) => setContext(e.target.value)}
               />
               <Button
@@ -72,7 +74,7 @@ const Reply = ({ reply, onDelete, handleEdit, setContext, context }) => {
               <Button
                 onClick={() => {
                   handleEdit(reply.id);
-                  setIsEditing(false); // Change editing state on submit
+                  setIsEditing(false);
                 }}
               >
                 Submit

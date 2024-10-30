@@ -153,12 +153,7 @@ const EditHotelDialog: React.FC<EditHotelDialog> = ({ item, setHotel }) => {
                       checked={item.facilities.includes(facility)} // Check if the facility is selected
                       onChange={(e) => {
                         const { checked, value } = e.target;
-                        console.log(
-                          "Checkbox checked:",
-                          checked,
-                          "Value:",
-                          value
-                        ); // Log to check
+                        
 
                         setHotel((prev) => {
                           const updatedFacilities = checked
@@ -195,12 +190,7 @@ const EditHotelDialog: React.FC<EditHotelDialog> = ({ item, setHotel }) => {
                       checked={item.policies.includes(policy)} // Check if the policy is selected
                       onChange={(e) => {
                         const { checked, value } = e.target;
-                        console.log(
-                          "Checkbox checked:",
-                          checked,
-                          "Value:",
-                          value
-                        ); // Log to check
+                      
 
                         setHotel((prev) => {
                           const updatedPolicies = checked

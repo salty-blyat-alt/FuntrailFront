@@ -74,7 +74,7 @@ const BookingModal: React.FC<BookingModalProps> = ({
   useEffect(() => {
     if (response?.startsWith("https://checkout.stripe.com/c/pay/")) { 
       // Redirect to Stripe Checkout
-      console.log("response in custoemr",response)
+   
       
       toast({
         title: "Redirecting to payment",
@@ -85,7 +85,7 @@ const BookingModal: React.FC<BookingModalProps> = ({
     }
     // for owner
     if (response === "Rooms booked successfully") {
-      console.log("response in owner",response) 
+      
       toast({
         title: "Payment Successful",
         description: "Your payment has been processed successfully.",

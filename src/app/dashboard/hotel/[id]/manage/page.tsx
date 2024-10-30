@@ -83,8 +83,7 @@ export default function Manage() {
   const handleCloseEditDialog = () => {
     setOpenEditDialog(false);
   };
-
-  console.log(selectedRoom);
+ 
   const hotelNavItems = useHotelNavItems();
 
   return (

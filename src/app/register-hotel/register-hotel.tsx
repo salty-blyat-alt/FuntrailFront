@@ -22,6 +22,8 @@ import UploadImages from "../components/image-field/upload-images";
 import ImageListPreview from "../components/image-field/image-list-preview";
 import { Input } from "../components/ui/input";
 import { Button } from "../components/ui/button";
+import { useAuth } from "../context/auth-context";
+import { redirect } from "next/navigation";
 
 const RegisterHotel = ({
   onRegistrationComplete,
@@ -46,6 +48,12 @@ const RegisterHotel = ({
     facilities?: string[];
     policies?: string[];
   }>();
+  const { user } = useAuth();
+  useEffect(() => {
+    if (!user) {
+      redirect("/auth/login");
+    }
+  }, []);
 
   const [selectedProvince, setSelectedProvince] = useState<string>("");
   const [provinceId, setProvinceId] = useState<number | null>(null);
@@ -76,8 +84,7 @@ const RegisterHotel = ({
 
   useEffect(() => {
     if (success) {
-      console.log(success);
-
+      
       toast({
         title: "Hotel Registered",
         description: "Your hotel has been successfully registered.",
@@ -105,8 +112,7 @@ const RegisterHotel = ({
   }, [finished]);
 
   useEffect(() => {
-    if (error) {
-      console.log(error);
+    if (error) { 
       toast({
         title: "Hotel Error",
         description: error,
@@ -114,7 +120,6 @@ const RegisterHotel = ({
       });
     }
   }, [error]);
-  // console.log(provinceId);
 
   const [hotel, setHotel] = useState<{
     name: string;
@@ -183,8 +188,7 @@ const RegisterHotel = ({
       formData.append("policies[]", policy);
     });
 
-    console.log("Submitting the form with the following data:", formData);
-    registerHotel?.(formData);
+     registerHotel?.(formData);
   };
 
   const handleFacilityChange = (facility: string, checked: boolean) => {
