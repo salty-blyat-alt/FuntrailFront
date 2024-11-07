@@ -1,5 +1,8 @@
 import { Avatar, AvatarFallback } from "@/app/components/ui/avatar";
-import React, { useState, useRef, useEffect } from "react";
+import React, {
+  useState, Dispatch,
+  SetStateAction
+} from "react";
 import { EllipsisVertical, PenIcon, Trash } from "lucide-react";
 import { Button } from "@/app/components/ui/button";
 import { Input } from "@/app/components/ui/input";
@@ -8,16 +11,43 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/app/components/ui/popover";
+import Image from "next/image";
+import { ANY } from "@/app/components/custom-table/custom-table";
 
-const Reply = ({ reply, onDelete, handleEdit, setContext, context }) => {
+interface ReplyProps {
+  reply: ANY;
+  context: string;
+  handleEdit: (data: number) => void;
+  setContext: Dispatch<SetStateAction<string>>;
+  onDelete: () => void; 
+}
+
+const Reply: React.FC<ReplyProps> = ({
+  reply,
+  onDelete,
+  handleEdit,
+  setContext,
+  context, 
+}) => {
   const [isEditing, setIsEditing] = useState(false);
 
   return (
     <div key={reply.id} className="space-y-1 group relative">
       <div className="flex items-start space-x-3">
-        <Avatar className="h-8 w-8">
-          <AvatarFallback>{reply.username.charAt(0)}</AvatarFallback>
+        <Avatar>
+        {reply?.profile_img ? (
+              <Image
+                width={70}
+                height={70}
+                src={`${process.env.NEXT_PUBLIC_BASE_URL}${reply?.profile_img}`}
+                alt="User profile"
+                className="rounded-full object-cover object-center w-full h-full"
+              />
+            ) : (
+              <AvatarFallback>UN</AvatarFallback>
+            )}
         </Avatar>
+        
         <div className="space-y-1 w-full">
           <div className="flex justify-between items-center">
             <h4 className="font-semibold text-sm">{reply.username}</h4>

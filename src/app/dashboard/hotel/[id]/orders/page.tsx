@@ -1,10 +1,10 @@
 "use client";
 import CustomTable, {
-  HeaderProps,
+  ANY,
+    HeaderProps,
 } from "@/app/components/custom-table/custom-table";
 import PageContainer from "@/app/dashboard/components/page-container";
 import DashboardLayout from "@/app/dashboard/dashboard-layout";
-import useHotelNavItems, { hotelNavItem } from "@/app/dashboard/routes/routes";
 import useAxios from "@/app/hooks/use-axios";
 import { useEffect, useState } from "react";
 
@@ -22,7 +22,7 @@ const Orders = () => {
   };
 
   const { triggerFetch: fetchOrderHistory, responseData: orderHistory } =
-    useAxios<any, undefined>({
+    useAxios<ANY, undefined>({
       endpoint: "/api/dashboard/history",
       method: "GET",
       config: {
@@ -35,6 +35,7 @@ const Orders = () => {
 
   const headers: HeaderProps[] = [
     { key: "id", label: "Receipt ID", hidden: false },
+    { key: "b_id", label: "bid", hidden: false },
     { key: "username", label: "Customer", hidden: false },
     { key: "room_type", label: "Room Type", hidden: false },
     { key: "date_start", label: "Checkin", hidden: false },
@@ -46,11 +47,12 @@ const Orders = () => {
   useEffect(() => {
     fetchOrderHistory?.();
   }, [perPage, currentPage]); // Fetch data when page or perPage changes
-  const hotelNavItems = useHotelNavItems();
+  
+  console.log(orderHistory)
   return (
     <>
       
-      <DashboardLayout navItems={hotelNavItems}>
+      <DashboardLayout >
         <PageContainer scrollable={true}>
           <CustomTable
             title="Order History"

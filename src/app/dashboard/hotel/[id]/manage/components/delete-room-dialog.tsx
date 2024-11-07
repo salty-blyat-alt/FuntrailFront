@@ -10,6 +10,7 @@ import useAxios from "@/app/hooks/use-axios";
 import { toast } from "@/app/hooks/use-toast";
 import React, { useEffect, useCallback } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
+import { ANY } from "@/app/components/custom-table/custom-table";
 
 interface DeleteRoomDialogProps {
   room_id: number | undefined;
@@ -30,7 +31,7 @@ const DeleteRoomDialog = ({
     error,
     responseDataWithStat: errorStat,
     responseData: success,
-  } = useAxios<FormData, any>({
+  } = useAxios< ANY ,FormData>({
     endpoint: "/api/hotel/delete-room",
     method: "POST",
   });

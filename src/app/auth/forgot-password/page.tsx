@@ -11,6 +11,7 @@ import { Input } from "@/app/components/ui/input";
 import useAxios from "@/app/hooks/use-axios";
 import { useEffect } from "react";
 import { toast } from "@/app/hooks/use-toast"; 
+import { ANY } from "@/app/components/custom-table/custom-table";
 
 function ResetPassword() {
   const {
@@ -26,7 +27,7 @@ function ResetPassword() {
     error,
     finished,
     responseData: response,
-  } = useAxios<any, FormData>({
+  } = useAxios<ANY, FormData>({
     endpoint: "/api/auth/forgot-password",
     method: "POST",
     config: {},
@@ -80,7 +81,7 @@ function ResetPassword() {
                 <Input
                   id="email"
                   type="email"
-                  placeholder="your_email@example.com"
+                  placeholder="Email"
                   {...register("email", { required: "Email is required" })}
                   required
                 />

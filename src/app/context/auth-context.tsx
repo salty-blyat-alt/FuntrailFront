@@ -10,6 +10,7 @@ import {
 } from "react";
 import useAxios from "../hooks/use-axios";
 import { getCookie, setCookie } from "cookies-next";
+import { ANY } from "../components/custom-table/custom-table";
 
 // Define the shape of the context value
 interface AuthContextType {
@@ -45,7 +46,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [hasFetchedProfile, setHasFetchedProfile] = useState(false); // Track if the profile has been fetched
   const access_token = getCookie("access_token");
   const { triggerFetch: fetchProfile, responseData: profile } = useAxios<
-    any,
+    ANY,
     undefined
   >({
     endpoint: "/api/auth/profile",

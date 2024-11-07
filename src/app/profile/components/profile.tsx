@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, Dispatch } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Avatar, AvatarFallback, AvatarImage } from "@components/ui/avatar";
 import { Input } from "@components/ui/input";
@@ -25,13 +25,16 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@components/ui/dialog";
+import { ANY } from "@/app/components/custom-table/custom-table";
 
 const Profile = ({
   isEditing,
   toggleEdit,
+  setIsEditing,
 }: {
   isEditing: boolean;
   toggleEdit: () => void;
+  setIsEditing: Dispatch<boolean>;
 }) => {
   const [selectedProvince, setSelectedProvince] = useState("");
   const [showCancelDialog, setShowCancelDialog] = useState(false);
@@ -45,10 +48,9 @@ const Profile = ({
   }>();
 
   const { user, fetchProfile } = useAuth();
-  if (!user) return null;
 
   const { triggerFetch: fetchProvinces, responseData: provinces } = useAxios<
-    any,
+    ANY,
     undefined
   >({
     endpoint: "/api/province/list",
@@ -62,15 +64,17 @@ const Profile = ({
     responseDataWithStat: errorStat,
     error,
     finished,
-  } = useAxios<any, FormData>({
-    endpoint: `/api/user/update/${user.id}`,
+  } = useAxios<ANY, FormData>({
+    endpoint: `/api/user/update/${user?.id}`,
     method: "POST",
     config: {},
   });
 
   useEffect(() => {
     fetchProvinces?.();
+  }, []);
 
+  useEffect(() => {
     if (user?.province) {
       setSelectedProvince(user.province.toString());
       const provinceData = provinces?.find(
@@ -80,11 +84,11 @@ const Profile = ({
         setValue("province_id", provinceData.id);
       }
     }
-  }, []);
+  }, [provinces]);
 
   useEffect(() => {
     if (finished && success) {
-      toggleEdit();
+      setIsEditing(false);
       fetchProfile?.();
       toast({
         title: "Success",
@@ -185,7 +189,7 @@ const Profile = ({
 
           {hovered && (
             <motion.div
-              className="absolute rounded-full text-center inset-0 bg-black bg-opacity-50 flex justify-center items-center text-white text-sm"
+              className="absolute rounded-full text-center inset-0 bg-opacity-50 bg-white flex justify-center items-center text-sm"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -214,7 +218,7 @@ const Profile = ({
             <Label htmlFor="name">Username</Label>
             <Input
               id="name"
-              defaultValue={user.username}
+              defaultValue={user?.username}
               {...register("username")}
             />
           </div>
@@ -224,7 +228,7 @@ const Profile = ({
             <Input
               id="email"
               type="email"
-              defaultValue={user.email}
+              defaultValue={user?.email}
               {...register("email")}
             />
           </div>
@@ -234,7 +238,7 @@ const Profile = ({
             <Input
               id="phone_number"
               type="number"
-              defaultValue={user.phone_number}
+              defaultValue={user?.phone_number}
               {...register("phone_number")}
             />
           </div>
@@ -246,7 +250,7 @@ const Profile = ({
             <Select
               value={selectedProvince}
               onValueChange={handleProvinceChange}
-              defaultValue={user.province?.toString()}
+              defaultValue={user?.province?.toString()}
             >
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Select a province" />
@@ -285,19 +289,19 @@ const Profile = ({
         <div className="space-y-4   ">
           <div className="flex items-center space-x-2">
             <Mail className="h-4 w-4" />
-            <span>{user.email || "No Data"}</span>
+            <span>{user?.email || "No Data"}</span>
           </div>
           <div className="flex items-center space-x-2">
             <MapPin className="h-4 w-4" />
-            <span>{user.province || "No Data"}</span>
+            <span>{user?.province || "No Data"}</span>
           </div>
           <div className="flex items-center space-x-2">
             <Calendar className="h-4 w-4" />
-            <span>Joined {user.created_at ? user.created_at : "No Data"}</span>
+            <span>Joined {user?.created_at ?? "No Data"}</span>
           </div>
           <div className="flex items-center space-x-2">
             <PhoneCall className="h-4 w-4" />
-            <span>{user.phone_number || "No Data"}</span>
+            <span>{user?.phone_number || "No Data"}</span>
           </div>
         </div>
       )}

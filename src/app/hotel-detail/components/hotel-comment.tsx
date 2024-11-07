@@ -4,18 +4,20 @@ import { useState, useEffect, useCallback } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { motion, AnimatePresence } from "framer-motion";
 import { Star } from "lucide-react";
-import { Avatar, AvatarFallback, AvatarImage } from "@components/ui/avatar";
+import { Avatar, AvatarFallback } from "@components/ui/avatar";
 import { Button } from "@components/ui/button";
-import { Textarea } from "@components/ui/textarea";
 import useAxios from "@/app/hooks/use-axios";
 import CommentCard from "./comment-card";
 import CustomPagination from "@/app/components/custom-pagination/custom-pagination";
 import { useToast } from "@/app/hooks/use-toast";
 import { useAuth } from "@/app/context/auth-context";
 import Image from "next/image";
-import { Input } from "@/app/components/ui/input";
+import { ANY } from "@/app/components/custom-table/custom-table";
 
 export interface CommentProps {
+  profile_img?: string;
+  can_edit: boolean;
+  can_delete: boolean;
   id: number;
   username: string;
   context: string;
@@ -30,6 +32,8 @@ export interface CommentProps {
 }
 
 export interface ReplyProps {
+  can_edit: boolean;
+  can_delete: boolean;
   id: number;
   context: string;
   star: number;
@@ -58,9 +62,11 @@ export interface CommentResponseProps {
 export default function HotelComment({ hotel_id }: { hotel_id: string }) {
   const [newRating, setNewRating] = useState(0);
   const [shouldRefetch, setShouldRefetch] = useState(false);
-  const [page, setPage] = useState<number>(1);
+  const [page, setPage] = useState<number|string>(1);
   const [isExpanded, setIsExpanded] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
   const { toast } = useToast();
+  const { user } = useAuth();
 
   const {
     register,
@@ -73,15 +79,15 @@ export default function HotelComment({ hotel_id }: { hotel_id: string }) {
     hotel_id: number;
   }>();
 
-  const {
-    triggerFetch: fetchComments,
-    loading,
-    responseData: response,
-  } = useAxios<any, undefined>({
+  const { triggerFetch: fetchComments, responseData: response } = useAxios<
+    ANY,
+    undefined
+  >({
     endpoint: `/api/comment/show/${hotel_id}`,
     config: {
       params: {
         page: page,
+        user_id: user?.id,
       },
     },
     method: "GET",
@@ -94,12 +100,8 @@ export default function HotelComment({ hotel_id }: { hotel_id: string }) {
     finished,
     responseDataWithStat: errorStat,
   } = useAxios<
-    any,
-    {
-      context: string;
-      star: number;
-      hotel_id: number;
-    }
+    ANY,
+    { context: string; star: number; hotel_id: number; }
   >({
     endpoint: `/api/comment/create`,
     config: {},
@@ -162,10 +164,9 @@ export default function HotelComment({ hotel_id }: { hotel_id: string }) {
   const comments = response?.items;
   const pagination = response?.paginate;
 
-  const handlePageChange = (newPage: number) => {
+  const handlePageChange = (newPage: number | string) => {
     setPage(newPage);
   };
-  const { user } = useAuth();
   return (
     <div className="mb-8">
       <h2 className="text-2xl font-bold mb-6">
@@ -193,14 +194,22 @@ export default function HotelComment({ hotel_id }: { hotel_id: string }) {
             {/* Added relative positioning for the container */}
             <div className="relative">
               <input
+              autoComplete="off"
                 {...register("context", {
                   required: "Comment cannot be blank",
                 })}
                 placeholder="Add a comment..."
-                onFocus={() => setIsExpanded(true)}
+                onFocus={() => {
+                  setIsExpanded(true);
+                  setIsFocused(true);
+                }}
                 onBlur={() => {
-                  // Delay the collapse to allow click event on buttons
-                  setTimeout(() => setIsExpanded(false), 300);
+                  setTimeout(() => {
+                    setIsFocused(false); // Reset the focused state after a short delay
+                    if (!isExpanded) {
+                      setIsExpanded(false); // Only collapse if not expanded
+                    }
+                  }, 300);
                 }}
                 className="w-full min-h-[40px] h-auto px-2 pb-2 border-none bg-transparent resize-none 
               focus:outline-none focus:ring-0"
@@ -208,10 +217,13 @@ export default function HotelComment({ hotel_id }: { hotel_id: string }) {
               <motion.div
                 className="absolute left-0 bottom-0 h-[2px] w-full bg-gray-300"
                 initial={{ scaleX: 0 }}
-                animate={{ scaleX: isExpanded ? 1 : 0 }} // Animate based on isExpanded state
+                animate={{
+                  scaleX: isFocused || isExpanded ? 1 : 0, // Keep the animation at 1 if focused or expanded
+                }}
                 transition={{ duration: 0.3, ease: "easeInOut" }}
                 style={{
-                  backgroundColor: isExpanded ? "#3b82f6" : "#gray-300",
+                  backgroundColor:
+                    isFocused || isExpanded ? "#3b82f6" : "#gray-300",
                 }}
               />
             </div>

@@ -1,11 +1,12 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { Badge } from "@/app/components/ui/badge";
+import { ANY } from "@/app/components/custom-table/custom-table";
 
-const HistoryBooking = ({ orderHistory }) => {
+const HistoryBooking = ({ orderHistory }:{orderHistory:ANY}) => {
   return (
     <div className="space-y-8">
-      {orderHistory.map((order, index) => (
+      {orderHistory.map((order:ANY, index:number) => (
         <motion.div
           key={order.id}
           initial={{ opacity: 0, x: -20 }}

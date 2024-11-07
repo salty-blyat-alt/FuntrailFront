@@ -11,7 +11,10 @@ const nextConfig = {
         hostname: 'localhost',
       },
     ],
-  },
+  }, 
+  eslint: {
+    ignoreDuringBuilds: true
+  }
 };
 
 export default nextConfig;

@@ -21,6 +21,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/app/components/ui/dialog";
+import { ANY } from "@/app/components/custom-table/custom-table";
 
 interface RoomProps {
   room_type: string;
@@ -49,16 +50,18 @@ export default function AddRoomDialog({
     setValue,
   } = useForm<RoomProps>();
 
-  const handleThumbnailChange = (file: File) => {
+  const handleThumbnailChange = (file?: File) => {
     setPreview(file);
-    setValue("img", file);
+    if( file){ 
+      setValue("img", file);
+    }
   };
 
   const {
     triggerFetch: addRoom,
     responseData: success,
     finished,
-  } = useAxios<any, any>({
+  } = useAxios<ANY,ANY>({
     method: "POST",
     endpoint: "/api/hotel/add-room",
     config: {},

@@ -14,6 +14,7 @@ import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import img from "@public/auth_pic/register.jpg";
+import { ANY } from "@/app/components/custom-table/custom-table";
 
 const Register = () => {
   const { fetchProfile } = useAuth();
@@ -22,17 +23,7 @@ const Register = () => {
     triggerFetch: registerUser,
     responseData: success,
     error: responseError,
-  } = useAxios<
-    any,
-    | FormData
-    | {
-        username: string;
-        email: string;
-        password: string;
-        password_confirmation: string;
-        phone_number: string;
-      }
-  >({
+  } = useAxios<ANY, FormData>({
     endpoint: "/api/auth/register",
     method: "POST",
     config: {},
@@ -54,7 +45,13 @@ const Register = () => {
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm<any>();
+  } = useForm<{
+    username: string;
+    email: string;
+    password: string;
+    password_confirmation: string;
+    phone_number: string;
+  }>();
 
   const onSubmit: SubmitHandler<{
     username: string;
@@ -99,7 +96,7 @@ const Register = () => {
       <div className="relative overflow-hidden hidden bg-muted lg:block">
         <BackButton className="absolute z-10 top-10 left-10" path="/" />
         <Image
-          src={img} 
+          src={img}
           alt="Image"
           width={"1920"}
           height={"1080"}
@@ -121,7 +118,7 @@ const Register = () => {
               <Input
                 id="username"
                 type="text"
-                placeholder="Enter your username"
+                placeholder="Username"
                 {...register("username", { required: true })}
               />
               {errors.username && (
@@ -135,7 +132,7 @@ const Register = () => {
               <Input
                 id="email"
                 type="email"
-                placeholder="m@example.com"
+                placeholder="Email"
                 {...register("email", { required: true })}
               />
               {errors.email && (
@@ -161,6 +158,7 @@ const Register = () => {
               <Input
                 id="password"
                 type="password"
+                placeholder="Password"
                 {...register("password", { required: true, minLength: 8 })}
               />
               {errors.password && (
@@ -176,6 +174,7 @@ const Register = () => {
               <Input
                 id="confirm-password"
                 type="password"
+                placeholder="Confirm Password"
                 {...register("password_confirmation", { required: true })}
               />
               {errors.password_confirmation && (

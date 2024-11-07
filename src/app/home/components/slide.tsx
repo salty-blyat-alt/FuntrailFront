@@ -9,6 +9,24 @@ import {
 } from "../../components/ui/carousel";
 
 const Slide = ({ title, subtitle }: { title: string; subtitle: string }) => {
+  // const {
+  //   triggerFetch: fetchHotels,
+  //   loading,
+  //   responseData: hotels,
+  // } = useAxios<any, undefined>({
+  //   endpoint: "/api/high-rating/hotels",
+  //   method: "GET",
+  //   config: {
+  //     headers: {
+  //       Accept: "application/json",
+  //     },
+  //   },
+  // });
+
+  // useEffect(() => {
+  //   fetchHotels?.();
+  // }, []);
+
   return (
     <section>
       <div className="mb-4">
@@ -21,7 +39,7 @@ const Slide = ({ title, subtitle }: { title: string; subtitle: string }) => {
         </p>
       </div> 
       <Carousel>
-        <CarouselContent>
+        <CarouselContent> 
           {Array.from({ length: 10 }).map((_, index) => (
             <CarouselItem key={index} className="basis-1/3 md:basis-1/4 lg:basis-1/6 ">
               <Link href="/">

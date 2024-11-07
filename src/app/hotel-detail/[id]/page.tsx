@@ -14,22 +14,15 @@ import ImageSelect from "../components/image-select";
 import CustomBreadcrumb from "@/app/components/custom-breadcrumb/custom-breadcrumb";
 import RoomList from "../components/room-list";
 import useAxios from "@/app/hooks/use-axios";
-import {
-  AwaitedReactNode,
-  JSXElementConstructor,
-  Key,
-  ReactElement,
-  ReactNode,
-  ReactPortal,
-  useEffect,
-} from "react";
-import { HeartFilledIcon } from "@radix-ui/react-icons";
+import { useEffect } from "react";
+import { ANY } from "@/app/components/custom-table/custom-table";
+import ReviewStatistic from "@/app/home/components/review-statistic";
 
 export default function HotelDetail() {
   const { id } = useParams();
 
   const { triggerFetch: fetchHotel, responseData: hotel } = useAxios<
-    any,
+    ANY,
     undefined
   >({
     endpoint: `/api/hotel/show/${id}`,
@@ -46,7 +39,7 @@ export default function HotelDetail() {
   }, []);
 
   const router = useRouter();
-  const pathname = usePathname(); 
+  const pathname = usePathname();
 
   return (
     <div className="container mx-auto p-4">
@@ -68,7 +61,6 @@ export default function HotelDetail() {
           <Button variant="outline" size="icon">
             <HeartIcon className="h-4 w-4" />
           </Button>
-          
         </div>
       </div>
 
@@ -79,108 +71,79 @@ export default function HotelDetail() {
       <div className="mb-4">
         <ImageSelect images={hotel?.images} />
       </div>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
+        <Tabs defaultValue="overview" className="mb-4">
+          <TabsList className="flex flex-wrap">
+            <TabsTrigger value="overview" className="mb-2 mr-2">
+              Overview
+            </TabsTrigger>
+            <TabsTrigger value="info" className="mb-2 mr-2">
+              Info & prices
+            </TabsTrigger>
+            <TabsTrigger value="facilities" className="mb-2 mr-2">
+              Facilities
+            </TabsTrigger>
+            <TabsTrigger value="policies" className="mb-2 mr-2">
+              Policies
+            </TabsTrigger>
+          </TabsList>
 
-      <Tabs defaultValue="overview" className="mb-4">
-        <TabsList className="flex flex-wrap">
-          <TabsTrigger value="overview" className="mb-2 mr-2">
-            Overview
-          </TabsTrigger>
-          <TabsTrigger value="info" className="mb-2 mr-2">
-            Info & prices
-          </TabsTrigger>
-          <TabsTrigger value="facilities" className="mb-2 mr-2">
-            Facilities
-          </TabsTrigger>
-          <TabsTrigger value="policies" className="mb-2 mr-2">
-            Policies
-          </TabsTrigger>
-        </TabsList>
+          <TabsContent value="overview">
+            {hotel?.description ? (
+              <p>{hotel.description}</p>
+            ) : (
+              <p>No overview available.</p>
+            )}
+          </TabsContent>
 
-        <TabsContent value="overview">
-          {hotel?.description ? (
-            <p>{hotel.description}</p>
-          ) : (
-            <p>No overview available.</p>
-          )}
-        </TabsContent>
+          <TabsContent value="info">
+            {hotel ? (
+              <>
+                <p>
+                  <strong>Hotel Name:</strong> {hotel.name || "N/A"}
+                </p>
+                <p>
+                  <strong>Address:</strong> {hotel.address || "N/A"}
+                </p>
+                <p>
+                  <strong>Check-in Time:</strong> {hotel.open_at || "N/A"}
+                </p>
+                <p>
+                  <strong>Check-out Time:</strong> {hotel.close_at || "N/A"}
+                </p>
+              </>
+            ) : (
+              <p>No information available.</p>
+            )}
+          </TabsContent>
 
-        <TabsContent value="info">
-          {hotel ? (
-            <>
-              <p>
-                <strong>Hotel Name:</strong> {hotel.name || "N/A"}
-              </p>
-              <p>
-                <strong>Address:</strong> {hotel.address || "N/A"}
-              </p>
-              <p>
-                <strong>Check-in Time:</strong> {hotel.open_at || "N/A"}
-              </p>
-              <p>
-                <strong>Check-out Time:</strong> {hotel.close_at || "N/A"}
-              </p>
-            </>
-          ) : (
-            <p>No information available.</p>
-          )}
-        </TabsContent>
+          <TabsContent value="facilities">
+            {Array.isArray(hotel?.facilities) && hotel.facilities.length > 0 ? (
+              <ul>
+                {hotel.facilities.map((facility: ANY, index: number) => {
+                  <li key={index}>{facility}</li>;
+                })}
+              </ul>
+            ) : (
+              <p>No facilities available.</p>
+            )}
+          </TabsContent>
 
-        <TabsContent value="facilities">
-          {Array.isArray(hotel?.facilities) && hotel.facilities.length > 0 ? (
-            <ul>
-              {hotel.facilities.map(
-                (
-                  facility:
-                    | string
-                    | number
-                    | bigint
-                    | boolean
-                    | ReactElement<any, string | JSXElementConstructor<any>>
-                    | Iterable<ReactNode>
-                    | ReactPortal
-                    | Promise<AwaitedReactNode>
-                    | null
-                    | undefined,
-                  index: Key | null | undefined
-                ) => (
-                  <li key={index}>{facility}</li>
-                )
-              )}
-            </ul>
-          ) : (
-            <p>No facilities available.</p>
-          )}
-        </TabsContent>
-
-        <TabsContent value="policies">
-          {Array.isArray(hotel?.facilities) && hotel.facilities.length > 0 ? (
-            <ul>
-              {hotel.facilities.map(
-                (
-                  facility:
-                    | string
-                    | number
-                    | bigint
-                    | boolean
-                    | ReactElement<any, string | JSXElementConstructor<any>>
-                    | Iterable<ReactNode>
-                    | ReactPortal
-                    | Promise<AwaitedReactNode>
-                    | null
-                    | undefined,
-                  index: Key | null | undefined
-                ) => (
-                  <li key={index}>{facility}</li>
-                )
-              )}
-            </ul>
-          ) : (
-            <p>No facilities available.</p>
-          )}
-        </TabsContent>
-      </Tabs>
-
-      <RoomList hotelId={id.toString()} />
+          <TabsContent value="policies">
+            {Array.isArray(hotel?.facilities) && hotel.facilities.length > 0 ? (
+              <ul>
+                {hotel.policies.map((policy: ANY, index: number) => {
+                  <li key={index}>{policy}</li>;
+                })}
+              </ul>
+            ) : (
+              <p>No policies available.</p>
+            )}
+          </TabsContent>
+        </Tabs>
+        <ReviewStatistic hotel_id={Number(id)} />
+      </div>
+      {/* <RoomList hotelId={id.toString()} /> */}
 
       <HotelComment hotel_id={id.toString()} />
     </div>

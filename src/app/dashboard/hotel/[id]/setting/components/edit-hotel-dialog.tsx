@@ -5,7 +5,7 @@ import { Label } from "@/app/components/ui/label";
 import { ScrollArea } from "@/app/components/ui/scroll-area";
 import { Textarea } from "@/app/components/ui/textarea";
 import { facilities, policies } from "@/app/constant/constant";
-import { HotelProps } from "@/app/data/mockupData";
+import { HotelProps } from "@/app/constant/constant";  
 import { Button } from "@components/ui/button";
 import {
   Dialog,

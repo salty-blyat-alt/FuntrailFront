@@ -11,9 +11,13 @@ import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { RoomProps } from "./room-list";
 import { SubmitHandler, useForm } from "react-hook-form";
 import useAxios from "@/app/hooks/use-axios";
-import { redirect, usePathname, useRouter, useSearchParams } from "next/navigation";
+import {
+  redirect,
+  usePathname, useSearchParams
+} from "next/navigation";
 import { DateRange } from "react-day-picker";
 import { format } from "date-fns";
+import { ANY } from "@/app/components/custom-table/custom-table";
 
 export interface BookingModalProps {
   bookingCart?: RoomProps[];
@@ -46,7 +50,7 @@ const BookingModal: React.FC<BookingModalProps> = ({
   const searchParams = useSearchParams();
   const session_id_param = searchParams.get("session_id");
 
-  const { handleSubmit } = useForm<BookingDetailProps>({
+  const { handleSubmit } = useForm<{ room_ids: (number | undefined)[]; hotel_id: string; date_start: string; date_end: string; }>({
     defaultValues: {
       date_start: dateRange?.from ? format(dateRange.from, "dd/MM/yyyy") : "",
       date_end: dateRange?.to ? format(dateRange.to, "dd/MM/yyyy") : "",
@@ -61,7 +65,7 @@ const BookingModal: React.FC<BookingModalProps> = ({
     responseDataWithStat: errorStat,
     responseData: response,
     finished: finishedBook,
-  } = useAxios<any, any>({
+  } = useAxios<ANY, { room_ids: (number | undefined)[]; hotel_id: string; date_start: string; date_end: string; }>({
     endpoint: "/api/hotel/book",
     method: "POST",
     config: {
@@ -69,13 +73,11 @@ const BookingModal: React.FC<BookingModalProps> = ({
         "Content-Type": "application/json",
       },
     },
-  }); 
+  });
 
   useEffect(() => {
-    if (response?.startsWith("https://checkout.stripe.com/c/pay/")) { 
+    if (response?.startsWith("https://checkout.stripe.com/c/pay/")) {
       // Redirect to Stripe Checkout
-   
-      
       toast({
         title: "Redirecting to payment",
         description: "Please complete your payment to confirm the booking.",
@@ -85,7 +87,6 @@ const BookingModal: React.FC<BookingModalProps> = ({
     }
     // for owner
     if (response === "Rooms booked successfully") {
-      
       toast({
         title: "Payment Successful",
         description: "Your payment has been processed successfully.",
@@ -100,20 +101,21 @@ const BookingModal: React.FC<BookingModalProps> = ({
   useEffect(() => {
     if (errorStat && error) {
       toast({
-        title: "Failed to change password",
+        title: "Failed to book the hotel",
         description:
           errorStat?.result_message + ". code: " + errorStat.result_code,
         variant: "destructive",
       });
+
+      history.replaceState(null, '', pathname);
     }
   }, [errorStat, error]);
 
   const {
-    triggerFetch: triggerSuccess,
-    responseDataWithStat: bookSuccess,
+    triggerFetch: triggerSuccess, 
     finished: finishedBooking,
     error: errPayment,
-  } = useAxios<any, undefined>({
+  } = useAxios<ANY, undefined>({
     endpoint: `/api/success/${session_id_param}`,
     method: "GET",
     config: {
@@ -127,7 +129,7 @@ const BookingModal: React.FC<BookingModalProps> = ({
     if (session_id_param) {
       triggerSuccess?.();
     }
-  }, [session_id_param]);
+  }, [session_id_param]); 
 
   useEffect(() => {
     if (errPayment) {
@@ -136,12 +138,15 @@ const BookingModal: React.FC<BookingModalProps> = ({
         description: "Your payment has been failed.",
         variant: "destructive",
       });
+      const url = new URL(window.location.href);
+      url.searchParams.delete("session_id"); 
     }
   }, [errPayment]);
 
+
+
   useEffect(() => {
     if (response && finishedBooking) {
-      window.history.replaceState(null, "", pathname);
       toast({
         title: "Payment Successful",
         description: "Your payment has been processed successfully.",
@@ -150,7 +155,7 @@ const BookingModal: React.FC<BookingModalProps> = ({
     }
   }, [response, finishedBooking]);
 
-  const onSubmit: SubmitHandler<BookingDetailProps> = async () => {
+  const onSubmit: SubmitHandler<{ room_ids: (number | undefined)[]; hotel_id: string; date_start: string; date_end: string; }> = async () => {
     setIsLoading(true);
 
     try {
@@ -171,8 +176,8 @@ const BookingModal: React.FC<BookingModalProps> = ({
         throw new Error("Please select rooms and dates for your booking");
       }
 
-      await triggerBook?.(bookingData);
-    } catch (err: any) {
+        triggerBook?.(bookingData);
+    } catch (err: ANY) {
       toast({
         title: "Validation Error",
         description: err.message,

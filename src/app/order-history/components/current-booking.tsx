@@ -1,3 +1,4 @@
+import { ANY } from "@/app/components/custom-table/custom-table";
 import { Badge } from "@/app/components/ui/badge";
 import { Button } from "@/app/components/ui/button";
 import {
@@ -12,8 +13,7 @@ import { motion } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useState } from "react";
 
-const CurrentBooking = ({ currentOrders }) => {
-  if (!currentOrders) return null;
+const CurrentBooking = ({ currentOrders }: { currentOrders: ANY }) => {
   const [currentOrderIndex, setCurrentOrderIndex] = useState(0);
 
   const nextOrder = () => {

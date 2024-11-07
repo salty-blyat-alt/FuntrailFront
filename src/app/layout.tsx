@@ -11,19 +11,24 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import Loading from "./components/loader/loading";
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const timer = setTimeout(() => {
       setLoading(false);
-    }, 3000); 
+    }, 3000);
 
     return () => clearTimeout(timer);
   }, []);
 
   const pathname = usePathname();
-  const noLayoutPages = ["/auth/login", "/auth/register"];
+  // const noLayoutPages =  ["/auth/login", "/auth/register"];
+  const noLayoutPages = [""];
 
   const isDynamicHotelRoute = pathname.startsWith("/dashboard/hotel/");
   const isLayoutRequired =
@@ -55,7 +60,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                   <main className={isLayoutRequired ? "mt-12" : ""}>
                     {children}
                   </main>
-                  {isLayoutRequired && <Footer className="mt-32" />}
+                  <Footer className="mt-32" />
                 </>
               )}
               <Toaster />

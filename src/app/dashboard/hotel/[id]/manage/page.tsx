@@ -1,11 +1,11 @@
 "use client";
 import CustomTable, {
+  ANY,
   HeaderProps,
 } from "@/app/components/custom-table/custom-table";
 import { Button } from "@/app/components/ui/button";
 import PageContainer from "@/app/dashboard/components/page-container";
 import DashboardLayout from "@/app/dashboard/dashboard-layout";
-import useHotelNavItems from "@/app/dashboard/routes/routes";
 import useAxios from "@/app/hooks/use-axios";
 import { RoomProps } from "@/app/hotel-detail/components/room-list";
 import { PlusIcon } from "lucide-react";
@@ -24,7 +24,7 @@ export default function Manage() {
   const headers: HeaderProps[] = [
     { key: "id", label: "ID", hidden: false },
     { key: "hotel_id", label: "Hotel ID", hidden: true },
-    { key: "img", label: "Image", hidden: false }, 
+    { key: "img", label: "Image", hidden: false },
     { key: "room_type", label: "Room Type", hidden: false },
     { key: "price_per_night", label: "Price", hidden: false },
     { key: "status", label: "Status", hidden: false },
@@ -47,7 +47,7 @@ export default function Manage() {
     triggerFetch: fetchRooms,
     loading,
     responseData: rooms,
-  } = useAxios<any, undefined>({
+  } = useAxios<ANY, undefined>({
     endpoint:
       responseUser?.establishment_id &&
       `/api/hotel/rooms/${responseUser.establishment_id}`,
@@ -60,8 +60,8 @@ export default function Manage() {
   }, [responseUser]);
 
   const handleEdit = (row: RoomProps) => {
-    setSelectedRow(row)
-    setOpenEditDialog(true)
+    setSelectedRow(row);
+    setOpenEditDialog(true);
   };
 
   const handleOpenAddDialog = () => {
@@ -83,11 +83,9 @@ export default function Manage() {
   const handleCloseEditDialog = () => {
     setOpenEditDialog(false);
   };
- 
-  const hotelNavItems = useHotelNavItems();
 
   return (
-    <DashboardLayout navItems={hotelNavItems}>
+    <DashboardLayout>
       <PageContainer scrollable={true}>
         <div className="w-full flex justify-between mb-4">
           Room Management
@@ -95,7 +93,7 @@ export default function Manage() {
             <PlusIcon className="mr-2" /> Add Room
           </Button>
         </div>
-        
+
         <CustomTable
           title="Rooms"
           subtitle="Manage your rooms"
@@ -104,14 +102,14 @@ export default function Manage() {
           onEdit={handleEdit}
           onDelete={handleOpenDeleteDialog}
           headers={headers}
-          onPageChange={function (page: number): void {
+          onPageChange={function (): void {
             throw new Error("Function not implemented.");
           }}
-          onPerPageChange={function (perPage: number): void {
+          onPerPageChange={function (): void {
             throw new Error("Function not implemented.");
           }}
         />
-        
+
         <AddRoomDialog
           open={openAddDialog}
           onClose={handleCloseAddDialog}

@@ -1,4 +1,22 @@
  
+ export interface HotelProps {
+  id?: number; 
+  average_stars: string;
+  name: string;
+  address?: string;
+  province_id: string;
+  description?: string;
+  thumbnail?: string;
+  images?: string[] | string;
+  open_at: string;
+  close_at: string;
+  facilities: string[];
+  policies: string[];
+  rating_label: string;
+  total_comments: string;
+} 
+
+
 export const facilities = [
   "Free Wi-Fi",
   "Swimming Pool",

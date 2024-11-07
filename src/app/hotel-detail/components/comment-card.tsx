@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { Card } from "@components/ui/card";
 import { Avatar, AvatarFallback } from "@components/ui/avatar";
 import { Input } from "@components/ui/input";
@@ -15,6 +15,8 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/app/components/ui/popover";
+import Image from "next/image";
+import { ANY } from "@/app/components/custom-table/custom-table";
 
 const CommentCard = ({
   comment,
@@ -24,7 +26,6 @@ const CommentCard = ({
   refetchComments: ((data?: undefined) => void) | undefined;
 }) => {
   const [isEditing, setIsEditing] = useState(false);
-  const [isEditingReply, setIsEditingReplying] = useState(false);
   const [replyContext, setReplyContext] = useState("");
   const [context, setContext] = useState("");
   const [isExpanded, setIsExpanded] = useState(false);
@@ -37,12 +38,8 @@ const CommentCard = ({
     responseDataWithStat: errorCreateStat,
     error,
   } = useAxios<
-    any,
-    {
-      context: string;
-      hotel_id: number;
-      parent_id: number;
-    }
+    ANY,
+    ANY
   >({
     endpoint: "/api/comment/create",
     method: "POST",
@@ -55,7 +52,7 @@ const CommentCard = ({
     responseDataWithStat: errorDeleteStat,
     error: errorDelete,
     finished: deleteFinished,
-  } = useAxios<any, any>({
+  } = useAxios<ANY, ANY>({
     endpoint: `/api/comment/delete`,
     method: "POST",
     config: {},
@@ -67,7 +64,7 @@ const CommentCard = ({
     responseDataWithStat: errorEditStat,
     error: errorEdit,
     finished: editFinished,
-  } = useAxios<any, any>({
+  } = useAxios<ANY, ANY>({
     endpoint: `/api/comment/update`,
     method: "POST",
     config: {},
@@ -198,15 +195,25 @@ const CommentCard = ({
     };
     addReply?.(formData);
   };
-
+  console.log(comment);
   return (
     <Card key={comment.id} className="shadow-lg rounded-lg mb-4 group relative">
       <div className="p-4">
         {/* <CardContent > */}
 
         <div className="flex items-start space-x-4">
-          <Avatar className="h-10 w-10">
-            <AvatarFallback>{comment.username.charAt(0)}</AvatarFallback>
+          <Avatar>
+            {comment?.profile_img ? (
+              <Image
+                width={70}
+                height={70}
+                src={`${process.env.NEXT_PUBLIC_BASE_URL}${comment?.profile_img}`}
+                alt="User profile"
+                className="rounded-full object-cover object-center w-full h-full"
+              />
+            ) : (
+              <AvatarFallback>UN</AvatarFallback>
+            )}
           </Avatar>
           <div className="space-y-2 w-full">
             <div className="flex justify-between items-center">
@@ -215,32 +222,39 @@ const CommentCard = ({
                 <span className="text-sm text-muted-foreground">
                   {comment.commented_at}
                 </span>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <EllipsisVertical className="rounded-full p-1   cursor-pointer transition-all duration-200 ease-in-out" />
-                  </PopoverTrigger>
-                  <PopoverContent className="w-28 p-2 border rounded-lg shadow-lg   space-y-1">
-                    <Button
-                      variant="ghost"
-                      className="w-full flex items-center justify-start px-2 py-1 text-sm rounded   transition-colors duration-200 ease-in-out"
-                      onClick={() => {
-                        setContext(comment.context)
-                        setIsEditing(true)}}
-                    >
-                      <PenIcon className="mr-2 h-4 w-4" />
-                      Edit
-                    </Button>
+                {(comment?.can_edit || comment?.can_delete) && (
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <EllipsisVertical className="rounded-full p-1 cursor-pointer transition-all duration-200 ease-in-out" />
+                    </PopoverTrigger>
+                    <PopoverContent className="w-28 p-2 border rounded-lg shadow-lg space-y-1">
+                      {comment?.can_edit && (
+                        <Button
+                          variant="ghost"
+                          className="w-full flex items-center justify-start px-2 py-1 text-sm rounded transition-colors duration-200 ease-in-out"
+                          onClick={() => {
+                            setContext(comment.context);
+                            setIsEditing(true);
+                          }}
+                        >
+                          <PenIcon className="mr-2 h-4 w-4" />
+                          Edit
+                        </Button>
+                      )}
 
-                    <Button
-                      variant="ghost"
-                      className="w-full flex items-center justify-start px-2 py-1 text-sm rounded   transition-colors duration-200 ease-in-out"
-                      onClick={handleDelete}
-                    >
-                      <Trash className="mr-2 h-4 w-4 text-red-500" />
-                      Delete
-                    </Button>
-                  </PopoverContent>
-                </Popover>
+                      {comment?.can_delete && (
+                        <Button
+                          variant="ghost"
+                          className="w-full flex items-center justify-start px-2 py-1 text-sm rounded transition-colors duration-200 ease-in-out"
+                          onClick={handleDelete}
+                        >
+                          <Trash className="mr-2 h-4 w-4 text-red-500" />
+                          Delete
+                        </Button>
+                      )}
+                    </PopoverContent>
+                  </Popover>
+                )}
               </div>
             </div>
 
@@ -261,7 +275,6 @@ const CommentCard = ({
                 {/* Shadcnui Text Input with comment context as the initial value */}
                 <Input
                   type="text"
-                  className="shadcnui-input" // Apply Shadcnui styles as needed
                   value={context} // Prefilled with current comment context
                   onChange={(e) => setContext(e.target.value)}
                 />
@@ -301,7 +314,7 @@ const CommentCard = ({
             )}
 
             <div className="">
-              {comment.replies?.length > 0 && (
+            {comment?.replies && comment.replies?.length > 0 && (
                 <Button
                   variant="link"
                   onClick={toggleReplies}
@@ -316,14 +329,14 @@ const CommentCard = ({
 
               {showReplies && (
                 <div className="mt-2 pl-6 border-l-2 border-gray-200 space-y-4">
-                  {comment.replies.length > 0 ? (
-                    comment.replies?.map((reply) => (
+                  {comment?.replies && comment.replies.length > 0 ? (
+                    comment.replies.map((reply) => (
                       <Reply
                         key={reply.id}
                         reply={reply}
                         context={replyContext}
                         handleEdit={() => handleEditReply(reply.id)}
-                        setContext={setReplyContext} 
+                        setContext={setReplyContext}
                         onDelete={() => handleDeleteReply(reply.id)}
                       />
                     ))
@@ -335,10 +348,18 @@ const CommentCard = ({
 
                   <form onSubmit={handleSubmit(onSubmit)} className="space-y-2">
                     <div className="flex items-start space-x-2">
-                      <Avatar className="h-8 w-8">
-                        <AvatarFallback>
-                          {user?.profile_img ?? "U"}
-                        </AvatarFallback>
+                      <Avatar className="w-10 h-10">
+                        {user?.profile_img ? (
+                          <Image
+                            width={70}
+                            height={70}
+                            src={`${process.env.NEXT_PUBLIC_BASE_URL}${user?.profile_img}`}
+                            alt="User profile"
+                            className="rounded-full object-cover object-center w-full h-full"
+                          />
+                        ) : (
+                          <AvatarFallback>UN</AvatarFallback>
+                        )}
                       </Avatar>
                       <div className="w-full">
                         <Input
