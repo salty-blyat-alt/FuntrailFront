@@ -214,7 +214,7 @@ export default function RoomList({ hotelId }: { hotelId: string }) {
                             src={
                               room.img
                                 ? `${process.env.NEXT_PUBLIC_BASE_URL}${room.img}`
-                                : ""
+                                : "https://placehold.co/600x400"
                             }
                             width={50}
                             height={50}
@@ -228,7 +228,7 @@ export default function RoomList({ hotelId }: { hotelId: string }) {
                             src={
                               room.img
                                 ? `${process.env.NEXT_PUBLIC_BASE_URL}${room.img}`
-                                : ""
+                                : "https://placehold.co/600x400"
                             }
                             width={500} // Larger image size for preview
                             height={500}

@@ -37,10 +37,7 @@ const CommentCard = ({
     finished: finishedReply,
     responseDataWithStat: errorCreateStat,
     error,
-  } = useAxios<
-    ANY,
-    ANY
-  >({
+  } = useAxios<ANY, ANY>({
     endpoint: "/api/comment/create",
     method: "POST",
     config: {},
@@ -207,7 +204,11 @@ const CommentCard = ({
               <Image
                 width={70}
                 height={70}
-                src={`${process.env.NEXT_PUBLIC_BASE_URL}${comment?.profile_img}`}
+                src={
+                  comment?.profile_img
+                    ? `${process.env.NEXT_PUBLIC_BASE_URL}${comment?.profile_img}`
+                    : "https://placehold.co/600x400"
+                }
                 alt="User profile"
                 className="rounded-full object-cover object-center w-full h-full"
               />
@@ -314,7 +315,7 @@ const CommentCard = ({
             )}
 
             <div className="">
-            {comment?.replies && comment.replies?.length > 0 && (
+              {comment?.replies && comment.replies?.length > 0 && (
                 <Button
                   variant="link"
                   onClick={toggleReplies}
@@ -353,7 +354,11 @@ const CommentCard = ({
                           <Image
                             width={70}
                             height={70}
-                            src={`${process.env.NEXT_PUBLIC_BASE_URL}${user?.profile_img}`}
+                            src={
+                              user.profile_img
+                                ? `${process.env.NEXT_PUBLIC_BASE_URL}${user?.profile_img}`
+                                : "https://placehold.co/600x400"
+                            }
                             alt="User profile"
                             className="rounded-full object-cover object-center w-full h-full"
                           />

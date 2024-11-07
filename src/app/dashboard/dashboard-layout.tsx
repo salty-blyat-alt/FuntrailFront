@@ -13,13 +13,12 @@ const DashboardLayout = ({
 }: {
   children: React.ReactNode; 
 }) => {
-
-
+ 
   const pathname = usePathname();
   return (
     <SidebarProvider>
       <div className="flex">
-        <Sidebar navItems={navItems} title={""} />
+        <Sidebar  title={""} />
         <main className="w-full flex-1 bg-muted/40 overflow-hidden mt-20">
           <div className="p-4">
             <AdminNavbar/>

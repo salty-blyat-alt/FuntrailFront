@@ -280,7 +280,7 @@ export default function AddRoom() {
                     alt={`Room id: ${room?.id}`}
                     height={100}
                     width={100}
-                    src={process.env.NEXT_PUBLIC_BASE_URL + room?.img}
+                    src={room.img ? process.env.NEXT_PUBLIC_BASE_URL + room?.img : "https://placehold.co/600x400"}
                     className="rounded-md"
                   />
                   <div className="flex-1 space-y-1">

@@ -81,8 +81,12 @@ const CardStack = ({
                   <Image
                     width={48}
                     height={48}
-                    src={`${process.env.NEXT_PUBLIC_BASE_URL}${card?.profile_img}`}
-                    alt={card?.username}
+                    src={
+                      card?.profile_img
+                        ? `${process.env.NEXT_PUBLIC_BASE_URL}${card.profile_img}`
+                        : 'https://placehold.co/600x400' // Fallback image if no profile image is available
+                    }
+                    alt={card?.username} 
                   />
                   <AvatarFallback>{card?.username.charAt(0)}</AvatarFallback>
                 </Avatar>

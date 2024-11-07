@@ -32,6 +32,7 @@ const GeniusCard = ({
         </div>
         <div className="w-full md:w-32 flex items-center justify-center">
           <Image
+          
             src={img}
             width={200}
             height={200}

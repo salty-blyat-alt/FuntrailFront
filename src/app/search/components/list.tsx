@@ -4,13 +4,20 @@ import { Card, CardContent } from "../../components/ui/card";
 import { HotelProps } from "@/app/constant/constant";
 
 const List = ({ item }: { item: HotelProps }) => {
-  const { thumbnail, average_stars, name,rating_label,total_comments, description } = item;
+  const {
+    thumbnail,
+    average_stars,
+    name,
+    rating_label,
+    total_comments,
+    description,
+  } = item;
 
   const imageUrl = thumbnail?.startsWith("https://via.placeholder.com")
     ? thumbnail
     : thumbnail
     ? `${process.env.NEXT_PUBLIC_BASE_URL}${thumbnail}`
-    : "";
+    : "https://placehold.co/600x400";
 
   return (
     <Card>
@@ -38,10 +45,12 @@ const List = ({ item }: { item: HotelProps }) => {
                 {average_stars ?? "Unrated"}
               </span>{" "}
               <br />
-              <span className="text-xs md:text-sm text-nowrap">{rating_label ?? 'Unrated'}</span>
+              <span className="text-xs md:text-sm text-nowrap">
+                {rating_label ?? "Unrated"}
+              </span>
               <br />
               <span className="text-xs md:text-sm text-muted-foreground">
-                {total_comments ?? 'Unavailable'} reviews
+                {total_comments ?? "Unavailable"} reviews
               </span>
             </div>
           </div>

@@ -69,7 +69,7 @@ export default function HotelDetail() {
       </p>
 
       <div className="mb-4">
-        <ImageSelect images={hotel?.images} />
+        <ImageSelect images={hotel?.images ?? []} />
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
         <Tabs defaultValue="overview" className="mb-4">

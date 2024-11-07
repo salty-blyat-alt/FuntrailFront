@@ -60,7 +60,7 @@ export default function RootLayout({
                   <main className={isLayoutRequired ? "mt-12" : ""}>
                     {children}
                   </main>
-                  <Footer className="mt-32" />
+                  {isLayoutRequired && <Footer className="mt-32" />}
                 </>
               )}
               <Toaster />

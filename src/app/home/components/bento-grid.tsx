@@ -16,7 +16,7 @@ interface PopularProvinceProps {
 
 export function BentoGrid({ className = "" }) {
   const {
-    triggerFetch: fetchPopularProvinces, 
+    triggerFetch: fetchPopularProvinces,
     loading,
     responseData: popularProvinces,
   } = useAxios<PopularProvinceProps[], undefined>({
@@ -57,7 +57,11 @@ export function BentoGrid({ className = "" }) {
               passHref
             >
               <Image
-                src={`${process.env.NEXT_PUBLIC_BASE_URL}${p?.img}`}
+                src={
+                  p?.img
+                    ? `${process.env.NEXT_PUBLIC_BASE_URL}${p.img}`
+                    : "https://placehold.co/600x400"
+                }
                 alt={p?.name}
                 width={500}
                 height={300}
@@ -69,15 +73,16 @@ export function BentoGrid({ className = "" }) {
             </Link>
           );
         })}
-        {loading || !popularProvinces && (
-          <>
-            <Skeleton className="h-52 rounded-md col-span-2" />
-            <Skeleton className="h-52 rounded-md col-span-1" />
-            <Skeleton className="h-52 rounded-md col-span-1" />
-            <Skeleton className="h-52 rounded-md col-span-1" />
-            <Skeleton className="h-52 rounded-md col-span-1" />
-          </>
-        )}
+        {loading ||
+          (!popularProvinces && (
+            <>
+              <Skeleton className="h-52 rounded-md col-span-2" />
+              <Skeleton className="h-52 rounded-md col-span-1" />
+              <Skeleton className="h-52 rounded-md col-span-1" />
+              <Skeleton className="h-52 rounded-md col-span-1" />
+              <Skeleton className="h-52 rounded-md col-span-1" />
+            </>
+          ))}
       </div>
     </section>
   );

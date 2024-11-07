@@ -81,7 +81,7 @@ const ImageSelect: React.FC<ImageSelectProps> = ({ images }) => {
                 <Image
                   fill
                   sizes="40rem"
-                  src={`${process.env.NEXT_PUBLIC_BASE_URL}${image}`}
+                  src={ image ? `${process.env.NEXT_PUBLIC_BASE_URL}${image}` : "https://placehold.co/600x400"}
                   alt={`Thumbnail ${index}`}
                   className="rounded-lg object-cover"
                 />

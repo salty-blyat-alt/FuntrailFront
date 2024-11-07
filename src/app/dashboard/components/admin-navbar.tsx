@@ -15,6 +15,8 @@ import {
   DialogTitle,
 } from "@components/ui/dialog";
 import { useRouter } from "next/navigation";
+import { NavLink } from "@/app/components/navbar/navbar";
+import Image from "next/image";
 
 export function AdminNavbar() {
   const [isLogoutDialogOpen, setIsLogoutDialogOpen] = useState(false);
@@ -76,7 +78,7 @@ export function AdminNavbar() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5, ease: "easeOut" }}
-        className="fixed top-0 right-0 z-50 w-full md:w-1/5 h-16 bg-background "
+        className=""
       >
         <div className="mx-auto px-6 h-full flex items-center justify-end">
           <div className="hidden md:flex items-center space-x-2">
@@ -113,7 +115,6 @@ export function AdminNavbar() {
                   <User className="h-5 w-5 text-gray-700" />
                 </Button>
 
-                
                 <AnimatePresence>
                   {isUserMenuOpen && (
                     <motion.div
@@ -152,44 +153,97 @@ export function AdminNavbar() {
         </div>
       </motion.nav>
 
-      {/* Mobile Menu */}
       <AnimatePresence>
         {isMobileMenuOpen && (
           <motion.div
             initial={{ opacity: 0, x: "100%" }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: "100%" }}
-            transition={{ duration: 0.3 }}
-            className="fixed top-0 right-0 z-50 bg-background md:hidden max-w-xs w-full h-full"
+            transition={{ type: "spring", stiffness: 300, damping: 30 }}
+            className="fixed inset-0 z-50 bg-background md:hidden"
           >
             <div className="flex flex-col h-full p-4">
               <div className="flex justify-between items-center mb-8">
-                <Button variant="ghost" size="icon" onClick={() => setIsMobileMenuOpen(false)}>
+                <Link href="/" className="flex items-center space-x-2">
+                  <Image
+                    src="/logo/logo.svg"
+                    alt="Funtrail Logo"
+                    width={36}
+                    height={36}
+                  />
+                  <span className="text-xl font-bold">Funtrail</span>
+                </Link>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
                   <X className="h-6 w-6" />
                 </Button>
               </div>
               <div className="flex flex-col space-y-4">
+                <NavLink href="/" onClick={() => setIsMobileMenuOpen(false)}>
+                  Home
+                </NavLink>
                 {user?.user_type !== "hotel" && (
-                  <Link href="/register-hotel" onClick={() => setIsMobileMenuOpen(false)}>Join Us</Link>
+                  <NavLink
+                    href="/register-hotel"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    Join Us
+                  </NavLink>
                 )}
                 {user?.user_type === "hotel" && (
-                  <Link href="/dashboard/hotel/id" onClick={() => setIsMobileMenuOpen(false)}>Dashboard</Link>
+                  <NavLink
+                    href="/dashboard/hotel/id"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    Dashboard
+                  </NavLink>
                 )}
                 {user ? (
                   <>
-                    <Link href="/profile" onClick={() => setIsMobileMenuOpen(false)}>Profile</Link>
-                    <Button variant="ghost" className="justify-start" onClick={handleLogout}>
-                      <LogOut className="h-5 w-5 mr-2" />Logout
+                    <NavLink
+                      href="/profile"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      Profile
+                    </NavLink>
+                    <Button
+                      variant="ghost"
+                      className="justify-start"
+                      onClick={handleLogout}
+                    >
+                      <LogOut className="h-5 w-5 mr-2" />
+                      Logout
                     </Button>
                   </>
                 ) : (
                   <>
-                    <Link href="/auth/login" onClick={() => setIsMobileMenuOpen(false)}>Login</Link>
-                    <Link href="/auth/register" onClick={() => setIsMobileMenuOpen(false)}>Register</Link>
+                    <NavLink
+                      href="/auth/login"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      Login
+                    </NavLink>
+                    <NavLink
+                      href="/auth/register"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      Register
+                    </NavLink>
                   </>
                 )}
-                <Button variant="ghost" className="justify-start" onClick={toggleTheme}>
-                  {theme === "dark" ? <Sun className="h-5 w-5 mr-2" /> : <Moon className="h-5 w-5 mr-2" />}
+                <Button
+                  variant="ghost"
+                  className="justify-start"
+                  onClick={toggleTheme}
+                >
+                  {theme === "dark" ? (
+                    <Sun className="h-5 w-5 mr-2" />
+                  ) : (
+                    <Moon className="h-5 w-5 mr-2" />
+                  )}
                   {theme === "dark" ? "Light Mode" : "Dark Mode"}
                 </Button>
               </div>
@@ -203,7 +257,12 @@ export function AdminNavbar() {
         <DialogContent>
           <DialogTitle>Are you sure you want to log out?</DialogTitle>
           <DialogFooter>
-            <Button onClick={() => setIsLogoutDialogOpen(false)} variant="outline">Cancel</Button>
+            <Button
+              onClick={() => setIsLogoutDialogOpen(false)}
+              variant="outline"
+            >
+              Cancel
+            </Button>
             <Button onClick={confirmLogout}>Confirm Logout</Button>
           </DialogFooter>
         </DialogContent>

@@ -44,7 +44,7 @@ const GridCard = () => {
               className="rounded-md border h-32 overflow-hidden"
             >
               <Image
-                src={`${process.env.NEXT_PUBLIC_BASE_URL}${h.thumbnail}`}
+                src={h.thumbnail ? `${process.env.NEXT_PUBLIC_BASE_URL}${h.thumbnail}` : "https://placehold.co/600x400"}
                 width={500}
                 height={500}
                 className="object-cover size-full hover:scale-110 duration-200 transition-all ease-in"

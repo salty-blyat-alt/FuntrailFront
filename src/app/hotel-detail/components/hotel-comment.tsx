@@ -180,7 +180,7 @@ export default function HotelComment({ hotel_id }: { hotel_id: string }) {
               <Image
                 width={70}
                 height={70}
-                src={`${process.env.NEXT_PUBLIC_BASE_URL}${user.profile_img}`}
+                src={user.profile_img ? `${process.env.NEXT_PUBLIC_BASE_URL}${user.profile_img}` : "https://placehold.co/600x400"}
                 alt="User profile"
                 className="rounded-full object-cover object-center w-full h-full"
               />

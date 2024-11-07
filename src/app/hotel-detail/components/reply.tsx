@@ -39,7 +39,7 @@ const Reply: React.FC<ReplyProps> = ({
               <Image
                 width={70}
                 height={70}
-                src={`${process.env.NEXT_PUBLIC_BASE_URL}${reply?.profile_img}`}
+                src={ reply.profile_img ? `${process.env.NEXT_PUBLIC_BASE_URL}${reply?.profile_img}` : "https://placehold.co/600x400"}
                 alt="User profile"
                 className="rounded-full object-cover object-center w-full h-full"
               />
