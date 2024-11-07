@@ -6,13 +6,10 @@ import useAxios from '@/app/hooks/use-axios';
 import { Pencil1Icon } from '@radix-ui/react-icons';
 import React, { useEffect, useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
+import { HotelSettingProps } from './name-textbox';
+ 
 
-interface ProvinceTextBox {
-  hotel: HotelProps;
-  fetchHotel: (() => void) | undefined;
-}
-
-const AddressTextBox: React.FC<ProvinceTextBox> = ({ hotel, fetchHotel }) => {
+const AddressTextBox: React.FC<HotelSettingProps> = ({ hotel, fetchHotel }) => {
   const [isEditingAddress, setIsEditingAddress] = useState(false);
   const {
     register,

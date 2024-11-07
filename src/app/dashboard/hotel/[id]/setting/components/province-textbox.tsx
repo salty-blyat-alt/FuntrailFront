@@ -7,13 +7,9 @@ import useAxios from '@/app/hooks/use-axios';
 import { Pencil1Icon } from '@radix-ui/react-icons';
 import React, { useEffect, useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
-
-interface ProvinceTextBox {
-  hotel: HotelProps;
-  fetchHotel: (() => void) | undefined;
-}
-
-const ProvinceTextBox: React.FC<ProvinceTextBox> = ({ hotel, fetchHotel }) => {
+import { HotelSettingProps } from './name-textbox';
+ 
+const ProvinceTextBox: React.FC<HotelSettingProps> = ({ hotel, fetchHotel }) => {
   const [isEditingProvince, setIsEditingProvince] = useState(false);
   const [provinceId, setProvinceId] = useState<number | null>(null);
   const [selectedProvince, setSelectedProvince] = useState<string>("");
