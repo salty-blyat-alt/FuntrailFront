@@ -113,7 +113,7 @@ export function AdminNavbar() {
                   <User className="h-5 w-5 text-gray-700" />
                 </Button>
 
-                {/* Smooth User Menu */}
+                
                 <AnimatePresence>
                   {isUserMenuOpen && (
                     <motion.div

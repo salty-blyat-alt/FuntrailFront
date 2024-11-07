@@ -15,6 +15,7 @@ import { Label } from "../ui/label";
 interface HotelProps {
   name: string;
   province_id: number;
+  province?: string;
   address: string;
   description?: string;
   thumbnail: File | undefined;

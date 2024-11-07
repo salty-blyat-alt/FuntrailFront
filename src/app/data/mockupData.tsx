@@ -1,6 +1,7 @@
  
 
 export interface HotelProps {
+  province: string;
   id?: number; // prod
   name: string;
   address?: string;
