@@ -1,7 +1,7 @@
 "use client";
 import CustomTable, {
   ANY,
-    HeaderProps,
+  HeaderProps,
 } from "@/app/components/custom-table/custom-table";
 import PageContainer from "@/app/dashboard/components/page-container";
 import DashboardLayout from "@/app/dashboard/dashboard-layout";
@@ -42,17 +42,16 @@ const Orders = () => {
     { key: "date_end", label: "Checkout", hidden: false },
     { key: "total", label: "Total", hidden: false },
     { key: "ordered_at", label: "Ordered At", hidden: false },
-  ]; 
+  ];
 
   useEffect(() => {
     fetchOrderHistory?.();
   }, [perPage, currentPage]); // Fetch data when page or perPage changes
-  
-  console.log(orderHistory)
+
+  console.log("orde history", orderHistory);
   return (
     <>
-      
-      <DashboardLayout >
+      <DashboardLayout>
         <PageContainer scrollable={true}>
           <CustomTable
             title="Order History"

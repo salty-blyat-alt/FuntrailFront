@@ -80,8 +80,7 @@ export function AdminNavbar() {
         transition={{ duration: 0.5 }}
         className="relative z-50"
       > 
-          <div className="flex items-center justify-end">
-          
+          <div className="flex items-center justify-end"> 
             <div className="flex items-center space-x-2">
               {user?.user_type !== "hotel" && (
                 <Button

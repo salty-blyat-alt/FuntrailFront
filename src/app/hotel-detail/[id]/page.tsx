@@ -7,16 +7,32 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/app/components/ui/tabs";
-import { ArrowBigLeft, HeartIcon, MapPinIcon } from "lucide-react";
+import {
+  ArrowBigLeft,
+  Clock,
+  HeartIcon,
+  LogIn,
+  MapPin,
+  MapPinIcon,
+  Wifi,
+} from "lucide-react";
 import { useParams, usePathname, useRouter } from "next/navigation";
 import HotelComment from "../components/hotel-comment";
 import ImageSelect from "../components/image-select";
 import CustomBreadcrumb from "@/app/components/custom-breadcrumb/custom-breadcrumb";
-import RoomList from "../components/room-list";
 import useAxios from "@/app/hooks/use-axios";
 import { useEffect } from "react";
 import { ANY } from "@/app/components/custom-table/custom-table";
 import ReviewStatistic from "@/app/home/components/review-statistic";
+import Image from "next/image";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/app/components/ui/card";
+import { Separator } from "@/app/components/ui/separator";
 
 export default function HotelDetail() {
   const { id } = useParams();
@@ -41,6 +57,24 @@ export default function HotelDetail() {
   const router = useRouter();
   const pathname = usePathname();
 
+  let policiesArray = [];
+  if (hotel?.policies) {
+    try {
+      policiesArray = JSON.parse(hotel.policies);
+    } catch (error) {
+      console.error("Failed to parse policies:", error);
+    }
+  }
+
+  let facilitiesArray = [];
+  if (hotel?.facilities) {
+    try {
+      facilitiesArray = JSON.parse(hotel?.facilities);
+    } catch (error) {
+      console.error("Failed to parse policies:", error);
+    }
+  }
+
   return (
     <div className="container mx-auto p-4">
       <div className="mb-4 text-sm breadcrumbs">
@@ -55,92 +89,105 @@ export default function HotelDetail() {
       >
         <ArrowBigLeft />
       </Button>
-      <div className="flex justify-between items-start sm:items-center mb-4 gap-4">
-        <h1 className="text-2xl font-bold">{hotel?.name}</h1>
-        <div className="flex gap-2">
-          <Button variant="outline" size="icon">
-            <HeartIcon className="h-4 w-4" />
-          </Button>
+
+      <div className=" mx-auto p-4 flex flex-col md:flex-row gap-8">
+        <div className="md:w-1/2 space-y-6">
+          <h1 className="text-4xl font-bold">{hotel?.name}</h1>
+          <div className=" ">
+            <ImageSelect images={hotel?.images ?? []} />
+          </div>
+          <Card>
+            <CardHeader>
+              <CardTitle>Contact</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p>
+                <strong>Owner:</strong> {hotel?.owner}
+              </p>
+              <Separator className="my-2" />
+              <p>
+                <strong>Address:</strong> {hotel?.address}
+              </p>
+              <Separator className="my-2" />
+              <p>
+                <strong>Province:</strong> {hotel?.province}
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+
+        <div className="md:w-1/2 space-y-6 flex flex-col  first:">
+          <Card className="flex-grow h-full">
+            <CardHeader>
+              <CardTitle>Location & Hours</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="flex items-center mb-4">
+                <MapPin className="mr-2" size={20} />
+                {hotel?.province}, {hotel?.address}
+              </p>
+            </CardContent>
+            <CardFooter className="flex justify-between items-center text-sm text-muted-foreground mt-auto">
+              <p className="flex items-center">
+                <Clock className="mr-2" size={16} />
+                Open: {hotel?.open_at}
+              </p>
+              <p className="flex items-center">
+                <Clock className="mr-2" size={16} />
+                Close: {hotel?.close_at}
+              </p>
+            </CardFooter>
+          </Card>
+
+          <Card className="flex-grow h-full">
+            <CardHeader>
+              <CardTitle>Facilities</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ul className="space-y-2">
+                {facilitiesArray.length > 0 ? (
+                  facilitiesArray.map((facility, index) => (
+                    <li key={index} className="flex items-center">
+                      {facility}
+                    </li>
+                  ))
+                ) : (
+                  <p>No policies available.</p>
+                )}
+              </ul>
+            </CardContent>
+          </Card>
+
+          <Card className="flex-grow h-full">
+            <CardHeader>
+              <CardTitle>Policies</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ul className="space-y-2">
+                {policiesArray.length > 0 ? (
+                  policiesArray.map((policy, index) => (
+                    <li key={index} className="flex items-center">
+                      {policy}
+                    </li>
+                  ))
+                ) : (
+                  <p>No policies available.</p>
+                )}
+              </ul>
+            </CardContent>
+          </Card>
         </div>
       </div>
 
-      <p className="mb-4 text-sm text-muted-foreground">
-        <MapPinIcon className="inline-block mr-1 h-4 w-4" /> {hotel?.address}
-      </p>
-
-      <div className="mb-4">
-        <ImageSelect images={hotel?.images ?? []} />
-      </div>
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
-        <Tabs defaultValue="overview" className="mb-4">
-          <TabsList className="flex flex-wrap">
-            <TabsTrigger value="overview" className="mb-2 mr-2">
-              Overview
-            </TabsTrigger>
-            <TabsTrigger value="info" className="mb-2 mr-2">
-              Info & prices
-            </TabsTrigger>
-            <TabsTrigger value="facilities" className="mb-2 mr-2">
-              Facilities
-            </TabsTrigger>
-            <TabsTrigger value="policies" className="mb-2 mr-2">
-              Policies
-            </TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="overview">
-            {hotel?.description ? (
-              <p>{hotel.description}</p>
-            ) : (
-              <p>No overview available.</p>
-            )}
-          </TabsContent>
-
-          <TabsContent value="info">
-            {hotel ? (
-              <>
-                <p>
-                  <strong>Hotel Name:</strong> {hotel.name || "N/A"}
-                </p>
-                <p>
-                  <strong>Address:</strong> {hotel.address || "N/A"}
-                </p>
-                <p>
-                  <strong>Check-in Time:</strong> {hotel.open_at || "N/A"}
-                </p>
-                <p>
-                  <strong>Check-out Time:</strong> {hotel.close_at || "N/A"}
-                </p>
-              </>
-            ) : (
-              <p>No information available.</p>
-            )}
-          </TabsContent>
-
-          <TabsContent value="facilities">
-            {Array.isArray(hotel?.facilities) && hotel.facilities.length > 0 ? (
-              <ul>
-                {hotel.facilities.map((facility: ANY, index: number) => {
-                  <li key={index}>{facility}</li>;
-                })}
-              </ul>
-            ) : (
-              <p>No facilities available.</p>
-            )}
-          </TabsContent>
-
-          <TabsContent value="policies">
-            {Array.isArray(hotel?.facilities) && hotel.facilities.length > 0 ? (
-              <ul>
-                {hotel.policies.map((policy: ANY, index: number) => {
-                  <li key={index}>{policy}</li>;
-                })}
-              </ul>
-            ) : (
-              <p>No policies available.</p>
-            )}
-          </TabsContent>
-        </Tabs>
+      <div className="grid grid-cols-1 md:grid-cols-2  gap-8 p-4">
+        <Card>
+          <CardHeader>
+            <CardTitle>About</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p>{hotel?.description}</p>
+          </CardContent>
+        </Card>
         <ReviewStatistic hotel_id={Number(id)} />
       </div>
       {/* <RoomList hotelId={id.toString()} /> */}

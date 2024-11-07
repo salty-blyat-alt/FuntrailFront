@@ -228,7 +228,7 @@ const CommentCard = ({
                     <PopoverTrigger asChild>
                       <EllipsisVertical className="rounded-full p-1 cursor-pointer transition-all duration-200 ease-in-out" />
                     </PopoverTrigger>
-                    <PopoverContent className="w-28 p-2 border rounded-lg shadow-lg space-y-1">
+                    <PopoverContent className="p-2 border rounded-lg shadow-lg space-y-1">
                       {comment?.can_edit && (
                         <Button
                           variant="ghost"
