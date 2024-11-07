@@ -1,20 +1,18 @@
 import { MapPinIcon } from "lucide-react";
 import Image from "next/image";
 import { Card, CardContent } from "../../components/ui/card";
-import { HotelProps } from "@/app/data/mockupData";
+import { HotelProps } from "@/app/constant/constant";
 
 const List = ({ item }: { item: HotelProps }) => {
-
-  const { thumbnail, name, description } = item;
+  const { thumbnail, average_stars, name,rating_label,total_comments, description } = item;
 
   const imageUrl = thumbnail?.startsWith("https://via.placeholder.com")
     ? thumbnail
     : thumbnail
-    ? `${process.env.NEXT_PUBLIC_BASE_URL}${thumbnail}` 
+    ? `${process.env.NEXT_PUBLIC_BASE_URL}${thumbnail}`
     : "";
 
   return (
-    
     <Card>
       <CardContent className="p-4 flex flex-row sm:flex-col md:flex-row gap-4">
         <div className="w-full md:w-1/3">
@@ -37,13 +35,13 @@ const List = ({ item }: { item: HotelProps }) => {
             </div>
             <div className="text-right">
               <span className="bg-blue-600 text-white px-2 py-1 rounded">
-                {"rating placeholder"}
+                {average_stars ?? "Unrated"}
               </span>{" "}
               <br />
-              <span className="text-xs md:text-sm text-nowrap">Very Good</span>
+              <span className="text-xs md:text-sm text-nowrap">{rating_label ?? 'Unrated'}</span>
               <br />
               <span className="text-xs md:text-sm text-muted-foreground">
-                {"reviewCount"} reviews
+                {total_comments ?? 'Unavailable'} reviews
               </span>
             </div>
           </div>

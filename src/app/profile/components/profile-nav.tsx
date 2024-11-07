@@ -6,18 +6,15 @@ import {
   CardHeader,
   CardTitle,
 } from "@/app/components/ui/card";
-import { Activity, BookOpen, Settings, User } from "lucide-react";
+import { Settings, User } from "lucide-react";
 
 const ProfileNav = ({ activeSection, setActiveSection }) => {
   const menuItems = [
     { id: "profile", icon: User, label: "Profile" },
-    { id: "account", icon: Settings, label: "Account" },
-
-    
-    { id: "activity", icon: Activity, label: "Activity" },
+    { id: "account", icon: Settings, label: "Account" }, 
   ];
   return (
-    <Card className="w-full md:w-64 h-full">
+    <Card className="w-full md:w-64 h-fit">
       <CardHeader>
         <CardTitle>Navigation</CardTitle>
       </CardHeader>

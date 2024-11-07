@@ -16,8 +16,7 @@ interface PopularProvinceProps {
 
 export function BentoGrid({ className = "" }) {
   const {
-    triggerFetch: fetchPopularProvinces,
-    error,
+    triggerFetch: fetchPopularProvinces, 
     loading,
     responseData: popularProvinces,
   } = useAxios<PopularProvinceProps[], undefined>({

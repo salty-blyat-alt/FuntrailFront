@@ -22,6 +22,7 @@ import {
   DialogTitle,
 } from "@/app/components/ui/dialog";
 import { RoomProps } from "@/app/hotel-detail/components/room-list";
+import { ANY } from "@/app/components/custom-table/custom-table";
 
 export default function EditRoomDialog({
   open,
@@ -69,10 +70,22 @@ export default function EditRoomDialog({
     }
   }, [selectedRow, setValue]);
 
-  const handleThumbnailChange = (file: File) => {
-    setPreview(file);
-    setValue("img", file);
+  const handleThumbnailChange = (file?: File | undefined) => {
+    if (file) {
+      // Create a FileReader to convert the file to Base64
+      const reader = new FileReader();
+      
+      reader.onloadend = () => {
+        // When the file is successfully read, you can store the Base64 string
+        setPreview(file);
+        setValue("img", reader.result as string);  // Cast the result as a string (Base64)
+      };
+  
+      // Read the file as a data URL (Base64)
+      reader.readAsDataURL(file);
+    }
   };
+  
 
   const {
     triggerFetch: addRoom,
@@ -106,10 +119,10 @@ export default function EditRoomDialog({
     }
   }, [finished, reset, fetchRooms, onClose]);
 
-  const onSubmit: SubmitHandler<RoomProps> = async (data) => {
+  const onSubmit: SubmitHandler<ANY> = async (data) => {
     const finalRoomType = roomType === "other" ? customRoomType : roomType;
     const formData = new FormData();
-    formData.append("room_type", finalRoomType);
+    formData.append("room_type",  finalRoomType ?? "Not a room");
     if (data?.price_per_night) {
       formData.append("price_per_night", data?.price_per_night.toString());
     }

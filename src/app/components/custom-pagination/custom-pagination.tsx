@@ -1,4 +1,4 @@
-import React from "react";
+
 import {
   Pagination,
   PaginationContent,
@@ -16,21 +16,21 @@ const CustomPagination = ({
 }: {
   currentPage: number;
   totalPages: number;
-  onPageChange: (newPage: number) => void;
+  onPageChange: (newPage: number|string) => void;
 }) => {
   const paginate = (current: number, max: number) => {
     if (!current || !max) return null;
 
-    let prev = current === 1 ? null : current - 1;
-    let next = current === max ? null : current + 1;
-    let items = [1];
+    const prev = current === 1 ? null : current - 1;
+    const next = current === max ? null : current + 1;
+    const items: (number | string)[] = [1]; 
 
     if (current === 1 && max === 1) return { current, prev, next, items };
     if (current > 4) items.push("…");
 
-    let r = 2;
-    let r1 = current - r;
-    let r2 = current + r;
+    const r = 2;
+    const r1 = current - r;
+    const r2 = current + r;
 
     for (let i = r1 > 2 ? r1 : 2; i <= Math.min(max, r2); i++) {
       items.push(i);
@@ -58,7 +58,9 @@ const CustomPagination = ({
                   href="#"
                   onClick={(e) => {
                     e.preventDefault();
-                    onPageChange(paginationData.prev);
+                    if (paginationData.prev !== null) {
+                      onPageChange(paginationData.prev); // Now safe, as prev is guaranteed to be a number
+                    }
                   }}
                 />
               </PaginationItem>
@@ -89,7 +91,9 @@ const CustomPagination = ({
                   href="#"
                   onClick={(e) => {
                     e.preventDefault();
+                    if (paginationData.next !== null) {
                     onPageChange(paginationData.next);
+                    }
                   }}
                 />
               </PaginationItem>

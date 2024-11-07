@@ -14,6 +14,7 @@ import { useAuth } from "@/app/context/auth-context";
 import BackButton from "@/app/components/back-button/back-button";
 import img from "@public/auth_pic/login.jpg";
 import { toast } from "@/app/hooks/use-toast";
+import { ANY } from "@/app/components/custom-table/custom-table";
 
 function Login() {
   const {
@@ -30,7 +31,7 @@ function Login() {
     error,
     finished,
     responseData: response,
-  } = useAxios<any, FormData | { email: string; password: string }>({
+  } = useAxios<ANY, FormData | { email: string; password: string }>({
     endpoint: "/api/auth/login",
     method: "POST",
     config: {
@@ -99,7 +100,7 @@ function Login() {
                 <Input
                   id="email"
                   type="email"
-                  placeholder="your_email@example.com"
+                  placeholder="Email"
                   {...register("email", { required: "Email is required" })}
                   required
                 />
@@ -121,6 +122,7 @@ function Login() {
                 <Input
                   id="password"
                   type="password"
+                  placeholder="Password"
                   {...register("password", {
                     required: "Password is required",
                   })}

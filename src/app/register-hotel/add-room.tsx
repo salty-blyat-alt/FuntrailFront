@@ -19,6 +19,7 @@ import UploadThumbnail from "../components/image-field/upload-thumbnail";
 import Image from "next/image";
 import { getCookie } from "cookies-next";
 import { useRouter } from "next/navigation";
+import { ANY } from "../components/custom-table/custom-table";
 
 interface RoomProps {
   room_type: string;
@@ -60,22 +61,24 @@ export default function AddRoom() {
     method: "GET",
   });
 
-  const { triggerFetch: deleteRoom } = useAxios<any, undefined>({
+  const { triggerFetch: deleteRoom } = useAxios<ANY, FormData>({
     endpoint: "/api/hotel/delete-room",
     config: {},
     method: "POST",
   });
 
-  const handleThumbnailChange = (file: File) => {
+  const handleThumbnailChange = (file?: File) => {
     setPreview(file);
-    setValue("img", file);
+    if(file){
+      setValue("img", file);
+    }
   };
 
   const {
     triggerFetch: addRoom,
     responseData: success,
     finished,
-  } = useAxios<any, any>({
+  } = useAxios<ANY, FormData>({
     method: "POST",
     endpoint: "/api/hotel/add-room",
     config: {},
@@ -144,7 +147,9 @@ export default function AddRoom() {
       formData.append("room_id", deleteRoomId.toString()); // Ensure the ID is a string
 
       try {
-        deleteRoom?.(formData); // Call deleteRoom with the FormData
+        if(formData){
+          deleteRoom?.(formData); // Call deleteRoom with the FormData
+        }
 
         toast({
           title: "Room Deleted",

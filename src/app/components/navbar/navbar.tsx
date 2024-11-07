@@ -18,6 +18,7 @@ import {
   DialogTitle,
 } from "@components/ui/dialog";
 import { useRouter } from "next/navigation";
+import { ANY } from "../custom-table/custom-table";
 
 export function Navbar() {
   const [isLogoutDialogOpen, setIsLogoutDialogOpen] = useState(false);
@@ -30,7 +31,7 @@ export function Navbar() {
     triggerFetch: triggerLogout,
     error,
     responseData: response,
-  } = useAxios<any, any>({
+  } = useAxios<ANY, FormData>({
     endpoint: "/api/auth/logout",
     method: "POST",
     config: {

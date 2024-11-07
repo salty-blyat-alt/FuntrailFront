@@ -7,18 +7,21 @@ import { DashboardNav, NavItem } from "./dashboard-nav";
 import logo from "@public/logo/logo.svg";
 import Image from "next/image";
 import Link from "next/link";
+import { Separator } from "@/app/components/ui/separator";
+import useHotelNavItems from "../routes/routes";
 
 interface SidebarProps extends NavItem {
   className?: string;
-  navItems: NavItem[];
 }
 
-export default function Sidebar({ className, navItems }: SidebarProps) {
+export default function Sidebar({ className }: SidebarProps) {
   const { isMinimized, toggle } = useSidebar();
+  const { topNavItems, bottomNavItems } = useHotelNavItems();
 
   const handleToggle = () => {
     toggle();
   };
+  console.log(bottomNavItems)
 
   return (
     <aside
@@ -50,7 +53,11 @@ export default function Sidebar({ className, navItems }: SidebarProps) {
           </Link>
 
           <div className="mt-3 space-y-1 ">
-            <DashboardNav items={navItems} />
+            <DashboardNav items={topNavItems} />
+          </div>
+          <Separator className="my-2" />
+          <div className="mt-3 space-y-1 ">
+            <DashboardNav items={bottomNavItems} />
           </div>
         </div>
       </div>

@@ -12,6 +12,7 @@ import useAxios from "@/app/hooks/use-axios";
 import { useEffect } from "react";
 import { toast } from "@/app/hooks/use-toast";
 import { useRouter, useSearchParams } from "next/navigation";
+import { ANY } from "@/app/components/custom-table/custom-table";
 
 function ForgotPassword() {
   const {
@@ -30,7 +31,7 @@ function ForgotPassword() {
     error,
     finished,
     responseData: response,
-  } = useAxios<any, FormData>({
+  } = useAxios<ANY, FormData>({
     endpoint: "/api/auth/forgot-password",
     method: "POST",
     config: {

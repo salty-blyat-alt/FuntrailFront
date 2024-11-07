@@ -16,6 +16,7 @@ import { Checkbox } from "@/app/components/ui/checkbox";
 import { deleteCookie } from "cookies-next";
 import { useRouter } from "next/navigation";
 import { toast } from "@/app/hooks/use-toast";
+import { ANY } from "@/app/components/custom-table/custom-table";
 
 const Account = () => {
   const [open, setOpen] = useState(false);
@@ -26,7 +27,7 @@ const Account = () => {
     responseDataWithStat: errorStat,
     error,
     finished,
-  } = useAxios<FormData, any>({
+  } = useAxios<ANY, FormData  >({
     endpoint: "/api/auth/change-password",
     method: "POST",
     config: {},

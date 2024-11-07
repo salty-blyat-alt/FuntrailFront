@@ -4,12 +4,12 @@ import PageContainer from "../../components/page-container";
 import DashboardLayout from "../../dashboard-layout";
 
 import CustomTable, {
+  ANY,
   HeaderProps,
 } from "@/app/components/custom-table/custom-table";
 import useAxios from "@/app/hooks/use-axios";
 import { useEffect } from "react";
 import StatsCard from "../../components/stats-card";
-import useHotelNavItems from "../../routes/routes";
 export default function HotelDashboard() {
   const headers: HeaderProps[] = [
     { key: "id", label: "Receipt ID", hidden: false },
@@ -24,21 +24,21 @@ export default function HotelDashboard() {
   ];
 
   const { triggerFetch: fetchWeekRev, responseData: weekRev } = useAxios<
-    any,
+    ANY,
     undefined
   >({
     endpoint: "/api/dashboard/week",
     method: "GET",
   });
   const { triggerFetch: fetchMonthRev, responseData: monthRev } = useAxios<
-    any,
+    ANY,
     undefined
   >({
     endpoint: "/api/dashboard/month",
     method: "GET",
   });
   const { triggerFetch: fetchPending, responseData: pendingOrders } = useAxios<
-    any,
+    ANY,
     undefined
   >({
     endpoint: "/api/dashboard/pending",
@@ -53,11 +53,9 @@ export default function HotelDashboard() {
     };
     fetchData?.();
   }, []);
-  const hotelNavItems = useHotelNavItems();
   return (
     <>
-      
-      <DashboardLayout navItems={hotelNavItems}>
+      <DashboardLayout>
         <PageContainer scrollable={true}>
           <div className="grid gap-2">
             <div className="flex gap-2">

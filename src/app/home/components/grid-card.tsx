@@ -5,13 +5,14 @@ import useAxios from "@/app/hooks/use-axios";
 import { useEffect } from "react";
 import { Skeleton } from "@/app/components/ui/skeleton";
 import { motion } from "framer-motion";
+import { ANY } from "@/app/components/custom-table/custom-table"; 
 
 const GridCard = () => {
   const {
     triggerFetch: fetchPopularHotels,
     loading,
     responseData: popularHotels,
-  } = useAxios<any, undefined>({
+  } = useAxios<ANY, undefined>({
     endpoint: "/api/popular/hotels",
     method: "GET",
     config: {
@@ -31,7 +32,7 @@ const GridCard = () => {
         Popular searches
       </h2>
       <div className="grid gap-4 grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
-        {popularHotels?.map((h, index) => (
+        {popularHotels?.map((h:ANY, index:number) => (
           <Link key={h.id} href={`/hotel-detail/${h.hotel_id}`} passHref>
             <motion.div
               initial={{ opacity: 0, y: -20 }} // Start slightly above

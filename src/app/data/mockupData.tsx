@@ -40,3 +40,4 @@ export const mockHotel: HotelProps = {
   province_id: "",
   thumbnail: "",
 };
+

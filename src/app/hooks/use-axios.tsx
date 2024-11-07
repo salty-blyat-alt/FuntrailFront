@@ -1,7 +1,7 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import { deleteCookie } from "cookies-next";
-import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { ANY } from "../components/custom-table/custom-table";
 
 export type AxiosMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
 
@@ -12,7 +12,7 @@ interface UseAxiosProps {
   baseUrl?: string;
 }
 
-interface CustomAxiosResponse<T = any> extends AxiosResponse {
+interface CustomAxiosResponse<T = ANY> extends AxiosResponse {
   data: {
     result: boolean;
     result_code: number;
@@ -143,7 +143,7 @@ const useAxios = <T, U>({
 
       const { body  } = response.data;
       setResponseData(body); 
-    } catch (err: any) {
+    } catch (err: ANY) {
       if (err.response) {
       const { body, result, result_code, result_message } = err.response.data;
 

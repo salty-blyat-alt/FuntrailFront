@@ -15,6 +15,7 @@ import { HotelProps } from "../data/mockupData";
 import { Province } from "../home/components/search-group";
 import useAxios from "../hooks/use-axios";
 import { Search } from "lucide-react";
+import { ANY } from "../components/custom-table/custom-table";
 
 export default function SearchPage() {
   const [name, setName] = useState("");
@@ -39,7 +40,7 @@ export default function SearchPage() {
     triggerFetch: fetchList,
     loading,
     responseData: response,
-  } = useAxios<any, undefined>({
+  } = useAxios<ANY, undefined>({
     endpoint: "/api/hotel/list",
     method: "GET",
     config: {

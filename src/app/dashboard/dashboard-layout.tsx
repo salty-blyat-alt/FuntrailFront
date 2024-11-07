@@ -1,6 +1,5 @@
 "use client";
 import { SidebarProvider } from "../hooks/use-sidebar";
-import { NavItem } from "./components/dashboard-nav";
 import Sidebar from "./components/sidebar";
 import { usePathname } from "next/navigation";
 import React from "react";
@@ -10,14 +9,13 @@ import {AdminNavbar} from "./components/admin-navbar";
 
 
 const DashboardLayout = ({
-  children,
-  navItems,
+  children, 
 }: {
-  children: React.ReactNode;
-  navItems: NavItem[];
+  children: React.ReactNode; 
 }) => {
-  const pathname = usePathname();
 
+
+  const pathname = usePathname();
   return (
     <SidebarProvider>
       <div className="flex">

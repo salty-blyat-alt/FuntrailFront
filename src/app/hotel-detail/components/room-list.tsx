@@ -12,9 +12,7 @@ import { toast } from "@/app/hooks/use-toast";
 import BookingCart from "./booking-cart";
 import useAxios from "@/app/hooks/use-axios";
 import BookingModal from "./booking-modal";
-import { CalendarDateRangePicker } from "@components/ui/date-range-picker";
 import { format } from "date-fns";
-import { DateRange } from "react-day-picker"; // Make sure to import DateRange
 import Image from "next/image";
 import {
   Dialog,
@@ -39,7 +37,7 @@ export interface RoomProps {
   room_type?: string;
   status?: string;
   updated_at?: string;
-  available_rooms?: string;
+  available_rooms?: string; 
 }
 
 export default function RoomList({ hotelId }: { hotelId: string }) {
@@ -87,7 +85,7 @@ export default function RoomList({ hotelId }: { hotelId: string }) {
   useEffect(() => {
     if (error && finished) {
       toast({
-        title: "Fail",
+        title: "Fail to get rooms",
         description:
           responseDataWithStat?.result_message +
           ". code: " +

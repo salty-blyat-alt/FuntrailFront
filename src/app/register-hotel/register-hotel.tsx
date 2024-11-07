@@ -24,6 +24,7 @@ import { Input } from "../components/ui/input";
 import { Button } from "../components/ui/button";
 import { useAuth } from "../context/auth-context";
 import { redirect } from "next/navigation";
+import { ANY } from "../components/custom-table/custom-table";
 
 const RegisterHotel = ({
   onRegistrationComplete,
@@ -38,7 +39,7 @@ const RegisterHotel = ({
     reset,
   } = useForm<{
     name: string;
-    province_id: number;
+    province_id: string | number;
     address: string;
     description?: string;
     thumbnail: File | undefined;
@@ -72,7 +73,7 @@ const RegisterHotel = ({
     responseData: success,
     finished,
     error,
-  } = useAxios<any, any>({
+  } = useAxios<ANY, FormData>({
     endpoint: "/api/hotel/create",
     method: "POST",
     config: {},

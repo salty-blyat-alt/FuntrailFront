@@ -11,7 +11,7 @@ interface UploadThumbnailProps {
   title: string;
   thumbnail: File | undefined;
   isRequired?: boolean;
-  setThumbnail: (file: File) => void;
+  setThumbnail: (file?: File ) => void;
 }
 
 const UploadThumbnail: React.FC<UploadThumbnailProps> = ({

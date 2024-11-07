@@ -13,53 +13,11 @@ import { ScrollArea } from "@components/ui/scroll-area";
 import useAxios from "../hooks/use-axios";
 import CurrentBooking from "./components/current-booking";
 import HistoryBooking from "./components/history-booking";
-
-const orderHistory = [
-  {
-    id: 3,
-    room_id: 102,
-    hotel_id: 1,
-    user_id: 1,
-    date_start: "2023-05-01",
-    date_end: "2023-05-03",
-    total: 300,
-    created_at: "2023-04-15T10:00:00Z",
-    updated_at: "2023-04-15T10:00:00Z",
-    status: "completed",
-    u_id: "USER125",
-  },
-  {
-    id: 4,
-    room_id: 102,
-    hotel_id: 1,
-    user_id: 1,
-    date_start: "2023-05-01",
-    date_end: "2023-05-03",
-    total: 300,
-    created_at: "2023-04-15T10:00:00Z",
-    updated_at: "2023-04-15T10:00:00Z",
-    status: "completed",
-    u_id: "USER125",
-  },
-  {
-    id: 5,
-    room_id: 102,
-    hotel_id: 1,
-    user_id: 1,
-    date_start: "2023-05-01",
-    date_end: "2023-05-03",
-    total: 300,
-    created_at: "2023-04-15T10:00:00Z",
-    updated_at: "2023-04-15T10:00:00Z",
-    status: "completed",
-    u_id: "USER125",
-  },
-  // Add more mock data as needed
-];
-
+import { ANY } from "../components/custom-table/custom-table";
+ 
 export default function OrderHistory() {
   const { triggerFetch: fetchHistory, responseData: response } = useAxios<
-    any,
+    ANY,
     undefined
   >({
     endpoint: "/api/order/history",
