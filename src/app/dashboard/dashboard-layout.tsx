@@ -19,7 +19,7 @@ const DashboardLayout = ({
     <SidebarProvider>
       <div className="flex">
         <Sidebar  title={""} />
-        <main className="w-full flex-1 bg-muted/40 overflow-hidden mt-20">
+        <main className="w-full flex-1 bg-muted/40 overflow-hidden ">
           <div className="p-4">
             <AdminNavbar/>
             <CustomBreadcrumb pathname={pathname} />

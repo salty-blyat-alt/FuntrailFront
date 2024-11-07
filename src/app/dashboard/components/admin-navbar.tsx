@@ -15,7 +15,7 @@ import {
   DialogTitle,
 } from "@components/ui/dialog";
 import { useRouter } from "next/navigation";
-import { NavLink } from "@/app/components/navbar/navbar";
+import { NavLink, UserMenu } from "@/app/components/navbar/navbar";
 import Image from "next/image";
 
 export function AdminNavbar() {
@@ -74,82 +74,52 @@ export function AdminNavbar() {
 
   return (
     <>
-      <motion.nav
+     <motion.nav
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ duration: 0.5, ease: "easeOut" }}
-        className=""
-      >
-        <div className="mx-auto px-6 h-full flex items-center justify-end">
-          <div className="hidden md:flex items-center space-x-2">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={toggleTheme}
-              className="hover:bg-gray-100 transition duration-300 ease-in-out"
-            >
-              {theme === "dark" ? (
-                <Sun className="h-5 w-5 text-gray-700" />
-              ) : (
-                <Moon className="h-5 w-5 text-gray-700" />
+        transition={{ duration: 0.5 }}
+        className="relative z-50"
+      > 
+          <div className="flex items-center justify-end">
+          
+            <div className="flex items-center space-x-2">
+              {user?.user_type !== "hotel" && (
+                <Button
+                  size="sm"
+                  onClick={() => router.push("/register-hotel")}
+                >
+                  Join Us
+                </Button>
               )}
-            </Button>
-            {user && (
-              <>
+              <Button variant="ghost" size="icon" onClick={toggleTheme}>
+                {theme === "dark" ? (
+                  <Sun className="h-5 w-5" />
+                ) : (
+                  <Moon className="h-5 w-5" />
+                )}
+              </Button>
+              {user && (
                 <Button
                   onClick={() => router.push("/order-history")}
                   variant="ghost"
                   size="icon"
-                  className="hover:bg-gray-100 transition duration-300 ease-in-out"
                 >
-                  <ShoppingCart className="h-5 w-5 text-gray-700" />
+                  <ShoppingCart className="h-5 w-5" />
                 </Button>
-                <Button
-                  variant="ghost"
-                  onClick={() => {
-                    setIsUserMenuOpen((prev) => !prev);
-                    if (isMobileMenuOpen) setIsMobileMenuOpen(false); // Close mobile menu if open
-                  }}
-                  className="hover:bg-gray-100 transition duration-300 ease-in-out"
-                >
-                  <User className="h-5 w-5 text-gray-700" />
-                </Button>
+              )}
 
-                <AnimatePresence>
-                  {isUserMenuOpen && (
-                    <motion.div
-                      initial={{ opacity: 0, y: -10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -10 }}
-                      transition={{ duration: 0.2 }}
-                      className="absolute mt-2 right-0 bg-white shadow-lg rounded-lg w-48 py-2 z-50"
-                    >
-                      <Link
-                        href="/profile"
-                        className="block px-4 py-2 text-gray-700 hover:bg-gray-100 transition duration-200 ease-in-out"
-                      >
-                        Profile
-                      </Link>
-                      <button
-                        onClick={handleLogout}
-                        className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100 transition duration-200 ease-in-out"
-                      >
-                        <LogOut className="h-5 w-5 inline mr-2" /> Logout
-                      </button>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </>
-            )}
-          </div>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="md:hidden hover:bg-gray-100 transition duration-300 ease-in-out"
-            onClick={() => setIsMobileMenuOpen(true)}
-          >
-            <Menu className="h-6 w-6 text-gray-700" />
-          </Button>
+              <UserMenu user={user} handleLogout={handleLogout} />
+            </div>
+
+            <Button
+              variant="ghost"
+              size="icon"
+              className="md:hidden"
+              onClick={() => setIsMobileMenuOpen(true)}
+            >
+              <Menu className="h-6 w-6" />
+            </Button>
+         
         </div>
       </motion.nav>
 
@@ -252,7 +222,6 @@ export function AdminNavbar() {
         )}
       </AnimatePresence>
 
-      {/* Logout Dialog */}
       <Dialog open={isLogoutDialogOpen} onOpenChange={setIsLogoutDialogOpen}>
         <DialogContent>
           <DialogTitle>Are you sure you want to log out?</DialogTitle>

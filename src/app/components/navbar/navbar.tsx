@@ -318,7 +318,7 @@ export function UserMenu({ user, handleLogout }: { user?: UserProps | null; hand
       >
         {user ? (
           <div className="py-1">
-            <div className="py-1 px-4 border-b  ">
+            <div className="py-1 px-4 border-b">
               <p className="text-sm font-semibold  ">
                 Logged in as {user.username}
               </p>
