@@ -1,26 +1,36 @@
-import { Button } from '@/app/components/ui/button';
-import { Label } from '@/app/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/app/components/ui/select';
-import { HotelProps } from '@/app/data/mockupData';
-import { Province } from '@/app/home/components/search-group';
-import useAxios from '@/app/hooks/use-axios';
-import { Pencil1Icon } from '@radix-ui/react-icons';
-import React, { useEffect, useState } from 'react';
-import { SubmitHandler, useForm } from 'react-hook-form';
-import { HotelSettingProps } from './name-textbox';
- 
-const ProvinceTextBox: React.FC<HotelSettingProps> = ({ hotel, fetchHotel }) => {
-  const [isEditingProvince, setIsEditingProvince] = useState(false);
-  const [provinceId, setProvinceId] = useState<number | null>(null);
-  const [selectedProvince, setSelectedProvince] = useState<string>("");
-  const {
-    register,
-    setValue,
-    handleSubmit,
-    formState: { errors } } =
-    useForm<{ province_id: number; }>();
+import { Button } from "@/app/components/ui/button";
+import { Label } from "@/app/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/app/components/ui/select";
+import { Province } from "@/app/home/components/search-group";
+import useAxios from "@/app/hooks/use-axios";
+import { Pencil1Icon } from "@radix-ui/react-icons";
+import React, { useEffect, useState } from "react";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { HotelSettingProps } from "./name-textbox";
 
-  const { triggerFetch: editHotel, responseData: success, finished } = useAxios<any, FormData>({
+const ProvinceTextBox: React.FC<HotelSettingProps> = ({
+  hotel,
+  fetchHotel,
+}) => {
+  const [isEditingProvince, setIsEditingProvince] = useState(false);
+  const [selectedProvince, setSelectedProvince] = useState<string>("");
+  const [provinceId, setProvinceId] = useState<number | null>(null);
+
+  const { register, setValue, handleSubmit, reset } = useForm<{
+    province_id: string;
+  }>();
+
+  const {
+    triggerFetch: editHotel,
+    responseData: success,
+    finished,
+  } = useAxios<any, FormData>({
     endpoint: `/api/hotel/update`,
     config: {},
     method: "POST",
@@ -39,6 +49,9 @@ const ProvinceTextBox: React.FC<HotelSettingProps> = ({ hotel, fetchHotel }) => 
       },
     },
   });
+  const toggleOperationalTime = () => {
+    setIsEditingOperationTime((prev) => !prev);
+  };
 
   useEffect(() => {
     fetchHotel?.();
@@ -48,7 +61,8 @@ const ProvinceTextBox: React.FC<HotelSettingProps> = ({ hotel, fetchHotel }) => 
   useEffect(() => {
     if (success && finished) {
       setIsEditingProvince(false);
-      fetchHotel?.()
+      fetchHotel?.();
+      reset();
     }
   }, [success, finished]);
 
@@ -64,66 +78,71 @@ const ProvinceTextBox: React.FC<HotelSettingProps> = ({ hotel, fetchHotel }) => 
     setValue("province_id", Number(id));
   };
 
-  const onSubmit: SubmitHandler<{ province_id: string }> = (data) => {
+  const onSubmit: SubmitHandler<{ province_id: string | number }> = (data) => {
     const formData = new FormData();
-    formData.append("province_id", data.province_id);
+    formData.append("province_id", data.province_id.toString());
     editHotel?.(formData);
   };
-  console.log(provinces);
-
   return (
-    <>
-      <Label htmlFor="province" className="text-gray-600">Province</Label>
-      <form onSubmit={handleSubmit(onSubmit)} className="flex items-center gap-x-4">
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      className="flex  items-center gap-x-4"
+    >
+      <Label htmlFor="name" className="font-medium">
+        Province
+      </Label>
 
-        <Select
-          value={selectedProvince}
-          onValueChange={handleProvinceChange} // Update onValueChange
+      {isEditingProvince ? (
+        <>
+          <Select
+            value={selectedProvince} 
+            onValueChange={handleProvinceChange}
+          >
+            <SelectTrigger>
+              <SelectValue
+                placeholder={hotel?.province ?? "Select a province"}
+              />
+            </SelectTrigger>
+            <SelectContent>
+              {provinces?.map((p) => (
+                <SelectItem key={p.id} value={p.name}>
+                  {p.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
+          <input
+            type="hidden"
+            {...register("province_id", {
+              required: "Province is required",
+            })}
+          />
+        </>
+      ) : (
+        <span>{hotel?.province}</span>
+      )}
+      {isEditingProvince ? (
+        <>
+          <Button type="button" variant="ghost" onClick={toggleProvince}>
+            Cancel
+          </Button>
+          <Button type="submit">Save</Button>
+        </>
+      ) : (
+        <Button
+          type="button"
+          variant="ghost"
+          onClick={(e) => {
+            e.stopPropagation();
+            toggleProvince();
+          }}
+          size="icon"
         >
-          <SelectTrigger>
-            <SelectValue placeholder="Select a province" />
-          </SelectTrigger>
-          <SelectContent>
-            {provinces?.map((p) => (
-              <SelectItem key={p.id} value={p.name}>
-                {p.name}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-        {isEditingProvince ? (
-          <>
-            <Button
-              type="button"
-              variant="ghost"
-              onClick={toggleProvince}
-              className="text-gray-500 hover:bg-gray-100 px-3 py-1 rounded-md">
-              Cancel
-            </Button>
-            <Button
-              type="submit"
-              className="bg-blue-500 text-white px-3 py-1 rounded-md hover:bg-blue-600">
-              Save
-            </Button>
-          </>
-        ) : (
-          <div className="flex items-center gap-x-2">
-            <span className="text-gray-700 font-medium">{hotel?.province_id}</span>
-            <Button
-              type="button"
-              variant="ghost"
-              className="rounded-full p-1 hover:bg-gray-100"
-              onClick={(e) => {
-                e.stopPropagation();
-                toggleProvince();
-              }}
-              size="icon">
-              <Pencil1Icon className="text-gray-500" />
-            </Button>
-          </div>
-        )}
-      </form>
-    </>
+          <Pencil1Icon className="text-gray-500" />
+        </Button>
+      )}
+    </form>
   );
 };
 

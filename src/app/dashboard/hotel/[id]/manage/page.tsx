@@ -1,5 +1,5 @@
 "use client";
-import CustomTable, {
+import  {
   ANY,
   HeaderProps,
 } from "@/app/components/custom-table/custom-table";
@@ -13,6 +13,8 @@ import { useEffect, useState } from "react";
 import AddRoomDialog from "./components/add-room-dialog";
 import DeleteRoomDialog from "./components/delete-room-dialog";
 import EditRoomDialog from "./components/edit-room-dialog";
+import { useAuth } from "@/app/context/auth-context";
+import ManageRoomTable from "./components/manage-room-table";
 
 export default function Manage() {
   const [selectedRoom, setSelectedRoom] = useState<number | undefined>();
@@ -20,6 +22,7 @@ export default function Manage() {
   const [openAddDialog, setOpenAddDialog] = useState<boolean>(false);
   const [openDeleteDialog, setOpenDeleteDialog] = useState<boolean>(false);
   const [openEditDialog, setOpenEditDialog] = useState<boolean>(false);
+  const { user } = useAuth();
 
   const headers: HeaderProps[] = [
     { key: "id", label: "ID", hidden: false },
@@ -29,35 +32,23 @@ export default function Manage() {
     { key: "price_per_night", label: "Price", hidden: false },
     { key: "status", label: "Status", hidden: false },
     { key: "actions", label: "Actions", hidden: false },
-  ];
-
-  const { triggerFetch: fetchProfile, responseData: responseUser } = useAxios<
-    any,
-    undefined
-  >({
-    endpoint: "/api/auth/profile",
-    method: "GET",
-  });
-
-  useEffect(() => {
-    fetchProfile?.();
-  }, []);
+  ]; 
 
   const {
     triggerFetch: fetchRooms,
     loading,
     responseData: rooms,
   } = useAxios<ANY, undefined>({
-    endpoint:
-      responseUser?.establishment_id &&
-      `/api/hotel/rooms/${responseUser.establishment_id}`,
+    endpoint: `/api/hotel/rooms/${user?.establishment_id}`,
   });
 
+  console.log();
+
   useEffect(() => {
-    if (responseUser?.establishment_id) {
+    if (user?.establishment_id) {
       fetchRooms?.();
     }
-  }, [responseUser]);
+  }, [user]);
 
   const handleEdit = (row: RoomProps) => {
     setSelectedRow(row);
@@ -83,18 +74,17 @@ export default function Manage() {
   const handleCloseEditDialog = () => {
     setOpenEditDialog(false);
   };
-
+   
   return (
     <DashboardLayout>
       <PageContainer scrollable={true}>
-        <div className="w-full flex justify-between mb-4">
-          Room Management
+        <div className="w-full flex justify-end mb-4"> 
           <Button onClick={handleOpenAddDialog} variant="outline">
             <PlusIcon className="mr-2" /> Add Room
           </Button>
         </div>
 
-        <CustomTable
+        <ManageRoomTable
           title="Rooms"
           subtitle="Manage your rooms"
           data={rooms}

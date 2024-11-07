@@ -74,51 +74,47 @@ export function AdminNavbar() {
 
   return (
     <>
-     <motion.nav
+      <motion.nav
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5 }}
         className="relative z-50"
-      > 
-          <div className="flex items-center justify-end"> 
-            <div className="flex items-center space-x-2">
-              {user?.user_type !== "hotel" && (
-                <Button
-                  size="sm"
-                  onClick={() => router.push("/register-hotel")}
-                >
-                  Join Us
-                </Button>
-              )}
-              <Button variant="ghost" size="icon" onClick={toggleTheme}>
-                {theme === "dark" ? (
-                  <Sun className="h-5 w-5" />
-                ) : (
-                  <Moon className="h-5 w-5" />
-                )}
+      >
+        <div className="flex items-center justify-end">
+          <div className="flex items-center space-x-2">
+            {user?.user_type !== "hotel" && (
+              <Button size="sm" onClick={() => router.push("/register-hotel")}>
+                Join Us
               </Button>
-              {user && (
-                <Button
-                  onClick={() => router.push("/order-history")}
-                  variant="ghost"
-                  size="icon"
-                >
-                  <ShoppingCart className="h-5 w-5" />
-                </Button>
+            )}
+            <Button variant="ghost" size="icon" onClick={toggleTheme}>
+              {theme === "dark" ? (
+                <Sun className="h-5 w-5" />
+              ) : (
+                <Moon className="h-5 w-5" />
               )}
-
-              <UserMenu user={user} handleLogout={handleLogout} />
-            </div>
-
-            <Button
-              variant="ghost"
-              size="icon"
-              className="md:hidden"
-              onClick={() => setIsMobileMenuOpen(true)}
-            >
-              <Menu className="h-6 w-6" />
             </Button>
-         
+            {user && (
+              <Button
+                onClick={() => router.push("/order-history")}
+                variant="ghost"
+                size="icon"
+              >
+                <ShoppingCart className="h-5 w-5" />
+              </Button>
+            )}
+
+            <UserMenu user={user} handleLogout={handleLogout} />
+          </div>
+
+          <Button
+            variant="ghost"
+            size="icon"
+            className="md:hidden"
+            onClick={() => setIsMobileMenuOpen(true)}
+          >
+            <Menu className="h-6 w-6" />
+          </Button>
         </div>
       </motion.nav>
 
@@ -164,7 +160,7 @@ export function AdminNavbar() {
                 )}
                 {user?.user_type === "hotel" && (
                   <NavLink
-                    href="/dashboard/hotel/id"
+                    href={`/dashboard/hotel/${user?.establishment_id}`}
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     Dashboard

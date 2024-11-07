@@ -25,14 +25,16 @@ export default function RootLayout({
 
     return () => clearTimeout(timer);
   }, []);
-
   const pathname = usePathname();
-  // const noLayoutPages =  ["/auth/login", "/auth/register"];
-  const noLayoutPages = [""];
-
-  const isDynamicHotelRoute = pathname.startsWith("/dashboard/hotel/");
-  const isLayoutRequired =
-    !noLayoutPages.includes(pathname) && !isDynamicHotelRoute;
+  const dashboardPage = pathname.startsWith("/dashboard/hotel/");
+  const authPages = ["/auth/register", "/auth/login"];
+  
+  // Check if `pathname` matches any of the `authPages`
+  const showNoFooter = dashboardPage || authPages.includes(pathname);
+  
+  // Define `showNoNavbar` as `dashboardPage` if needed
+  const showNoNavbar = dashboardPage;
+  
 
   return (
     <html lang="en" suppressHydrationWarning>
@@ -56,11 +58,11 @@ export default function RootLayout({
                 <Loading />
               ) : (
                 <>
-                  {isLayoutRequired && <Navbar />}
-                  <main className={isLayoutRequired ? "mt-12" : ""}>
-                    {children}
+                  {!showNoNavbar && <Navbar />}
+                  <main className={!showNoNavbar ? "mt-12" : ""}>
+                    {children} 
                   </main>
-                  {isLayoutRequired && <Footer className="mt-32" />}
+                  {!showNoFooter && <Footer className="mt-32" />}
                 </>
               )}
               <Toaster />

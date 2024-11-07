@@ -34,41 +34,37 @@ const Orders = () => {
     });
 
   const headers: HeaderProps[] = [
-    { key: "id", label: "Receipt ID", hidden: false },
-    { key: "b_id", label: "bid", hidden: false },
+    { key: "receipt_id", label: "Receipt ID", hidden: false },
     { key: "username", label: "Customer", hidden: false },
-    { key: "room_type", label: "Room Type", hidden: false },
-    { key: "date_start", label: "Checkin", hidden: false },
-    { key: "date_end", label: "Checkout", hidden: false },
+    { key: "rooms", label: "room", hidden: false },
+    { key: "checkin", label: "Checkin", hidden: false },
+    { key: "checkout", label: "Checkout", hidden: false },
     { key: "total", label: "Total", hidden: false },
     { key: "ordered_at", label: "Ordered At", hidden: false },
   ];
 
   useEffect(() => {
     fetchOrderHistory?.();
-  }, [perPage, currentPage]); // Fetch data when page or perPage changes
-
-  console.log("orde history", orderHistory);
+  }, [perPage, currentPage]);
+  console.log(orderHistory);
   return (
-    <>
-      <DashboardLayout>
-        <PageContainer scrollable={true}>
-          <CustomTable
-            title="Order History"
-            subtitle=""
-            data={orderHistory?.items}
-            headers={headers}
-            currentPage={orderHistory?.paginate.current_page}
-            totalPages={orderHistory?.paginate.last_page}
-            perPage={perPage}
-            totalItems={orderHistory?.paginate.total}
-            onPageChange={handlePageChange}
-            onPerPageChange={handlePerPageChange}
-            havePagination
-          />
-        </PageContainer>
-      </DashboardLayout>
-    </>
+    <DashboardLayout>
+      <PageContainer scrollable={true}>
+        <CustomTable
+          title="Order History"
+          subtitle=""
+          data={orderHistory?.items}
+          headers={headers}
+          currentPage={orderHistory?.paginate.current_page}
+          totalPages={orderHistory?.paginate.last_page}
+          perPage={perPage}
+          totalItems={orderHistory?.paginate.total}
+          onPageChange={handlePageChange}
+          onPerPageChange={handlePerPageChange}
+          havePagination
+        />
+      </PageContainer>
+    </DashboardLayout>
   );
 };
 

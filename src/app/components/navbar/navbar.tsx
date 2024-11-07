@@ -112,7 +112,7 @@ export function Navbar() {
               <NavLink href="/search">Explore</NavLink>
 
               {user?.user_type === "hotel" && (
-                <NavLink href="/dashboard/hotel/id">Dashboard</NavLink>
+                <NavLink href={`/dashboard/hotel/${user?.establishment_id}`}>Dashboard</NavLink>
               )}
             </div>
 
@@ -199,7 +199,7 @@ export function Navbar() {
                 )}
                 {user?.user_type === "hotel" && (
                   <NavLink
-                    href="/dashboard/hotel/id"
+                    href={`/dashboard/hotel/${user?.establishment_id}`}
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     Dashboard
@@ -332,7 +332,7 @@ export function UserMenu({ user, handleLogout }: { user?: UserProps | null; hand
             </Link>
             {user.user_type === "hotel" && (
               <Link
-                href="/dashboard/hotel/id"
+                href={`/dashboard/hotel/${user?.establishment_id}`}
                 className="block px-4 py-2 text-sm hover:bg-muted"
               >
                 Dashboard

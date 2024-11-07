@@ -25,7 +25,7 @@ import {
   TableHeader,
   TableRow,
 } from "@components/ui/table";
-import { Badge } from "../ui/badge";
+ 
 import Image from "next/image"; // Import Image component
 import {
   Select,
@@ -33,8 +33,9 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "../ui/select";
-// eslint-disable-next-line no-use-before-define
+} from "@components/ui/select"
+import { Badge } from "@/app/components/ui/badge";
+
 export type ANY = any;
 
 export interface DataProps {
@@ -48,7 +49,7 @@ export interface HeaderProps {
   hidden?: boolean;
 }
 
-export interface CustomTableProps {
+  interface ManageRoomTableProps {
   data?: ANY;
   title: string;
   subtitle?: string;
@@ -65,7 +66,7 @@ export interface CustomTableProps {
   onPerPageChange: (perPage: number) => void;
 }
 
-export default function CustomTable({
+export default function ManageRoomTable({
   data,
   subtitle,
   title,
@@ -80,7 +81,7 @@ export default function CustomTable({
   onPageChange,
   totalItems = 1,
   havePagination,
-}: CustomTableProps) {
+}: ManageRoomTableProps) {
   return (
     <Card>
       <CardHeader>
@@ -91,47 +92,85 @@ export default function CustomTable({
         <Table>
           <TableHeader>
             <TableRow>
-              {headers.map((header) =>
-                !header.hidden ? (
-                  <TableCell key={header.key} className="text-center  ">
-                    {header.label}
-                  </TableCell>
-                ) : null
-              )}
+              {headers.map(({ key, label, hidden }) => (
+                <TableHead key={key} className={hidden ? "hidden" : ""}>
+                  {label}
+                </TableHead>
+              ))}
             </TableRow>
           </TableHeader>
           <TableBody>
-            {data?.map((item: DataProps, index: number) => (
-              <TableRow key={item.id || index}>
-                {headers.map((header) =>
-                  !header.hidden ? (
-                    <TableCell className="text-center" key={header.key}>
-                      {header.key === "rooms" ? (
-                        <div className="flex justify-center gap-1">
-                          {item.rooms && Array.isArray(item.rooms) ? (
-                            item.rooms.map(
-                              (room: string, roomIndex: number) => (
-                                <Badge key={roomIndex} className="mr-1">
-                                  {room}
-                                </Badge>
-                              )
-                            )
-                          ) : (
-                            <span>No rooms available</span>
-                          )}
+            {loading ? (
+              <TableRow>
+                <TableCell colSpan={headers.length} className="text-center">
+                  Loading data...
+                </TableCell>
+              </TableRow>
+            ) : data && data.length > 0 ? (
+              data.map((item: DataProps) => (
+                <TableRow key={item.id}>
+                  {headers.map(({ key, hidden }) => (
+                    <TableCell key={key} className={hidden ? "hidden" : ""}>
+                      {key === "actions" ? (
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button
+                              aria-haspopup="true"
+                              size="icon"
+                              variant="ghost"
+                            >
+                              <MoreHorizontal className="h-4 w-4" />
+                              <span className="sr-only">Toggle menu</span>
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem onClick={() => onEdit?.(item)}>
+                              Edit
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => onDelete?.(item)}>
+                              Delete
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      ) : key === "img" ? (
+                         <Image
+                          src={
+                            typeof item[key] === "string"
+                              ? process.env.NEXT_PUBLIC_BASE_URL + item[key]
+                              : URL.createObjectURL(item[key])
+                          }
+                          alt="Thumbnail"
+                          width={100}
+                          height={100}
+                          className="object-cover size-20 rounded-md"
+                        />
+                      ) : Array.isArray(item[key]) ? (
+                         <div className="flex gap-2">
+                          {item[key].map((value: string) => (
+                            <Badge key={value} variant="outline">
+                              {value}
+                            </Badge>
+                          ))}
                         </div>
                       ) : (
-                        item[header.key] ?? "-"
+                        item[key]
                       )}
                     </TableCell>
-                  ) : null
-                )}
+                  ))}
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell colSpan={headers.length} className="text-center">
+                  No data found
+                </TableCell>
               </TableRow>
-            ))}
+            )}
           </TableBody>
         </Table>
       </CardContent>
-
       {havePagination && (
         <CardFooter className="flex justify-between items-center">
           <div className="text-xs text-muted-foreground">
@@ -169,7 +208,7 @@ export default function CustomTable({
               variant={"ghost"}
               size={"sm"}
               onClick={() => onPageChange(currentPage + 1)}
-              disabled={currentPage >= totalPages}
+              disabled={currentPage >= totalPages} // Disable if on the last page
             >
               <ChevronRight />
             </Button>

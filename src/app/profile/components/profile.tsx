@@ -26,6 +26,7 @@ import {
   DialogFooter,
 } from "@components/ui/dialog";
 import { ANY } from "@/app/components/custom-table/custom-table";
+import Image from "next/image";
 
 const Profile = ({
   isEditing,
@@ -167,8 +168,7 @@ const Profile = ({
         variant: "destructive",
       });
     }
-  }, [errorStat, error]);
-
+  }, [errorStat, error]); 
   return (
     <div className="space-y-6">
       <div className="flex items-center space-x-4">
@@ -178,7 +178,9 @@ const Profile = ({
           onMouseLeave={() => setHovered(false)}
         >
           <Avatar className="size-20 object-center object-cover">
-            <AvatarImage
+            <Image
+              width={200}
+              height={200}
               src={`${process.env.NEXT_PUBLIC_BASE_URL}${user?.profile_img}`}
               alt="Profile picture"
             />
