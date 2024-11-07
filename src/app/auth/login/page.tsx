@@ -34,10 +34,7 @@ function Login() {
   } = useAxios<ANY, FormData | { email: string; password: string }>({
     endpoint: "/api/auth/login",
     method: "POST",
-    config: {
-      headers: {
-        Accept: "application/json",
-      },
+    config: { 
     },
   });
 

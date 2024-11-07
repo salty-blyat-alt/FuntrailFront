@@ -48,9 +48,9 @@ export const policies = [
   "No Pets Allowed",
   "Cancellation Policy: Free up to 24 hours before check-in",
   "Cancellation Policy: Non-refundable",
-  // "Guests must be 18 or older to check in",
-  // "Late Check-out Available",
-  // "No Parties or Events Allowed",
+  "Guests must be 18 or older to check in",
+  "Late Check-out Available",
+  "No Parties or Events Allowed",
   // "Quiet Hours from 10 PM to 7 AM",
   // "Valid ID Required at Check-in",
   // "Credit Card Required at Check-in",
@@ -58,7 +58,7 @@ export const policies = [
   // "No Outside Food or Drink Allowed",
   // "Maximum Occupancy: 4 guests per room",
   // "Early Check-in Available Upon Request",
-  "Luggage Storage Available",
-  "Daily Housekeeping",
+  // "Luggage Storage Available",
+  // "Daily Housekeeping",
 ];
  

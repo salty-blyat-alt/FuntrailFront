@@ -5,9 +5,10 @@ import { Label } from '@/app/components/ui/label';
 import { Button } from '@/app/components/ui/button';
 import { Pencil1Icon } from '@radix-ui/react-icons';
 import { useForm } from 'react-hook-form';
+import { ANY } from '@/app/components/custom-table/custom-table';
 
 interface OperationalProps {
-  hotel: any;
+  hotel: ANY;
   fetchHotel: (() => void) | undefined;
 }
 

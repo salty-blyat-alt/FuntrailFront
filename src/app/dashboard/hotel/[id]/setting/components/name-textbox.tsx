@@ -7,12 +7,12 @@ import { Pencil1Icon } from '@radix-ui/react-icons';
 import React, { useEffect, useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form';
 
-interface NameTextBox {
+export interface HotelSettingProps {
   hotel: HotelProps;
   fetchHotel: ((data?: undefined) => void) | undefined;
 }
 
-const NameTextBox: React.FC<NameTextBox> = ({ hotel, fetchHotel }) => {
+const NameTextBox: React.FC<HotelSettingProps> = ({ hotel, fetchHotel }) => {
   const [isEditingName, setIsEditingName] = useState(false);
   const {
     register,
