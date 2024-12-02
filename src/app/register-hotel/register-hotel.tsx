@@ -22,9 +22,6 @@ import UploadImages from "../components/image-field/upload-images";
 import ImageListPreview from "../components/image-field/image-list-preview";
 import { Input } from "../components/ui/input";
 import { Button } from "../components/ui/button";
-import { useAuth } from "../context/auth-context";
-import { redirect } from "next/navigation";
-import { ANY } from "../components/custom-table/custom-table";
 
 const RegisterHotel = ({
   onRegistrationComplete,
@@ -39,7 +36,7 @@ const RegisterHotel = ({
     reset,
   } = useForm<{
     name: string;
-    province_id: string | number;
+    province_id: number;
     address: string;
     description?: string;
     thumbnail: File | undefined;
@@ -49,12 +46,6 @@ const RegisterHotel = ({
     facilities?: string[];
     policies?: string[];
   }>();
-  const { user } = useAuth();
-  useEffect(() => {
-    if (!user) {
-      redirect("/auth/login");
-    }
-  }, []);
 
   const [selectedProvince, setSelectedProvince] = useState<string>("");
   const [provinceId, setProvinceId] = useState<number | null>(null);
@@ -73,7 +64,7 @@ const RegisterHotel = ({
     responseData: success,
     finished,
     error,
-  } = useAxios<ANY, FormData>({
+  } = useAxios<any, any>({
     endpoint: "/api/hotel/create",
     method: "POST",
     config: {},
@@ -85,7 +76,8 @@ const RegisterHotel = ({
 
   useEffect(() => {
     if (success) {
-      
+      console.log(success);
+
       toast({
         title: "Hotel Registered",
         description: "Your hotel has been successfully registered.",
@@ -113,7 +105,8 @@ const RegisterHotel = ({
   }, [finished]);
 
   useEffect(() => {
-    if (error) { 
+    if (error) {
+      console.log(error);
       toast({
         title: "Hotel Error",
         description: error,
@@ -121,6 +114,7 @@ const RegisterHotel = ({
       });
     }
   }, [error]);
+  // console.log(provinceId);
 
   const [hotel, setHotel] = useState<{
     name: string;
@@ -189,7 +183,8 @@ const RegisterHotel = ({
       formData.append("policies[]", policy);
     });
 
-     registerHotel?.(formData);
+    console.log("Submitting the form with the following data:", formData);
+    registerHotel?.(formData);
   };
 
   const handleFacilityChange = (facility: string, checked: boolean) => {
@@ -252,8 +247,8 @@ const RegisterHotel = ({
 
             {/* Address */}
             <div>
-              <Label htmlFor="address">Address</Label>
-              <Textarea
+              <Label htmlFor="address">Address  <RedStar /></Label>
+              <Textarea 
                 className="w-full"
                 id="address"
                 placeholder="Please enter address"

@@ -21,10 +21,9 @@ export default function Home() {
 
         <DisplayComments /> 
 
-        {/* Genius card section */}
-        <GeniusCard title={""} subtitle={""} />
-
         <BentoGrid className="mt-12" />
+
+        {/* <GeniusCard title={""} subtitle={""} /> */}
       </main>
     </>
   );

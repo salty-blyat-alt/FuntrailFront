@@ -39,7 +39,7 @@ const DisplayComments = () => {
         {!comments || loading ? (
           <p>Loading...</p>
         ) : (
-          <CardStack items={comments?.items ?? []} />
+          <CardStack loading={loading} items={comments?.items ?? []} />
         )} 
     </div>
   );

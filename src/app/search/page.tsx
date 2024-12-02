@@ -15,7 +15,6 @@ import { HotelProps } from "../data/mockupData";
 import { Province } from "../home/components/search-group";
 import useAxios from "../hooks/use-axios";
 import { Search } from "lucide-react";
-import { ANY } from "../components/custom-table/custom-table";
 
 export default function SearchPage() {
   const [name, setName] = useState("");
@@ -33,15 +32,19 @@ export default function SearchPage() {
   } = useAxios<Province[], undefined>({
     endpoint: "/api/province/list",
     method: "GET",
-    config: {},
+    config: {
+      headers: {
+        Accept: "application/json",
+      },
+    },
   });
 
   const {
     triggerFetch: fetchList,
     loading,
     responseData: response,
-  } = useAxios<ANY, undefined>({
-    endpoint: "/api/hotel/list",
+  } = useAxios<any, any>({
+    endpoint: "/api/hotel/list/",
     method: "GET",
     config: {
       params: {
@@ -49,6 +52,9 @@ export default function SearchPage() {
         page: page,
         province_id: provinceId,
         sort_direction: sortDirection,
+      },
+      headers: {
+        Accept: "application/json",
       },
     },
   });
@@ -68,14 +74,14 @@ export default function SearchPage() {
   }, [name, provinceId, sortDirection, page, isProvinceInitialized]);
 
   // Fetch provinces once on mount
-  useEffect(() => { 
-      fetchProvinces?.(); 
+  useEffect(() => {
+    fetchProvinces?.();
   }, []);
 
   let debounceTimeout: NodeJS.Timeout;
 
   const handleSearch = (e: ChangeEvent<HTMLInputElement>) => {
-    const newQuery = e.target.value;
+    const newQuery = e.target.value; 
     setName((prevQuery) => {
       if (debounceTimeout) {
         clearTimeout(debounceTimeout);
@@ -125,7 +131,6 @@ export default function SearchPage() {
               placeholder="Search"
               className="pl-8"
               type="text"
-              value={name}
               onChange={handleSearch}
             />
           </div>

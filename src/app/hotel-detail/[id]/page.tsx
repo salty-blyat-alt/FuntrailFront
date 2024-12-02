@@ -2,19 +2,8 @@
 
 import { Button } from "@components/ui/button";
 import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@/app/components/ui/tabs";
-import {
   ArrowBigLeft,
-  Clock,
-  HeartIcon,
-  LogIn,
-  MapPin,
-  MapPinIcon,
-  Wifi,
+  Clock, MapPin
 } from "lucide-react";
 import { useParams, usePathname, useRouter } from "next/navigation";
 import HotelComment from "../components/hotel-comment";
@@ -24,7 +13,6 @@ import useAxios from "@/app/hooks/use-axios";
 import { useEffect } from "react";
 import { ANY } from "@/app/components/custom-table/custom-table";
 import ReviewStatistic from "@/app/home/components/review-statistic";
-import Image from "next/image";
 import {
   Card,
   CardContent,
@@ -33,6 +21,7 @@ import {
   CardTitle,
 } from "@/app/components/ui/card";
 import { Separator } from "@/app/components/ui/separator";
+import RoomList from "../components/room-list";
 
 export default function HotelDetail() {
   const { id } = useParams();
@@ -190,7 +179,8 @@ export default function HotelDetail() {
         </Card>
         <ReviewStatistic hotel_id={Number(id)} />
       </div>
-      {/* <RoomList hotelId={id.toString()} /> */}
+      
+      <RoomList hotelId={id.toString()} />
 
       <HotelComment hotel_id={id.toString()} />
     </div>

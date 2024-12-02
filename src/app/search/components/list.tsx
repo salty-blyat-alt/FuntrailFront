@@ -8,6 +8,7 @@ const List = ({ item }: { item: HotelProps }) => {
     thumbnail,
     average_stars,
     name,
+    address,
     rating_label,
     total_comments,
     description,
@@ -36,8 +37,7 @@ const List = ({ item }: { item: HotelProps }) => {
             <div>
               <h2 className="text-lg md:text-xl font-bold">{name}</h2>
               <div className="flex items-center text-xs md:text-sm text-muted-foreground">
-                <MapPinIcon className="mr-1 h-4 w-4" /> {"distance"} from
-                downtown
+                <MapPinIcon className="mr-1 h-4 w-4" /> {address}
               </div>
             </div>
             <div className="text-right">

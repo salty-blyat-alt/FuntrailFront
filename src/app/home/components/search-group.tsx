@@ -39,8 +39,7 @@ const SearchGroup = () => {
       queries.push(createQueryString("province", selectedProvince));
     }
 
-    // Redirecting to search page with constructed query strings
-    router.push("/search?" + queries.join("&"));
+     router.push("/search?" + queries.join("&"));
   };
 
   const { triggerFetch: fetchProvinces, responseData: provinces } = useAxios<

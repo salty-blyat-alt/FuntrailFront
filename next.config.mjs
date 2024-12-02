@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    domains: ["placehold.co"],
+    domains: ["placehold.co", 'www.svgrepo.com'],
     remotePatterns: [
       {
         protocol: "https",
@@ -12,6 +12,10 @@ const nextConfig = {
         protocol: "http",
         hostname: "localhost",
       },
+      {
+        protocol: "https",
+        hostname: "www.google.com",
+      },
     ],
   },
   eslint: {
@@ -19,4 +23,4 @@ const nextConfig = {
   },
 };
 
-export default nextConfig;
+export default nextConfig; 

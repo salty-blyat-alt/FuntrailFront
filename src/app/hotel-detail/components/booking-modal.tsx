@@ -76,8 +76,7 @@ const BookingModal: React.FC<BookingModalProps> = ({
   });
 
   useEffect(() => {
-    if (response?.startsWith("https://checkout.stripe.com/c/pay/")) {
-      // Redirect to Stripe Checkout
+    if (response?.startsWith("https://checkout.stripe.com/c/pay/")) { 
       toast({
         title: "Redirecting to payment",
         description: "Please complete your payment to confirm the booking.",
@@ -92,10 +91,12 @@ const BookingModal: React.FC<BookingModalProps> = ({
         description: "Your payment has been processed successfully.",
         variant: "success",
       });
+       
     }
     setBookingCart([]);
     setIsLoading(false);
-    handleCloseModal?.();
+    handleCloseModal?.(); 
+    history.replaceState(null, '', pathname);
   }, [response, finishedBook]);
 
   useEffect(() => {

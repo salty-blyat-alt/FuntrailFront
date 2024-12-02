@@ -1,6 +1,6 @@
-import { useState, useEffect, Dispatch } from "react";
+import { useState, useEffect } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { Avatar, AvatarFallback, AvatarImage } from "@components/ui/avatar";
+import { Avatar, AvatarFallback } from "@components/ui/avatar";
 import { Input } from "@components/ui/input";
 import { Label } from "@components/ui/label";
 import {
@@ -10,8 +10,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@components/ui/select";
+import placeholder from "@public/images/placeholder.png";
 import { motion } from "framer-motion";
-import { Mail, MapPin, Calendar, PhoneCall, Save } from "lucide-react";
+import { Mail, MapPin, Calendar, PhoneCall, Save, Edit2 } from "lucide-react";
 import RedStar from "@components/redstar/redstar";
 import { useAuth } from "@/app/context/auth-context";
 import useAxios from "@/app/hooks/use-axios";
@@ -27,19 +28,19 @@ import {
 } from "@components/ui/dialog";
 import { ANY } from "@/app/components/custom-table/custom-table";
 import Image from "next/image";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/app/components/ui/card";
 
-const Profile = ({
-  isEditing,
-  toggleEdit,
-  setIsEditing,
-}: {
-  isEditing: boolean;
-  toggleEdit: () => void;
-  setIsEditing: Dispatch<boolean>;
-}) => {
+const Profile = ({ activeSection }: { activeSection: string }) => {
   const [selectedProvince, setSelectedProvince] = useState("");
   const [showCancelDialog, setShowCancelDialog] = useState(false);
   const [hovered, setHovered] = useState(false);
+  const [isEditing, setIsEditing] = useState<boolean>(false);
   const [showSaveDialog, setShowSaveDialog] = useState(false); // State for save confirmation
   const { handleSubmit, reset, register, setValue } = useForm<{
     username?: string;
@@ -49,7 +50,7 @@ const Profile = ({
   }>();
 
   const { user, fetchProfile } = useAuth();
-
+  const toggleEdit = () => setIsEditing(!isEditing);
   const { triggerFetch: fetchProvinces, responseData: provinces } = useAxios<
     ANY,
     undefined
@@ -168,185 +169,227 @@ const Profile = ({
         variant: "destructive",
       });
     }
-  }, [errorStat, error]); 
+  }, [errorStat, error]);
   return (
-    <div className="space-y-6">
-      <div className="flex items-center space-x-4">
-        <div
-          className="relative group w-20 h-20"
-          onMouseEnter={() => setHovered(true)}
-          onMouseLeave={() => setHovered(false)}
+    <Card className="flex-1 h-fit ">
+      <CardHeader>
+        <div className="flex items-center justify-between">
+          <CardTitle className="text-2xl font-bold">User Profile</CardTitle>
+          <Button variant="outline" size="icon" onClick={toggleEdit}>
+            {isEditing ? (
+              <Save className="h-4 w-4" />
+            ) : (
+              <Edit2 className="h-4 w-4" />
+            )}
+            <span className="sr-only">
+              {isEditing ? "Save changes" : "Edit profile"}
+            </span>
+          </Button>
+        </div>
+        <CardDescription>
+          Manage your profile information and settings
+        </CardDescription>
+      </CardHeader>
+
+      <CardContent>
+        <motion.div
+          key={activeSection}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3 }}
+          className="space-y-6"
         >
-          <Avatar className="size-20 object-center object-cover">
-            <Image
-              width={200}
-              height={200}
-              src={`${process.env.NEXT_PUBLIC_BASE_URL}${user?.profile_img}`}
-              alt="Profile picture"
-            />
-            <AvatarFallback>
-              {user?.username?.slice(0, 2) || "JD"}
-            </AvatarFallback>
-          </Avatar>
+          <div className="space-y-6">
+            <div className="flex items-center space-x-4">
+              <div
+                className="relative group w-20 h-20"
+                onMouseEnter={() => setHovered(true)}
+                onMouseLeave={() => setHovered(false)}
+              >
+                <Avatar className="size-20 object-center object-cover">
+                  <Image
+                    width={200}
+                    height={200}
+                    src={
+                      user?.profile_img
+                        ? process.env.NEXT_PUBLIC_BASE_URL + user?.profile_img
+                        : placeholder
+                    }
+                    alt="Profile picture"
+                  />
+                  <AvatarFallback>
+                    {user?.username?.slice(0, 2) || "JD"}
+                  </AvatarFallback>
+                </Avatar>
 
-          {hovered && (
-            <motion.div
-              className="absolute rounded-full text-center inset-0 bg-opacity-50 bg-white flex justify-center items-center text-sm"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.3, ease: "easeInOut" }}
-            >
-              Choose Image
-            </motion.div>
-          )}
+                {hovered && (
+                  <motion.div
+                    className="absolute rounded-full text-center inset-0 bg-opacity-50 bg-white flex justify-center items-center text-sm"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.3, ease: "easeInOut" }}
+                  >
+                    Choose Image
+                  </motion.div>
+                )}
 
-          <input
-            type="file"
-            accept="image/*"
-            className="absolute inset-0 opacity-0 cursor-pointer"
-            onChange={handleImageChange}
-          />
-        </div>
-        <div>
-          <h2 className="text-2xl font-bold">{user?.username || "John Doe"}</h2>
-          <p className="text-muted-foreground">{user?.user_type}</p>
-        </div>
-      </div>
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="absolute inset-0 opacity-0 cursor-pointer"
+                  onChange={handleImageChange}
+                />
+              </div>
+              <div>
+                <h2 className="text-2xl font-bold">
+                  {user?.username || "John Doe"}
+                </h2>
+                <p className="text-muted-foreground">{user?.user_type}</p>
+              </div>
+            </div>
 
-      {isEditing ? (
-        <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
-          <div className="space-y-2">
-            <Label htmlFor="name">Username</Label>
-            <Input
-              id="name"
-              defaultValue={user?.username}
-              {...register("username")}
-            />
+            {isEditing ? (
+              <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
+                <div className="space-y-2">
+                  <Label htmlFor="name">Username</Label>
+                  <Input
+                    id="name"
+                    defaultValue={user?.username}
+                    {...register("username")}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="email">Email</Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    defaultValue={user?.email}
+                    {...register("email")}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="phone_number">Phone number</Label>
+                  <Input
+                    id="phone_number"
+                    type="number"
+                    defaultValue={user?.phone_number}
+                    {...register("phone_number")}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="province_id">
+                    Province <RedStar />
+                  </Label>
+                  <Select
+                    value={selectedProvince}
+                    onValueChange={handleProvinceChange}
+                    defaultValue={user?.province?.toString()}
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select a province" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {provinces?.map((province: Province) => (
+                        <SelectItem key={province.id} value={province.name}>
+                          {province.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+
+                  <input type="hidden" {...register("province_id")} />
+                </div>
+                <div className="flex gap-x-4">
+                  <Button
+                    size={"sm"}
+                    variant={"outline"}
+                    className="flex gap-x-4"
+                    onClick={handleCancel}
+                  >
+                    Cancel
+                  </Button>
+
+                  <Button
+                    size={"sm"}
+                    className="flex gap-x-2"
+                    onClick={() => setShowSaveDialog(true)} // Show save confirmation dialog
+                  >
+                    <Save className="size-4" /> Save
+                  </Button>
+                </div>
+              </form>
+            ) : (
+              <div className="space-y-4   ">
+                <div className="flex items-center space-x-2">
+                  <Mail className="h-4 w-4" />
+                  <span>{user?.email || "No Data"}</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <MapPin className="h-4 w-4" />
+                  <span>{user?.province || "No Data"}</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Calendar className="h-4 w-4" />
+                  <span>Joined {user?.created_at ?? "No Data"}</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <PhoneCall className="h-4 w-4" />
+                  <span>{user?.phone_number || "No Data"}</span>
+                </div>
+              </div>
+            )}
+
+            {/* Cancel Dialog */}
+            <Dialog open={showCancelDialog} onOpenChange={setShowCancelDialog}>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Unsaved Changes</DialogTitle>
+                </DialogHeader>
+                <p>
+                  Changes made are unsaved. Are you sure you want to cancel?
+                </p>
+                <DialogFooter className="space-x-4">
+                  <Button
+                    onClick={() => setShowCancelDialog(false)}
+                    variant="outline"
+                  >
+                    No, keep editing
+                  </Button>
+                  <Button onClick={confirmCancel} variant="destructive">
+                    Yes, cancel changes
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+
+            {/* Save Confirmation Dialog */}
+            <Dialog open={showSaveDialog} onOpenChange={setShowSaveDialog}>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Save Changes</DialogTitle>
+                </DialogHeader>
+                <p>Are you sure you want to save the changes?</p>
+                <DialogFooter className="space-x-4">
+                  <Button
+                    onClick={() => setShowSaveDialog(false)}
+                    variant="outline"
+                  >
+                    No, keep editing
+                  </Button>
+                  <Button onClick={confirmSave} variant="default">
+                    Yes, save changes
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
           </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
-            <Input
-              id="email"
-              type="email"
-              defaultValue={user?.email}
-              {...register("email")}
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="phone_number">Phone number</Label>
-            <Input
-              id="phone_number"
-              type="number"
-              defaultValue={user?.phone_number}
-              {...register("phone_number")}
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="province_id">
-              Province <RedStar />
-            </Label>
-            <Select
-              value={selectedProvince}
-              onValueChange={handleProvinceChange}
-              defaultValue={user?.province?.toString()}
-            >
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="Select a province" />
-              </SelectTrigger>
-              <SelectContent>
-                {provinces?.map((province: Province) => (
-                  <SelectItem key={province.id} value={province.name}>
-                    {province.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-
-            <input type="hidden" {...register("province_id")} />
-          </div>
-          <div className="flex gap-x-4">
-            <Button
-              size={"sm"}
-              variant={"outline"}
-              className="flex gap-x-4"
-              onClick={handleCancel}
-            >
-              Cancel
-            </Button>
-
-            <Button
-              size={"sm"}
-              className="flex gap-x-2"
-              onClick={() => setShowSaveDialog(true)} // Show save confirmation dialog
-            >
-              <Save className="size-4" /> Save
-            </Button>
-          </div>
-        </form>
-      ) : (
-        <div className="space-y-4   ">
-          <div className="flex items-center space-x-2">
-            <Mail className="h-4 w-4" />
-            <span>{user?.email || "No Data"}</span>
-          </div>
-          <div className="flex items-center space-x-2">
-            <MapPin className="h-4 w-4" />
-            <span>{user?.province || "No Data"}</span>
-          </div>
-          <div className="flex items-center space-x-2">
-            <Calendar className="h-4 w-4" />
-            <span>Joined {user?.created_at ?? "No Data"}</span>
-          </div>
-          <div className="flex items-center space-x-2">
-            <PhoneCall className="h-4 w-4" />
-            <span>{user?.phone_number || "No Data"}</span>
-          </div>
-        </div>
-      )}
-
-      {/* Cancel Dialog */}
-      <Dialog open={showCancelDialog} onOpenChange={setShowCancelDialog}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Unsaved Changes</DialogTitle>
-          </DialogHeader>
-          <p>Changes made are unsaved. Are you sure you want to cancel?</p>
-          <DialogFooter className="space-x-4">
-            <Button
-              onClick={() => setShowCancelDialog(false)}
-              variant="outline"
-            >
-              No, keep editing
-            </Button>
-            <Button onClick={confirmCancel} variant="destructive">
-              Yes, cancel changes
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      {/* Save Confirmation Dialog */}
-      <Dialog open={showSaveDialog} onOpenChange={setShowSaveDialog}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Save Changes</DialogTitle>
-          </DialogHeader>
-          <p>Are you sure you want to save the changes?</p>
-          <DialogFooter className="space-x-4">
-            <Button onClick={() => setShowSaveDialog(false)} variant="outline">
-              No, keep editing
-            </Button>
-            <Button onClick={confirmSave} variant="default">
-              Yes, save changes
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-    </div>
+        </motion.div>
+      </CardContent>
+    </Card>
   );
 };
 

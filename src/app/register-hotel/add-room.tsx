@@ -20,6 +20,7 @@ import Image from "next/image";
 import { getCookie } from "cookies-next";
 import { useRouter } from "next/navigation";
 import { ANY } from "../components/custom-table/custom-table";
+import { useAuth } from "../context/auth-context";
 
 interface RoomProps {
   room_type: string;
@@ -40,9 +41,7 @@ export default function AddRoom() {
   const [customRoomType, setCustomRoomType] = useState("");
   const [deleteRoomId, setDeleteRoomId] = useState<number | null>(null);
   const [showDialog, setShowDialog] = useState(false);
-
-  // Retrieve establishment_id from cookies
-  const establishmentId = getCookie("establishment_id");
+  const { user } = useAuth();
 
   const {
     register,
@@ -56,7 +55,9 @@ export default function AddRoom() {
     Room[],
     undefined
   >({
-    endpoint: establishmentId ? `/api/hotel/rooms/${establishmentId}` : "",
+    endpoint: user?.establishment_id
+      ? `/api/hotel/rooms/${user?.establishment_id}`
+      : "",
     config: {},
     method: "GET",
   });
@@ -69,7 +70,7 @@ export default function AddRoom() {
 
   const handleThumbnailChange = (file?: File) => {
     setPreview(file);
-    if(file){
+    if (file) {
       setValue("img", file);
     }
   };
@@ -85,39 +86,27 @@ export default function AddRoom() {
   });
 
   useEffect(() => {
-    if (success) {
-      fetchRooms?.()
+    if (success && finished) {
+      setRoomType("standard");
+      setCustomRoomType("");
+      setPreview(undefined);
+      reset();
+      fetchRooms?.();
       toast({
         title: "Room Added",
         description: "Room is added to your hotel successfully.",
         variant: "success",
       });
     }
-  }, [success]);
+  }, [success, finished]);
 
   const router = useRouter();
 
   useEffect(() => {
-    if (finished) {
-      setRoomType("standard");
-      setCustomRoomType("");
-      setPreview(undefined);
-      reset();
+    if (user?.establishment_id) {
       fetchRooms?.();
     }
-  }, [finished]);
-
-  useEffect(() => {
-    if (establishmentId) {
-      fetchRooms?.();
-    } else {
-      toast({
-        title: "Error",
-        description: "Establishment ID is required to fetch rooms.",
-        variant: "destructive",
-      });
-    }
-  }, [establishmentId]);
+  }, [user?.establishment_id]);
 
   const onSubmit: SubmitHandler<RoomProps> = async (data) => {
     const finalRoomType = roomType === "other" ? customRoomType : roomType;
@@ -147,7 +136,7 @@ export default function AddRoom() {
       formData.append("room_id", deleteRoomId.toString()); // Ensure the ID is a string
 
       try {
-        if(formData){
+        if (formData) {
           deleteRoom?.(formData); // Call deleteRoom with the FormData
         }
 
@@ -255,7 +244,7 @@ export default function AddRoom() {
             <Button
               onClick={(e) => {
                 e.preventDefault();
-                router.push(`/dashboard/hotel/${establishmentId}`);
+                router.push(`/dashboard/hotel/${user?.establishment_id}`);
               }}
               size={"sm"}
               variant={"outline"}
@@ -280,7 +269,11 @@ export default function AddRoom() {
                     alt={`Room id: ${room?.id}`}
                     height={100}
                     width={100}
-                    src={room.img ? process.env.NEXT_PUBLIC_BASE_URL + room?.img : "https://placehold.co/600x400"}
+                    src={
+                      room.img
+                        ? process.env.NEXT_PUBLIC_BASE_URL + room?.img
+                        : "https://placehold.co/600x400"
+                    }
                     className="rounded-md"
                   />
                   <div className="flex-1 space-y-1">

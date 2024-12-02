@@ -56,9 +56,8 @@ const Operational: React.FC<OperationalProps> = ({
     editHotel?.(formData);
   };
   function formatTime(timeString: string) {
-    // Assuming hotel.open_at is in the "HH:mm" format, e.g., "17:00"
-    const date = new Date(`1970-01-01T${timeString}Z`); // Add a dummy date to work with the time only
-    return format(date, "hh:mm a"); // Format to 12-hour format with AM/PM
+     const date = new Date(`1970-01-01T${timeString}Z`); 
+    return format(date, "hh:mm a");  
   }
   console.log(isEditingOperationTime);
   return (

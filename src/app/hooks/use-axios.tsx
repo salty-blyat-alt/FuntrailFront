@@ -105,12 +105,11 @@ const useAxios = <T, U>({
 
   useEffect(() => {
     const csrfToken = getCsrfTokenFromCookies();
-    // Only fetch the CSRF token if it's not already present
     if (!csrfToken) {
       fetchCsrfToken();
     }
   }, []);
-  
+
   const fetchData = async (data?: U) => {
     setLoading(true);
     setError(null);
@@ -141,24 +140,26 @@ const useAxios = <T, U>({
         ...requestOption,
       });
 
-      const { body  } = response.data;
-      setResponseData(body); 
+      const { body } = response.data;
+      setResponseData(body);
     } catch (err: ANY) {
       if (err.response) {
-      const { body, result, result_code, result_message } = err.response.data;
+        const { body, result, result_code, result_message } = err.response.data;
 
         console.error("Error response data:", err.response.data);
         console.error("Error response status:", err.response.status);
         console.error("Error response headers:", err.response.headers);
-        setResponseDataWithStat({body, result, result_code, result_message});
-        
+
+        setResponseDataWithStat({ body, result, result_code, result_message });
+
         if (err.response.status === 401) {
-           deleteCookie("access_token", {
-            path: "/",
+          deleteCookie("access_token", {
+            path: process.env.NEXT_PUBLIC_DOMAIN,
             domain: process.env.NEXT_PUBLIC_DOMAIN,
           });
           // Optionally redirect to login page
           window.location.href = "/auth/login";
+
         }
       } else if (err.request) {
         console.error("No response received:", err.request);

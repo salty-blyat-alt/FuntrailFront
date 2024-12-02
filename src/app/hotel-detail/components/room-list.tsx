@@ -37,7 +37,7 @@ export interface RoomProps {
   room_type?: string;
   status?: string;
   updated_at?: string;
-  available_rooms?: string; 
+  available_rooms?: string;
 }
 
 export default function RoomList({ hotelId }: { hotelId: string }) {
@@ -90,7 +90,7 @@ export default function RoomList({ hotelId }: { hotelId: string }) {
           responseDataWithStat?.result_message +
           ". code: " +
           responseDataWithStat?.result_code,
-          variant: 'destructive'
+        variant: "destructive",
       });
     }
   }, [error, finished]);
@@ -118,15 +118,11 @@ export default function RoomList({ hotelId }: { hotelId: string }) {
   };
   return (
     <>
-      <div
-        className={`grid ${
-          bookingCart.length > 0 ? "md:grid-cols-2" : "md:grid-cols-1"
-        } gap-4`}
-      >
+      <div className={`grid gap-4`}>
         <div className="">
           <div className="flex flex-wrap gap-4 justify-between items-center mb-4">
             <h1 className="text-2xl font-bold">Available Rooms</h1>
-            <div className="flex items-center gap-x-2">
+            <div className="flex items-center gap-x-2  ">
               <div className="flex gap-x-4">
                 {/* check in date */}
                 <Popover>
@@ -190,83 +186,89 @@ export default function RoomList({ hotelId }: { hotelId: string }) {
               </Button>
             </div>
           </div>
-
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead></TableHead>
-                <TableHead>Type</TableHead>
-                <TableHead>Price</TableHead>
-                {/* <TableHead>Status</TableHead> */}
-                <TableHead>Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            {/* list out the rooms */}
-            <TableBody>
-              {Array.isArray(rooms) && rooms?.length > 0 ? (
-                rooms.map((room) => (
-                  <TableRow key={room.id}>
-                    <TableCell>
-                      <Dialog>
-                        <DialogTrigger asChild>
-                          <Image
-                            alt={room.room_type || "room"}
-                            src={
-                              room.img
-                                ? `${process.env.NEXT_PUBLIC_BASE_URL}${room.img}`
-                                : "https://placehold.co/600x400"
-                            }
-                            width={50}
-                            height={50}
-                            style={{ cursor: "pointer" }}
-                          />
-                        </DialogTrigger>
-                        <DialogContent className="p-4">
-                          <DialogClose className="absolute right-2 top-2" />
-                          <Image
-                            alt={room.room_type || "room"}
-                            src={
-                              room.img
-                                ? `${process.env.NEXT_PUBLIC_BASE_URL}${room.img}`
-                                : "https://placehold.co/600x400"
-                            }
-                            width={500} // Larger image size for preview
-                            height={500}
-                            className="rounded-md"
-                          />
-                        </DialogContent>
-                      </Dialog>
-                    </TableCell>
-                    <TableCell>{room.room_type}</TableCell>
-                    <TableCell>${room.price_per_night}</TableCell>
-                    <TableCell>
-                      <Button
-                        size="sm"
-                        onClick={() => addToBookingCart(room)}
-                        disabled={bookingCart.some((r) => r.id === room.id)}
-                      >
-                        Add to Cart
-                      </Button>
+          <div
+            className={`grid ${
+              bookingCart.length > 0 ? "md:grid-cols-2" : "md:grid-cols-1"
+            } gap-4`}
+          >
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead></TableHead>
+                  <TableHead>Type</TableHead>
+                  <TableHead>Price</TableHead>
+                  {/* <TableHead>Status</TableHead> */}
+                  <TableHead>Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              {/* list out the rooms */}
+              <TableBody>
+                {Array.isArray(rooms) && rooms?.length > 0 ? (
+                  rooms.map((room) => (
+                    <TableRow key={room.id}>
+                      <TableCell>
+                        <Dialog>
+                          <DialogTrigger asChild>
+                            <Image
+                              alt={room.room_type || "room"}
+                              src={
+                                room.img
+                                  ? `${process.env.NEXT_PUBLIC_BASE_URL}${room.img}`
+                                  : "https://placehold.co/600x400"
+                              }
+                              width={50}
+                              height={50}
+                              style={{ cursor: "pointer" }}
+                            />
+                          </DialogTrigger>
+                          <DialogContent className="p-4">
+                            <DialogClose className="absolute right-2 top-2" />
+                            <Image
+                              alt={room.room_type || "room"}
+                              src={
+                                room.img
+                                  ? `${process.env.NEXT_PUBLIC_BASE_URL}${room.img}`
+                                  : "https://placehold.co/600x400"
+                              }
+                              width={500} // Larger image size for preview
+                              height={500}
+                              className="rounded-md"
+                            />
+                          </DialogContent>
+                        </Dialog>
+                      </TableCell>
+                      <TableCell>{room.room_type}</TableCell>
+                      <TableCell>${room.price_per_night}</TableCell>
+                      <TableCell>
+                        <Button
+                          size="sm"
+                          onClick={() => addToBookingCart(room)}
+                          disabled={bookingCart.some((r) => r.id === room.id)}
+                        >
+                          Add to Cart
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell colSpan={4} className="text-center">
+                      No rooms available
                     </TableCell>
                   </TableRow>
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell colSpan={4} className="text-center">
-                    No rooms available
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
+                )}
+              </TableBody>
+            </Table>
+
+            {bookingCart.length > 0 && (
+              <BookingCart
+                handleOpenBookingModal={handleOpenBookingModal}
+                bookingCart={bookingCart}
+                setBookingCart={setBookingCart}
+              />
+            )}
+          </div>
         </div>
-        {bookingCart.length > 0 && (
-          <BookingCart
-            handleOpenBookingModal={handleOpenBookingModal}
-            bookingCart={bookingCart}
-            setBookingCart={setBookingCart}
-          />
-        )}
         <BookingModal
           bookingCart={bookingCart}
           setBookingCart={setBookingCart}

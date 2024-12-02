@@ -6,6 +6,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/app/components/ui/dialog";
+import { motion } from "framer-motion";
+
 import useAxios from "@/app/hooks/use-axios";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { useEffect, useState } from "react";
@@ -17,8 +19,9 @@ import { deleteCookie } from "cookies-next";
 import { useRouter } from "next/navigation";
 import { toast } from "@/app/hooks/use-toast";
 import { ANY } from "@/app/components/custom-table/custom-table";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/app/components/ui/card";
 
-const Account = () => {
+const Account = ({activeSection}:{activeSection:string} ) => {
   const [open, setOpen] = useState(false);
   const { setUser } = useAuth();
   const {
@@ -109,6 +112,28 @@ const Account = () => {
   }, [errorStat, error]);
 
   return (
+    
+<Card className="flex-1 h-fit ">
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <CardTitle className="text-2xl font-bold">User Profile</CardTitle>
+            
+          </div>
+          <CardDescription>
+            Manage your profile information and settings
+          </CardDescription>
+        </CardHeader>
+
+        <CardContent >
+          <motion.div
+            key={activeSection}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3 }}
+            className="space-y-6"
+          >
+
+         
     <div className="space-y-6">
       <h2 className="text-xl font-semibold">Account Settings</h2>
       <hr />
@@ -216,6 +241,10 @@ const Account = () => {
         </div>
       </div>
     </div>
+    
+    </motion.div>
+        </CardContent>
+      </Card>
   );
 };
 
